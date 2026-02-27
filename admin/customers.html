@@ -1414,15 +1414,27 @@
         // ============================================================
         async function loadCustomers() {
             try {
-                const { data, error } = await window.supabaseClient
+                // Try full query first (requires migration-v3 columns)
+                let data, error;
+                ({ data, error } = await window.supabaseClient
                     .from('users')
-                    .select('id, full_name, email, phone, status, is_admin, last_login, created_at, onboarding_completed, onboarding_completed_at, ip_address, notes')
+                    .select('id, full_name, first_name, last_name, email, phone, status, is_admin, last_login, created_at, onboarding_completed, onboarding_completed_at, ip_address, notes')
                     .eq('is_admin', false)
-                    .order('created_at', { ascending: false });
+                    .order('created_at', { ascending: false }));
+
+                // If that fails (missing columns), fall back to basic query
+                if (error) {
+                    console.warn('Full query failed, trying basic columns:', error.message);
+                    ({ data, error } = await window.supabaseClient
+                        .from('users')
+                        .select('id, full_name, first_name, last_name, email, phone, is_admin, last_login, created_at, ip_address')
+                        .eq('is_admin', false)
+                        .order('created_at', { ascending: false }));
+                }
 
                 if (error) {
                     console.error('Error loading customers:', error);
-                    showEmptyState('Failed to load customers.');
+                    showEmptyState('Failed to load customers: ' + (error.message || 'Unknown error'));
                     return;
                 }
 
@@ -1569,7 +1581,7 @@
 
                 return `
                     <tr onclick="navigateToCustomer('${c.id}')">
-                        <td><span class="customer-name">${escapeHtml(c.full_name || 'N/A')}</span></td>
+                        <td><span class="customer-name">${escapeHtml(c.full_name || ((c.first_name || '') + ' ' + (c.last_name || '')).trim() || 'N/A')}</span></td>
                         <td>${escapeHtml(c.email || 'N/A')}</td>
                         <td>${escapeHtml(c.phone || 'N/A')}</td>
                         <td>
@@ -1768,10 +1780,27 @@
                     throw new Error('User creation failed - no user returned');
                 }
 
-                // 2. Update the user profile in the users table with correct status
+                const newUserId = authData.user.id;
+
+                // 2. Auto-confirm email via database function (bypasses email verification)
+                try {
+                    const { error: confirmError } = await window.supabaseClient
+                        .rpc('admin_confirm_user_email', { target_user_id: newUserId });
+
+                    if (confirmError) {
+                        console.warn('Could not auto-confirm email (run sql/admin-helpers.sql):', confirmError.message);
+                    }
+                } catch (confirmErr) {
+                    console.warn('admin_confirm_user_email not available:', confirmErr);
+                }
+
+                // 3. Update the user profile in the users table with correct status
                 //    The handle_new_user trigger will have created the row, so update it
                 const isOnboardingComplete = (status === 'member' || status === 'verified_member');
-                const { error: updateError } = await window.supabaseClient
+
+                // Try with all columns first, fall back to basic columns
+                let updateError;
+                ({ error: updateError } = await window.supabaseClient
                     .from('users')
                     .update({
                         first_name: firstName,
@@ -1782,10 +1811,23 @@
                         onboarding_completed: isOnboardingComplete,
                         onboarding_completed_at: isOnboardingComplete ? new Date().toISOString() : null
                     })
-                    .eq('id', authData.user.id);
+                    .eq('id', newUserId));
 
                 if (updateError) {
-                    console.error('Error updating user profile:', updateError);
+                    // Fallback: try without migration-v3 columns
+                    ({ error: updateError } = await window.supabaseClient
+                        .from('users')
+                        .update({
+                            first_name: firstName,
+                            last_name: lastName,
+                            full_name: firstName + ' ' + lastName,
+                            phone: phone
+                        })
+                        .eq('id', newUserId));
+
+                    if (updateError) {
+                        console.error('Error updating user profile:', updateError);
+                    }
                 }
 
                 closeCreateUserModal();

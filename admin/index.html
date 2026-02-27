@@ -1199,11 +1199,19 @@
         async function loadStats() {
             try {
                 // Fetch all non-admin users
-                const { data: users, error } = await window.supabaseClient
+                let users, error;
+                ({ data: users, error } = await window.supabaseClient
                     .from('users')
-                    .select('*')
-                    .eq('is_admin', false);
+                    .select('id, full_name, first_name, last_name, email, phone, status, is_admin, last_login, created_at, onboarding_completed, ip_address')
+                    .eq('is_admin', false));
 
+                // Fallback if new columns don't exist
+                if (error) {
+                    ({ data: users, error } = await window.supabaseClient
+                        .from('users')
+                        .select('id, full_name, first_name, last_name, email, phone, is_admin, last_login, created_at, ip_address')
+                        .eq('is_admin', false));
+                }
                 if (error) throw error;
                 allUsers = users || [];
 
@@ -1334,13 +1342,23 @@
         async function loadRecentSignups() {
             const tbody = document.getElementById('signups-tbody');
             try {
-                const { data: users, error } = await window.supabaseClient
+                let users, error;
+                ({ data: users, error } = await window.supabaseClient
                     .from('users')
                     .select('first_name, last_name, email, status, created_at')
                     .eq('is_admin', false)
                     .order('created_at', { ascending: false })
-                    .limit(5);
+                    .limit(5));
 
+                // Fallback if 'status' column doesn't exist yet
+                if (error) {
+                    ({ data: users, error } = await window.supabaseClient
+                        .from('users')
+                        .select('first_name, last_name, email, created_at')
+                        .eq('is_admin', false)
+                        .order('created_at', { ascending: false })
+                        .limit(5));
+                }
                 if (error) throw error;
 
                 if (!users || users.length === 0) {
