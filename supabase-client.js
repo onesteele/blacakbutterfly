@@ -195,10 +195,10 @@ window.applyClientSidebar = function(activePage) {
 
     const items = [
         { href: '/', icon: 'dashboard', label: 'Dashboard', id: 'dashboard' },
-        { href: '/portal/content', icon: 'content', label: 'Content', id: 'content' },
-        { href: '/portal/announcements', icon: 'announcements', label: 'Announcements', id: 'announcements' },
-        { href: '/portal/chat', icon: 'messages', label: 'Messages', id: 'messages' },
-        { href: '/portal/account', icon: 'account', label: 'Account', id: 'account' },
+        { href: '/portal/content.html', icon: 'content', label: 'Content', id: 'content' },
+        { href: '/portal/announcements.html', icon: 'announcements', label: 'Announcements', id: 'announcements' },
+        { href: '/portal/chat.html', icon: 'messages', label: 'Messages', id: 'messages' },
+        { href: '/portal/account.html', icon: 'account', label: 'Account', id: 'account' },
     ];
 
     let html = '';
@@ -238,15 +238,17 @@ window.CLIENT_SIDEBAR_CSS = `
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 16px 14px;
+        padding: 16px;
+        padding-left: 14px;
         border-bottom: 1px solid #2a2a2a;
         flex-shrink: 0;
-        height: 60px;
+        height: 64px;
         overflow: hidden;
     }
     .cs-logo img {
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
+        margin-left: 1px;
         object-fit: contain;
         flex-shrink: 0;
         filter: drop-shadow(0 0 8px rgba(240, 200, 50, 0.4));
@@ -270,7 +272,8 @@ window.CLIENT_SIDEBAR_CSS = `
         flex: 1;
         display: flex;
         flex-direction: column;
-        padding: 8px 0;
+        padding: 16px 0;
+        gap: 4px;
         overflow-y: auto;
         overflow-x: hidden;
     }
@@ -278,8 +281,9 @@ window.CLIENT_SIDEBAR_CSS = `
         display: flex;
         align-items: center;
         gap: 14px;
-        padding: 12px 18px;
-        margin: 2px 8px;
+        padding: 14px 0;
+        padding-left: 18px;
+        margin: 0 6px;
         border-radius: 10px;
         text-decoration: none;
         color: #9ca3af;
@@ -287,6 +291,7 @@ window.CLIENT_SIDEBAR_CSS = `
         border-left: 3px solid transparent;
         white-space: nowrap;
         overflow: hidden;
+        min-height: 48px;
     }
     .cs-nav-item:hover {
         background: rgba(240, 200, 50, 0.05);
@@ -298,16 +303,16 @@ window.CLIENT_SIDEBAR_CSS = `
         border-left-color: #f0c832;
     }
     .cs-nav-icon {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
         flex-shrink: 0;
         display: flex;
         align-items: center;
         justify-content: center;
     }
     .cs-nav-icon svg {
-        width: 20px;
-        height: 20px;
+        width: 22px;
+        height: 22px;
     }
     .cs-nav-label {
         font-size: 14px;
@@ -320,15 +325,16 @@ window.CLIENT_SIDEBAR_CSS = `
     }
     .cs-bottom {
         border-top: 1px solid #2a2a2a;
-        padding: 8px 0;
+        padding: 12px 0;
         flex-shrink: 0;
     }
     .cs-signout {
         display: flex;
         align-items: center;
         gap: 14px;
-        padding: 12px 18px;
-        margin: 2px 8px;
+        padding: 14px 0;
+        padding-left: 18px;
+        margin: 0 6px;
         border-radius: 10px;
         text-decoration: none;
         color: #9ca3af;
@@ -337,9 +343,10 @@ window.CLIENT_SIDEBAR_CSS = `
         border: none;
         background: none;
         font-family: 'Manrope', sans-serif;
-        width: calc(100% - 16px);
+        width: calc(100% - 12px);
         white-space: nowrap;
         overflow: hidden;
+        min-height: 48px;
     }
     .cs-signout:hover {
         background: rgba(239, 68, 68, 0.1);
