@@ -1193,8 +1193,14 @@
                     return;
                 }
 
-                // 3. Check if onboarding is completed
-                if (!profile.onboarding_completed) {
+                // 3. Check user status for routing
+                const userStatus = (profile.status || 'onboarding').toLowerCase();
+                if (userStatus === 'onboarding') {
+                    window.location.href = '/onboarding';
+                    return;
+                }
+                // Only 'member' and 'verified_member' (and 'active' for legacy) get dashboard access
+                if (!['member', 'verified_member', 'active'].includes(userStatus)) {
                     window.location.href = '/onboarding';
                     return;
                 }

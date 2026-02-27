@@ -1104,6 +1104,225 @@
         }
 
         /* ============================================================
+           NEW CHAT BUTTON + MODAL
+           ============================================================ */
+        .conv-header-top {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .btn-new-chat {
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-new-chat:hover {
+            background: var(--accent-light);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(240, 200, 50, 0.3);
+        }
+
+        .btn-new-chat svg {
+            width: 18px;
+            height: 18px;
+            color: #000;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            width: 100%;
+            max-width: 460px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            font-family: 'Gilroy ExtraBold', sans-serif;
+            font-size: 20px;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 28px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0 4px;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(240, 200, 50, 0.1);
+        }
+
+        .nc-user-list {
+            max-height: 320px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .nc-user-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .nc-user-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .nc-loading {
+            padding: 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .nc-user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            border-bottom: 1px solid rgba(42, 42, 42, 0.4);
+        }
+
+        .nc-user-item:last-child {
+            border-bottom: none;
+        }
+
+        .nc-user-item:hover {
+            background: var(--accent-dim);
+        }
+
+        .nc-user-item .nc-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-dim) 0%, rgba(240, 200, 50, 0.08) 100%);
+            border: 1px solid rgba(240, 200, 50, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+            flex-shrink: 0;
+            text-transform: uppercase;
+        }
+
+        .nc-user-item .nc-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .nc-user-item .nc-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nc-user-item .nc-email {
+            font-size: 12px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nc-user-item .nc-existing {
+            font-size: 11px;
+            color: var(--accent);
+            background: var(--accent-dim);
+            padding: 2px 8px;
+            border-radius: 100px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .nc-empty {
+            padding: 20px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* ============================================================
            RESPONSIVE
            ============================================================ */
         @media (max-width: 900px) {
@@ -1373,11 +1592,18 @@
             <!-- Left Panel: Conversation List -->
             <div class="conv-list-panel" id="conv-list-panel">
                 <div class="conv-list-header">
-                    <div class="conv-search-wrap">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        <input type="text" class="conv-search" id="conv-search" placeholder="Search by customer name...">
+                    <div class="conv-header-top">
+                        <div class="conv-search-wrap" style="margin-bottom:0; flex:1;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            <input type="text" class="conv-search" id="conv-search" placeholder="Search by customer name...">
+                        </div>
+                        <button class="btn-new-chat" onclick="openNewChatModal()" title="Start New Chat">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
                     </div>
                     <div class="conv-filter-tabs">
                         <button class="conv-filter-tab active" data-filter="all" onclick="setFilter('all')">All</button>
@@ -1457,6 +1683,23 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Chat Modal -->
+    <div class="modal-overlay" id="new-chat-modal" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Start New Conversation</h3>
+                <button class="modal-close" onclick="closeNewChatModal()">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Search User</label>
+                <input type="text" id="nc-search" placeholder="Search by name or email..." oninput="filterNewChatUsers()">
+            </div>
+            <div class="nc-user-list" id="nc-user-list">
+                <div class="nc-loading">Loading users...</div>
             </div>
         </div>
     </div>
@@ -2149,6 +2392,142 @@
             setTimeout(() => {
                 toast.classList.remove('show');
             }, 3500);
+        }
+
+        /* ============================================================
+           NEW CHAT - START CONVERSATION WITH USER
+           ============================================================ */
+        let allUsersForChat = [];
+
+        async function openNewChatModal() {
+            document.getElementById('new-chat-modal').style.display = 'flex';
+            document.getElementById('nc-search').value = '';
+            document.getElementById('nc-search').focus();
+
+            // Load all non-admin users
+            const listEl = document.getElementById('nc-user-list');
+            listEl.innerHTML = '<div class="nc-loading">Loading users...</div>';
+
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('users')
+                    .select('id, first_name, last_name, email')
+                    .eq('is_admin', false)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                allUsersForChat = data || [];
+                renderNewChatUsers(allUsersForChat);
+            } catch (err) {
+                console.error('Error loading users for chat:', err);
+                listEl.innerHTML = '<div class="nc-empty">Failed to load users.</div>';
+            }
+        }
+
+        function closeNewChatModal() {
+            document.getElementById('new-chat-modal').style.display = 'none';
+        }
+
+        function filterNewChatUsers() {
+            const q = document.getElementById('nc-search').value.trim().toLowerCase();
+            if (!q) {
+                renderNewChatUsers(allUsersForChat);
+                return;
+            }
+            const filtered = allUsersForChat.filter(u => {
+                const name = ((u.first_name || '') + ' ' + (u.last_name || '')).toLowerCase();
+                const email = (u.email || '').toLowerCase();
+                return name.includes(q) || email.includes(q);
+            });
+            renderNewChatUsers(filtered);
+        }
+
+        function renderNewChatUsers(users) {
+            const listEl = document.getElementById('nc-user-list');
+
+            if (users.length === 0) {
+                listEl.innerHTML = '<div class="nc-empty">No users found.</div>';
+                return;
+            }
+
+            // Check which users already have conversations
+            const existingUserIds = new Set(allConversations.map(c => c.user_id));
+
+            listEl.innerHTML = users.map(u => {
+                const name = ((u.first_name || '') + ' ' + (u.last_name || '')).trim() || u.email || 'Unknown';
+                const initials = ((u.first_name || '')[0] || '') + ((u.last_name || '')[0] || '') || (u.email || '?')[0];
+                const hasConv = existingUserIds.has(u.id);
+                const existingTag = hasConv ? '<span class="nc-existing">Existing</span>' : '';
+
+                return `
+                    <div class="nc-user-item" onclick="startNewChat('${u.id}', ${hasConv})">
+                        <div class="nc-avatar">${escapeHtml(initials.toUpperCase())}</div>
+                        <div class="nc-info">
+                            <div class="nc-name">${escapeHtml(name)}</div>
+                            <div class="nc-email">${escapeHtml(u.email || '')}</div>
+                        </div>
+                        ${existingTag}
+                    </div>`;
+            }).join('');
+        }
+
+        async function startNewChat(userId, hasExisting) {
+            // If user already has a conversation, just select it
+            if (hasExisting) {
+                const existing = allConversations.find(c => c.user_id === userId);
+                if (existing) {
+                    closeNewChatModal();
+                    selectConversation(existing.id);
+                    return;
+                }
+            }
+
+            // Create a new conversation
+            try {
+                const { data: newConv, error } = await window.supabaseClient
+                    .from('chat_conversations')
+                    .insert({
+                        user_id: userId,
+                        status: 'open',
+                        last_message_at: new Date().toISOString()
+                    })
+                    .select(`
+                        *,
+                        user:users!chat_conversations_user_id_fkey (
+                            id,
+                            first_name,
+                            last_name,
+                            email
+                        )
+                    `)
+                    .single();
+
+                if (error) throw error;
+
+                closeNewChatModal();
+
+                // Add to local conversations list and select it
+                allConversations.unshift(newConv);
+                applyFilters();
+                selectConversation(newConv.id);
+
+                showToast('Conversation started. Send a message to begin.', 'success');
+
+            } catch (err) {
+                console.error('Error creating conversation:', err);
+                if (err.message && err.message.includes('duplicate')) {
+                    // Conversation already exists - refresh and find it
+                    await loadConversations();
+                    const existing = allConversations.find(c => c.user_id === userId);
+                    if (existing) {
+                        closeNewChatModal();
+                        selectConversation(existing.id);
+                    }
+                } else {
+                    showToast('Failed to start conversation. Please try again.', 'error');
+                }
+            }
         }
 
         /* ============================================================

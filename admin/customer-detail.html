@@ -481,6 +481,16 @@
             color: #60a5fa;
         }
 
+        .status-badge.member {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        .status-badge.verified_member {
+            background: rgba(240, 200, 50, 0.15);
+            color: var(--accent);
+        }
+
         .status-badge.active {
             background: rgba(34, 197, 94, 0.15);
             color: var(--success);
@@ -546,6 +556,8 @@
         }
 
         .status-dropdown-item .sdi-dot.onboarding { background: #60a5fa; }
+        .status-dropdown-item .sdi-dot.member { background: var(--success); }
+        .status-dropdown-item .sdi-dot.verified_member { background: var(--accent); }
         .status-dropdown-item .sdi-dot.active { background: var(--success); }
         .status-dropdown-item .sdi-dot.inactive { background: var(--text-muted); }
         .status-dropdown-item .sdi-dot.churned { background: var(--error); }
@@ -1560,6 +1572,12 @@
                                     <div class="status-dropdown" id="status-dropdown">
                                         <div class="status-dropdown-item" onclick="changeStatus('onboarding')">
                                             <span class="sdi-dot onboarding"></span> Onboarding
+                                        </div>
+                                        <div class="status-dropdown-item" onclick="changeStatus('member')">
+                                            <span class="sdi-dot member"></span> Member
+                                        </div>
+                                        <div class="status-dropdown-item" onclick="changeStatus('verified_member')">
+                                            <span class="sdi-dot verified_member"></span> Verified Member
                                         </div>
                                         <div class="status-dropdown-item" onclick="changeStatus('active')">
                                             <span class="sdi-dot active"></span> Active

@@ -91,14 +91,52 @@ GRANT EXECUTE ON FUNCTION public.is_user_admin(UUID) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.is_user_admin(UUID) TO anon;
 
 -- ============================================================================
+-- STEP 5: Protect default admin from demotion
+-- ============================================================================
+-- This trigger prevents anyone from removing admin privileges from the
+-- default admin account (steeleblue07@gmail.com) via any method.
+
+CREATE OR REPLACE FUNCTION public.protect_default_admin()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+  -- If someone is trying to set is_admin = false on the default admin, block it
+  IF OLD.email = 'steeleblue07@gmail.com' AND OLD.is_admin = TRUE AND NEW.is_admin = FALSE THEN
+    RAISE EXCEPTION 'Cannot remove admin privileges from the default admin account.';
+  END IF;
+
+  -- Also prevent changing the default admin's email (to bypass the protection)
+  IF OLD.email = 'steeleblue07@gmail.com' AND NEW.email != 'steeleblue07@gmail.com' THEN
+    RAISE EXCEPTION 'Cannot change the email of the default admin account.';
+  END IF;
+
+  RETURN NEW;
+END;
+$$;
+
+-- Drop the trigger if it already exists, then create it
+DROP TRIGGER IF EXISTS protect_default_admin_trigger ON users;
+CREATE TRIGGER protect_default_admin_trigger
+  BEFORE UPDATE ON users
+  FOR EACH ROW
+  EXECUTE FUNCTION public.protect_default_admin();
+
+-- ============================================================================
 -- VERIFICATION
 -- ============================================================================
 -- Run these to verify everything is working:
 -- SELECT * FROM pg_policies WHERE tablename IN ('users', 'onboarding_progress');
 -- SELECT public.is_user_admin(auth.uid());
+-- Test default admin protection:
+-- UPDATE users SET is_admin = false WHERE email = 'steeleblue07@gmail.com';
+-- ^ This should fail with: "Cannot remove admin privileges from the default admin account."
 
 -- ============================================================================
 -- SUCCESS!
 -- ============================================================================
 -- The security definer function bypasses RLS, so there's no more recursion.
+-- The default admin (steeleblue07@gmail.com) is protected at the database level.
 -- Now sign out, clear cookies, and sign back in to test admin access.

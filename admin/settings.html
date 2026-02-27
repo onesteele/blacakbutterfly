@@ -1710,28 +1710,37 @@
                 return;
             }
 
+            const DEFAULT_ADMIN_EMAIL = 'steeleblue07@gmail.com';
+
             container.innerHTML = adminUsers.map(admin => {
                 const name = `${admin.first_name || ''} ${admin.last_name || ''}`.trim() || 'Unnamed';
                 const initials = name.split(' ').map(n => n.charAt(0).toUpperCase()).join('').substring(0, 2);
                 const isCurrentUser = adminProfile && admin.id === adminProfile.id;
+                const isDefaultAdmin = (admin.email || '').toLowerCase() === DEFAULT_ADMIN_EMAIL.toLowerCase();
+
+                let actionHtml;
+                if (isDefaultAdmin) {
+                    actionHtml = '<span class="you-badge" style="background:var(--accent-dim);color:var(--accent);">Owner</span>';
+                } else if (isCurrentUser) {
+                    actionHtml = '<span class="you-badge">You</span>';
+                } else {
+                    actionHtml = `<button class="btn-danger-sm" onclick="openConfirmRemoveAdmin('${admin.id}', '${escapeHtml(name)}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6" />
+                                    </svg>
+                                    Remove Admin
+                                </button>`;
+                }
 
                 return `
                     <div class="admin-list-item">
                         <div class="admin-list-avatar">${initials}</div>
                         <div class="admin-list-details">
-                            <div class="admin-list-name">${escapeHtml(name)}</div>
+                            <div class="admin-list-name">${escapeHtml(name)}${isDefaultAdmin ? ' <span style="font-size:11px;color:var(--accent);font-weight:400;">(Default)</span>' : ''}</div>
                             <div class="admin-list-email">${escapeHtml(admin.email || '')}</div>
                         </div>
                         <div class="admin-list-actions">
-                            ${isCurrentUser
-                                ? '<span class="you-badge">You</span>'
-                                : `<button class="btn-danger-sm" onclick="openConfirmRemoveAdmin('${admin.id}', '${escapeHtml(name)}')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6" />
-                                    </svg>
-                                    Remove Admin
-                                </button>`
-                            }
+                            ${actionHtml}
                         </div>
                     </div>`;
             }).join('');
@@ -1816,6 +1825,21 @@
             btn.textContent = 'Removing...';
 
             try {
+                // Check if this is the default admin - block removal
+                const { data: targetUser, error: fetchError } = await window.supabaseClient
+                    .from('users')
+                    .select('email')
+                    .eq('id', removeTargetId)
+                    .single();
+
+                if (fetchError) throw fetchError;
+
+                if (targetUser && targetUser.email.toLowerCase() === 'steeleblue07@gmail.com') {
+                    showToast('Cannot remove the default admin account.', 'error');
+                    closeConfirmRemoveAdmin();
+                    return;
+                }
+
                 const { error } = await window.supabaseClient
                     .from('users')
                     .update({ is_admin: false })

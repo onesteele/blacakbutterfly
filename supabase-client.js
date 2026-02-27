@@ -98,7 +98,7 @@ window.markOnboardingComplete = async function(userId) {
         .update({
             onboarding_completed: true,
             onboarding_completed_at: new Date().toISOString(),
-            status: 'active'
+            status: 'member'
         })
         .eq('id', userId);
 

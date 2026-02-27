@@ -637,14 +637,17 @@
                 // Verify session is set before redirecting
                 const { data: { session } } = await window.supabaseClient.auth.getSession();
                 if (session) {
-                    // Check if user is admin
+                    // Check user profile for routing
                     const userProfile = await window.getUserProfile(data.user.id);
                     if (userProfile?.is_admin) {
-                        // Redirect admins to admin dashboard
                         window.location.href = '/admin';
                     } else {
-                        // Redirect regular users to onboarding
-                        window.location.href = '/onboarding';
+                        const status = (userProfile?.status || 'onboarding').toLowerCase();
+                        if (['member', 'verified_member', 'active'].includes(status)) {
+                            window.location.href = '/';
+                        } else {
+                            window.location.href = '/onboarding';
+                        }
                     }
                 } else {
                     throw new Error('Session not established. Please try again.');

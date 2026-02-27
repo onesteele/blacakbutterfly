@@ -581,6 +581,16 @@
             color: #60a5fa;
         }
 
+        .status-badge.member {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        .status-badge.verified_member {
+            background: rgba(240, 200, 50, 0.15);
+            color: var(--accent);
+        }
+
         .status-badge.active {
             background: rgba(34, 197, 94, 0.15);
             color: var(--success);
@@ -733,6 +743,268 @@
 
         .empty-state p {
             font-size: 14px;
+        }
+
+        /* ============================================================
+           CREATE USER BUTTON
+           ============================================================ */
+        .create-user-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .create-user-btn:hover {
+            background: var(--accent-light);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(240, 200, 50, 0.3);
+        }
+
+        .create-user-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Status change button in table */
+        .status-badge {
+            cursor: pointer;
+            transition: opacity 0.15s ease;
+        }
+
+        .status-badge:hover {
+            opacity: 0.8;
+        }
+
+        /* ============================================================
+           MODALS
+           ============================================================ */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-card-sm {
+            max-width: 400px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h3 {
+            font-family: 'Gilroy ExtraBold', sans-serif;
+            font-size: 20px;
+            color: var(--text-primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 28px;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0 4px;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(240, 200, 50, 0.1);
+        }
+
+        .form-group select option {
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .btn-cancel {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--text-muted);
+            color: var(--text-primary);
+        }
+
+        .btn-create {
+            padding: 10px 24px;
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-create:hover {
+            background: var(--accent-light);
+        }
+
+        .btn-create:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .modal-note {
+            margin-top: 16px;
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .status-user-info {
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .status-user-info strong {
+            color: var(--text-primary);
+        }
+
+        /* ============================================================
+           TOAST NOTIFICATION
+           ============================================================ */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 20px;
+            background: #1a1a1a;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .toast.success svg {
+            color: var(--success);
+        }
+
+        .toast.error svg {
+            color: var(--error);
         }
 
         /* ============================================================
@@ -956,10 +1228,18 @@
                 <select class="filter-select" id="status-filter">
                     <option value="all">All Statuses</option>
                     <option value="onboarding">Onboarding</option>
+                    <option value="member">Member</option>
+                    <option value="verified_member">Verified Member</option>
                     <option value="active">Active</option>
                     <option value="inactive">Inactive</option>
                     <option value="churned">Churned</option>
                 </select>
+                <button class="create-user-btn" onclick="openCreateUserModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                    </svg>
+                    Create User
+                </button>
                 <button class="export-btn" id="export-btn" onclick="exportEmails()">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -997,6 +1277,88 @@
                 <div class="pagination" id="pagination"></div>
             </div>
         </div>
+    </div>
+
+    <!-- Create User Modal -->
+    <div class="modal-overlay" id="create-user-modal" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Create New User</h3>
+                <button class="modal-close" onclick="closeCreateUserModal()">&times;</button>
+            </div>
+            <form id="create-user-form" onsubmit="handleCreateUser(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>First Name *</label>
+                        <input type="text" id="cu-first-name" required placeholder="John">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name *</label>
+                        <input type="text" id="cu-last-name" required placeholder="Doe">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="cu-email" required placeholder="user@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password *</label>
+                    <input type="password" id="cu-password" required minlength="6" placeholder="Min 6 characters">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="cu-phone" placeholder="+1 (555) 123-4567">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="cu-status">
+                            <option value="onboarding">Onboarding</option>
+                            <option value="member">Member</option>
+                            <option value="verified_member">Verified Member</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeCreateUserModal()">Cancel</button>
+                    <button type="submit" class="btn-create" id="btn-create-user">Create User</button>
+                </div>
+                <p class="modal-note">User will be created without email verification and can log in immediately.</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Status Modal -->
+    <div class="modal-overlay" id="change-status-modal" style="display:none;">
+        <div class="modal-card modal-card-sm">
+            <div class="modal-header">
+                <h3>Change User Status</h3>
+                <button class="modal-close" onclick="closeChangeStatusModal()">&times;</button>
+            </div>
+            <div class="status-user-info" id="status-user-info"></div>
+            <div class="form-group">
+                <label>New Status</label>
+                <select id="cs-status">
+                    <option value="onboarding">Onboarding</option>
+                    <option value="member">Member</option>
+                    <option value="verified_member">Verified Member</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="churned">Churned</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeChangeStatusModal()">Cancel</button>
+                <button type="button" class="btn-create" onclick="handleChangeStatus()">Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+        <span id="toast-msg"></span>
     </div>
 
     <!-- Supabase -->
@@ -1211,7 +1573,7 @@
                         <td>${escapeHtml(c.email || 'N/A')}</td>
                         <td>${escapeHtml(c.phone || 'N/A')}</td>
                         <td>
-                            <span class="status-badge ${statusClass}">
+                            <span class="status-badge ${statusClass}" onclick="event.stopPropagation(); openChangeStatusModal('${c.id}', '${escapeHtml(c.full_name || c.email || 'N/A')}', '${statusClass}')" title="Click to change status">
                                 <span class="status-dot"></span>
                                 ${statusLabel}
                             </span>
@@ -1358,6 +1720,154 @@
                     </td>
                 </tr>
             `;
+        }
+
+        // ============================================================
+        // CREATE USER MODAL
+        // ============================================================
+        function openCreateUserModal() {
+            document.getElementById('create-user-modal').style.display = 'flex';
+            document.getElementById('cu-first-name').focus();
+        }
+
+        function closeCreateUserModal() {
+            document.getElementById('create-user-modal').style.display = 'none';
+            document.getElementById('create-user-form').reset();
+        }
+
+        async function handleCreateUser(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-create-user');
+            btn.disabled = true;
+            btn.textContent = 'Creating...';
+
+            const email = document.getElementById('cu-email').value.trim();
+            const password = document.getElementById('cu-password').value;
+            const firstName = document.getElementById('cu-first-name').value.trim();
+            const lastName = document.getElementById('cu-last-name').value.trim();
+            const phone = document.getElementById('cu-phone').value.trim();
+            const status = document.getElementById('cu-status').value;
+
+            try {
+                // 1. Create auth user via Supabase signUp
+                const { data: authData, error: authError } = await window.supabaseClient.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            first_name: firstName,
+                            last_name: lastName,
+                            phone: phone
+                        }
+                    }
+                });
+
+                if (authError) throw authError;
+
+                if (!authData.user) {
+                    throw new Error('User creation failed - no user returned');
+                }
+
+                // 2. Update the user profile in the users table with correct status
+                //    The handle_new_user trigger will have created the row, so update it
+                const isOnboardingComplete = (status === 'member' || status === 'verified_member');
+                const { error: updateError } = await window.supabaseClient
+                    .from('users')
+                    .update({
+                        first_name: firstName,
+                        last_name: lastName,
+                        full_name: firstName + ' ' + lastName,
+                        phone: phone,
+                        status: status,
+                        onboarding_completed: isOnboardingComplete,
+                        onboarding_completed_at: isOnboardingComplete ? new Date().toISOString() : null
+                    })
+                    .eq('id', authData.user.id);
+
+                if (updateError) {
+                    console.error('Error updating user profile:', updateError);
+                }
+
+                closeCreateUserModal();
+                showToast(`User "${firstName} ${lastName}" created successfully.`, 'success');
+                await loadCustomers();
+
+            } catch (error) {
+                console.error('Error creating user:', error);
+                showToast(error.message || 'Failed to create user. Please try again.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Create User';
+            }
+        }
+
+        // ============================================================
+        // CHANGE STATUS MODAL
+        // ============================================================
+        let changeStatusUserId = null;
+
+        function openChangeStatusModal(userId, userName, currentStatus) {
+            changeStatusUserId = userId;
+            document.getElementById('status-user-info').innerHTML = `<strong>${userName}</strong> &mdash; Current: <em>${currentStatus}</em>`;
+            document.getElementById('cs-status').value = currentStatus;
+            document.getElementById('change-status-modal').style.display = 'flex';
+        }
+
+        function closeChangeStatusModal() {
+            document.getElementById('change-status-modal').style.display = 'none';
+            changeStatusUserId = null;
+        }
+
+        async function handleChangeStatus() {
+            if (!changeStatusUserId) return;
+
+            const newStatus = document.getElementById('cs-status').value;
+            const isOnboardingComplete = (newStatus === 'member' || newStatus === 'verified_member' || newStatus === 'active');
+
+            try {
+                const { error } = await window.supabaseClient
+                    .from('users')
+                    .update({
+                        status: newStatus,
+                        onboarding_completed: isOnboardingComplete,
+                        onboarding_completed_at: isOnboardingComplete ? new Date().toISOString() : null
+                    })
+                    .eq('id', changeStatusUserId);
+
+                if (error) throw error;
+
+                closeChangeStatusModal();
+                showToast('User status updated successfully.', 'success');
+                await loadCustomers();
+
+            } catch (error) {
+                console.error('Error updating status:', error);
+                showToast('Failed to update status.', 'error');
+            }
+        }
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const msg = document.getElementById('toast-msg');
+            msg.textContent = message;
+            toast.className = 'toast ' + type;
+
+            if (type === 'success') {
+                toast.querySelector('svg').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />';
+            } else {
+                toast.querySelector('svg').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.832c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />';
+            }
+
+            requestAnimationFrame(() => {
+                toast.classList.add('show');
+            });
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
         }
 
         // ============================================================
