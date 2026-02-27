@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profit Insider - Welcome</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase-client.js"></script>
+    <style>
+        @font-face {
+            font-family: 'Gilroy ExtraBold';
+            src: url('../Gilroy%20ExtraBold.ttf') format('truetype');
+            font-weight: 800;
+            font-style: normal;
+        }
+
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-card: #141414;
+            --accent: #f0c832;
+            --accent-light: #f7d954;
+            --accent-dim: rgba(240, 200, 50, 0.15);
+            --accent-glow: rgba(240, 200, 50, 0.4);
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border: #2a2a2a;
+            --success: #22c55e;
+            --error: #ef4444;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .dot-pattern {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: radial-gradient(rgba(240, 200, 50, 0.18) 1px, transparent 1px);
+            background-size: 24px 24px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: floatOrb 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            top: -100px; left: -100px;
+        }
+
+        .orb-2 {
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(240, 200, 50, 0.25) 0%, transparent 70%);
+            bottom: 20%; right: -50px;
+            animation-delay: -7s;
+            animation-duration: 25s;
+        }
+
+        .orb-3 {
+            width: 250px; height: 250px;
+            background: radial-gradient(circle, rgba(240, 200, 50, 0.2) 0%, transparent 70%);
+            top: 50%; left: 30%;
+            animation-delay: -14s;
+            animation-duration: 30s;
+        }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.05); }
+            50% { transform: translate(-20px, 20px) scale(0.95); }
+            75% { transform: translate(20px, 10px) scale(1.02); }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+            opacity: 0;
+            animation: floatParticle 8s ease-in-out infinite;
+        }
+
+        @keyframes floatParticle {
+            0% { opacity: 0; transform: translateY(100vh) scale(0); }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { opacity: 0; transform: translateY(-100px) scale(1); }
+        }
+
+        .user-bar {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 24px 0;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .welcome-user {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .user-name {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .signout-link {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .signout-link:hover {
+            color: var(--accent);
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 48px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .logo {
+            width: 60px; height: 60px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 20px var(--accent-glow));
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { filter: drop-shadow(0 0 20px var(--accent-glow)); }
+            50% { filter: drop-shadow(0 0 30px var(--accent-glow)) drop-shadow(0 0 40px rgba(240, 200, 50, 0.2)); }
+        }
+
+        .brand-name {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-dim);
+            border: 1px solid rgba(240, 200, 50, 0.3);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .header-badge svg { width: 16px; height: 16px; }
+
+        h1 {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: clamp(42px, 10vw, 72px);
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-subtitle {
+            font-size: 18px;
+            background: linear-gradient(135deg, var(--text-secondary) 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Welcome Message */
+        .welcome-message {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease-out 0.05s both;
+            box-shadow: 0 0 30px rgba(240, 200, 50, 0.03);
+        }
+
+        .welcome-message h2 {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--accent);
+        }
+
+        .welcome-message p {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        .welcome-message .signature {
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 16px;
+        }
+
+        .progress-section {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px 28px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease-out 0.1s both;
+            box-shadow: 0 0 30px rgba(240, 200, 50, 0.05);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .progress-label {
+            font-weight: 600;
+            background: linear-gradient(135deg, rgba(240, 200, 50, 0.6) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .progress-count {
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 14px;
+        }
+
+        .progress-bar-container {
+            height: 8px;
+            background: var(--border);
+            border-radius: 100px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            border-radius: 100px;
+            width: 0%;
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .progress-stats span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, rgba(240, 200, 50, 0.5) 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .progress-stats svg { width: 14px; height: 14px; }
+
+        .timeline {
+            position: relative;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 28px;
+            top: 40px;
+            bottom: 40px;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-dim), var(--border), var(--accent-dim));
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 72px;
+            margin-bottom: 24px;
+        }
+
+        .timeline-item:last-child { margin-bottom: 0; }
+
+        .timeline-marker {
+            position: absolute;
+            left: 16px;
+            top: 24px;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            background: var(--bg-dark);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-marker svg {
+            width: 12px; height: 12px;
+            color: var(--text-muted);
+        }
+
+        .timeline-item.active .timeline-marker {
+            border-color: var(--accent);
+            background: var(--accent);
+            box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-dim);
+            animation: markerPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes markerPulse {
+            0%, 100% { box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-dim); }
+            50% { box-shadow: 0 0 30px var(--accent-glow), 0 0 60px var(--accent-dim); }
+        }
+
+        .timeline-item.active .timeline-marker svg { color: var(--bg-dark); }
+        .timeline-item.completed .timeline-marker { border-color: var(--success); background: var(--success); }
+        .timeline-item.completed .timeline-marker svg { color: white; }
+
+        .video-card {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item.active .video-card {
+            border-color: rgba(240, 200, 50, 0.5);
+            box-shadow: 0 0 40px var(--accent-dim);
+        }
+
+        .timeline-item.locked .video-card { opacity: 0.6; }
+
+        .video-header {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+
+        .video-number {
+            font-size: 12px;
+            font-weight: 600;
+            background: linear-gradient(135deg, rgba(240, 200, 50, 0.5) 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .video-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .timeline-item.locked .video-title { color: var(--text-muted); }
+
+        .video-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 100px;
+            white-space: nowrap;
+        }
+
+        .video-status.locked { background: var(--border); color: var(--text-muted); }
+        .video-status.active {
+            background: var(--accent-dim);
+            color: var(--accent);
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { box-shadow: 0 0 0 0 var(--accent-dim); }
+            50% { box-shadow: 0 0 0 4px var(--accent-dim); }
+        }
+
+        .video-status.completed { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+        .video-status svg { width: 14px; height: 14px; }
+
+        .video-content {
+            display: none;
+            border-top: 1px solid var(--border);
+        }
+
+        .timeline-item.active .video-content { display: block; }
+
+        .video-player-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            background: #000;
+        }
+
+        .video-player {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+
+        .video-description {
+            padding: 20px 24px;
+            background: linear-gradient(135deg, var(--text-secondary) 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 15px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Video completed badge - top right corner */
+        .video-overlay {
+            position: absolute;
+            top: 12px; right: 12px;
+            width: auto;
+            height: auto;
+            background: var(--success);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+            z-index: 10;
+        }
+
+        .video-overlay.show { display: flex; }
+
+        .video-overlay svg { width: 16px; height: 16px; }
+
+        /* Questionnaire */
+        .questionnaire {
+            padding: 24px;
+            border-top: 1px solid var(--border);
+            display: none;
+        }
+
+        .questionnaire.show { display: block; }
+
+        .questionnaire-title {
+            font-size: 16px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .questionnaire-title svg { width: 20px; height: 20px; }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .checkbox-item input {
+            display: none;
+        }
+
+        .checkbox-custom {
+            width: 22px; height: 22px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .checkbox-custom svg {
+            width: 14px; height: 14px;
+            color: transparent;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-item input:checked + .checkbox-custom {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .checkbox-item input:checked + .checkbox-custom svg {
+            color: white;
+        }
+
+        .checkbox-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .complete-btn {
+            display: block;
+            width: calc(100% - 48px);
+            margin: 0 24px 24px;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: var(--bg-dark);
+            font-family: 'Manrope', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .complete-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .complete-btn:hover:not(:disabled)::before { left: 100%; }
+        .complete-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+
+        .complete-btn:disabled {
+            background: var(--border);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .btn-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            margin: -16px 24px 24px;
+        }
+
+        .booking-card {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 48px 32px;
+            text-align: center;
+            margin-top: 40px;
+            transition: all 0.5s ease;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .booking-card::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--accent-dim), transparent, var(--accent-dim), transparent);
+            animation: rotateBorder 10s linear infinite;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .booking-card.unlocked::before { opacity: 1; }
+
+        .booking-card::after {
+            content: '';
+            position: absolute;
+            inset: 2px;
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 18px;
+            z-index: 0;
+        }
+
+        @keyframes rotateBorder {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .booking-card.unlocked {
+            border-color: var(--accent);
+            box-shadow: 0 0 60px var(--accent-dim);
+        }
+
+        .booking-card.locked { opacity: 0.5; }
+        .booking-card > * { position: relative; z-index: 1; }
+
+        .booking-icon {
+            width: 80px; height: 80px;
+            margin: 0 auto 24px;
+            background: var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+        }
+
+        .booking-card.unlocked .booking-icon {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            animation: iconPulse 2s infinite;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+            50% { box-shadow: 0 0 0 20px transparent; }
+        }
+
+        .booking-icon svg {
+            width: 36px; height: 36px;
+            color: var(--text-muted);
+            transition: all 0.5s ease;
+        }
+
+        .booking-card.unlocked .booking-icon svg { color: var(--bg-dark); }
+
+        .booking-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .booking-subtitle {
+            background: linear-gradient(135deg, var(--text-secondary) 0%, var(--text-muted) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 16px;
+            margin-bottom: 32px;
+        }
+
+        .booking-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 36px;
+            background: var(--border);
+            color: var(--text-muted);
+            font-family: 'Manrope', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: not-allowed;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .booking-card.unlocked .booking-btn {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: var(--bg-dark);
+            cursor: pointer;
+        }
+
+        .booking-card.unlocked .booking-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 32px var(--accent-glow);
+        }
+
+        .booking-btn svg { width: 20px; height: 20px; }
+
+        /* Requirements Section */
+        .requirements-section {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            margin-top: 40px;
+            animation: fadeInUp 0.8s ease-out 0.35s both;
+        }
+
+        .requirements-section h3 {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .requirements-section h3 svg { width: 22px; height: 22px; }
+
+        .requirement-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding: 16px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .requirement-item:hover {
+            border-color: rgba(240, 200, 50, 0.3);
+            box-shadow: 0 0 20px rgba(240, 200, 50, 0.05);
+        }
+
+        .requirement-item:last-child { margin-bottom: 0; }
+
+        .requirement-icon {
+            width: 36px; height: 36px;
+            background: var(--accent-dim);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .requirement-icon svg {
+            width: 18px; height: 18px;
+            color: var(--accent);
+        }
+
+        .requirement-content h4 {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .requirement-content p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .requirement-content a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .requirement-content a:hover { text-decoration: underline; }
+
+        .confetti-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px; height: 10px;
+            opacity: 0;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--success);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(34, 197, 94, 0.3);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast svg { width: 20px; height: 20px; }
+
+        @media (max-width: 640px) {
+            .container { padding: 24px 16px 60px; }
+            .brand-header { gap: 12px; margin-bottom: 32px; }
+            .logo { width: 48px; height: 48px; }
+            .brand-name { font-size: 20px; }
+            .timeline::before { left: 20px; }
+            .timeline-item { padding-left: 56px; }
+            .timeline-marker { left: 8px; width: 24px; height: 24px; }
+            .video-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .booking-card { padding: 32px 20px; }
+            .booking-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    <div class="dot-pattern"></div>
+    <div class="particles" id="particles"></div>
+
+    <div class="user-bar">
+        <span class="welcome-user">Welcome, <span class="user-name" id="user-name">User</span></span>
+        <a class="signout-link" href="javascript:void(0)" onclick="window.signOut()">Sign Out</a>
+    </div>
+
+    <div class="container">
+        <div class="brand-header">
+            <img src="../logo.png" alt="Profit Insider" class="logo">
+            <span class="brand-name">Profit Insider</span>
+        </div>
+
+        <header class="header">
+            <div class="header-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Getting Started
+            </div>
+            <h1>Welcome In</h1>
+            <p class="header-subtitle">Complete these setup videos to get your algorithm running. Watch each lesson and confirm the steps before proceeding.</p>
+        </header>
+
+        <!-- Welcome Message -->
+        <div class="welcome-message">
+            <h2>👋 Welcome Aboard!</h2>
+            <p>You've just taken a major step toward automating and optimizing your trading edge.</p>
+            <p>I'm <strong>Steele</strong>, and I'll personally help you get set up and walk you through every step of the onboarding process. I will ensure your algo is running correctly, your parameters are aligned with your goals, and that you fully understand how to interpret its data and performance metrics.</p>
+            <p><strong>Stay consistent.</strong> The algo thrives on stability and data accumulation — the longer it runs, the more powerful its insights become.</p>
+            <p><strong>Leverage our team.</strong> I handle setup and tech, but RP is personally here if you have strategic questions or want deeper insight into what the algo is seeing in the markets.</p>
+            <p>You now have access to one of the most powerful tools available to individual traders — use it intentionally and it'll completely change the way you approach markets.</p>
+            <p class="signature">— RP & Steele</p>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-header">
+                <span class="progress-label">Your Progress</span>
+                <span class="progress-count"><span id="completed-count">0</span> of <span id="total-count">7</span> lessons</span>
+            </div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="progress-stats">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span id="percent-complete">0%</span> Complete
+                </span>
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <span id="locked-count">6</span> Lessons Locked
+                </span>
+            </div>
+        </div>
+
+        <div class="timeline" id="timeline">
+            <!-- Step 1: TradersPost Account Setup -->
+            <div class="timeline-item active" data-step="1">
+                <div class="timeline-marker">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    </svg>
+                </div>
+                <div class="video-card">
+                    <div class="video-header">
+                        <div class="video-info">
+                            <div>
+                                <div class="video-number">Step 1</div>
+                                <div class="video-title">Create Your TradersPost Account</div>
+                            </div>
+                        </div>
+                        <div class="video-status active">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                            </svg>
+                            Watch Now
+                        </div>
+                    </div>
+                    <div class="video-content">
+                        <div class="video-player-wrapper" style="padding-bottom: 52.59%;">
+                            <iframe class="video-player" id="video-1" src="https://www.loom.com/embed/90586f245c364fa79f5c9ca64661ec69" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                            <div class="video-overlay" id="overlay-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span>Video Completed!</span>
+                            </div>
+                        </div>
+                        <p class="video-description">Learn how to create your TradersPost account. Select the $49 plan and get your account ready for algorithm integration.</p>
+                        <div class="questionnaire" id="questionnaire-1">
+                            <div class="questionnaire-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Confirm Your Setup
+                            </div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" data-step="1" data-check="1">
+                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
+                                    <span class="checkbox-label">I have created my TradersPost account at <a href="https://traderspost.io/" target="_blank">traderspost.io</a></span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" data-step="1" data-check="2">
+                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
+                                    <span class="checkbox-label">I have selected the $49/month plan</span>
+                                </label>
+                            </div>
+                        </div>
+                        <button class="complete-btn" id="btn-1" onclick="completeStep(1)" disabled>Complete All Checkboxes to Continue →</button>
+                        <p class="btn-hint" id="hint-1">Watch the video and confirm all items above</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Broker Connection -->
+            <div class="timeline-item locked" data-step="2">
+                <div class="timeline-marker">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <div class="video-card">
+                    <div class="video-header">
+                        <div class="video-info">
+                            <div>
+                                <div class="video-number">Step 2</div>
+                                <div class="video-title">Connect Your Broker Account</div>
+                            </div>
+                        </div>
+                        <div class="video-status locked">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Locked
+                        </div>
+                    </div>
+                    <div class="video-content">
+                        <div class="video-player-wrapper" style="padding-bottom: 57.70%;">
+                            <iframe class="video-player" id="video-2" src="https://www.loom.com/embed/a6cfc77d985b47bcaae827bbf55e2a02" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                            <div class="video-overlay" id="overlay-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span>Video Completed!</span>
+                            </div>
+                        </div>
+                        <p class="video-description">Connect your broker or funded account (Tradovate, Apex, etc.) to TradersPost for automated trading.</p>
+                        <div class="questionnaire" id="questionnaire-2">
+                            <div class="questionnaire-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Confirm Your Setup
+                            </div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" data-step="2" data-check="1">
+                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
+                                    <span class="checkbox-label">I have my broker/funded account credentials ready (Tradovate, Apex, etc.)</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" data-step="2" data-check="2">
+                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
+                                    <span class="checkbox-label">I have connected my broker to TradersPost</span>
+                                </label>
+                            </div>
+                        </div>
+                        <button class="complete-btn" id="btn-2" onclick="completeStep(2)" disabled>Complete All Checkboxes to Continue →</button>
+                        <p class="btn-hint" id="hint-2">Watch the video and confirm all items above</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Algorithm Configuration -->
+            <div class="timeline-item locked" data-step="3">
+                <div class="timeline-marker">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <div class="video-card">
+                    <div class="video-header">
+                        <div class="video-info">
+                            <div>
+                                <div class="video-number">Step 3</div>
+                                <div class="video-title">Configure Algorithm Parameters</div>
+                            </div>
+                        </div>
+                        <div class="video-status locked">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Locked
+                        </div>
+                    </div>
+                    <div class="video-content">
+                        <div class="video-player-wrapper" style="padding-bottom: 47.72%;">
+                            <iframe class="video-player" id="video-3" src="https://www.loom.com/embed/c0b516c949ed4e78ba6ca9eee2abd5b2" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                            <div class="video-overlay" id="overlay-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span>Video Completed!</span>
+                            </div>
+                        </div>
+                        <p class="video-description">Set up your algorithm parameters including max daily loss and max drawdown for each account.</p>
+                        <div class="questionnaire" id="questionnaire-3">
+                            <div class="questionnaire-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Confirm Your Setup
+                            </div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" data-step="3" data-check="1">
+                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
+                                    <span class="checkbox-label">I know my max daily loss for each account</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" data-step="3" data-check="2">
+                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
+                                    <span class="checkbox-label">I know my max drawdown for each account</span>
+                                </label>
+                            </div>
+                        </div>
+                        <button class="complete-btn" id="btn-3" onclick="completeStep(3)" disabled>Complete All Checkboxes to Continue →</button>
+                        <p class="btn-hint" id="hint-3">Watch the video and confirm all items above</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Risk Management -->
+            <div class="timeline-item locked" data-step="4">
+                <div class="timeline-marker">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <div class="video-card">
+                    <div class="video-header">
+                        <div class="video-info">
+                            <div>
+                                <div class="video-number">Step 4</div>
+                                <div class="video-title">Understanding Risk Management</div>
+                            </div>
+                        </div>
+                        <div class="video-status locked">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Locked
+                        </div>
+                    </div>
+                    <div class="video-content">
+                        <div class="video-player-wrapper" style="padding-bottom: 53.82%;">
+                            <iframe class="video-player" id="video-4" src="https://www.loom.com/embed/006abf83f3a64947af1b7cbd504ca521" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                            <div class="video-overlay" id="overlay-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span>Video Completed!</span>
+                            </div>
+                        </div>
+                        <p class="video-description">Learn how the algorithm manages risk and protects your capital.</p>
+                        <div class="questionnaire" id="questionnaire-4">
+                            <div class="questionnaire-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Confirm Your Understanding
+                            </div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" data-step="4" data-check="1">
+                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
+                                    <span class="checkbox-label">I understand how the risk management system works</span>
+                                </label>
+                            </div>
+                        </div>
+                        <button class="complete-btn" id="btn-4" onclick="completeStep(4)" disabled>Complete All Checkboxes to Continue →</button>
+                        <p class="btn-hint" id="hint-4">Watch the video and confirm all items above</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 5: Reading Performance Metrics -->
+            <div class="timeline-item locked" data-step="5">
+                <div class="timeline-marker">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <div class="video-card">
+                    <div class="video-header">
+                        <div class="video-info">
+                            <div>
+                                <div class="video-number">Step 5</div>
+                                <div class="video-title">Reading Performance Metrics</div>
+                            </div>
+                        </div>
+                        <div class="video-status locked">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Locked
+                        </div>
+                    </div>
+                    <div class="video-content">
+                        <div class="video-player-wrapper" style="padding-bottom: 60.76%;">
+                            <iframe class="video-player" id="video-5" src="https://www.loom.com/embed/a0f400b331df4af399d6c6500cabf0ad" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                            <div class="video-overlay" id="overlay-5">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span>Video Completed!</span>
+                            </div>
+                        </div>
+                        <p class="video-description">Learn how to interpret the algorithm's data and performance metrics.</p>
+                        <div class="questionnaire" id="questionnaire-5">
+                            <div class="questionnaire-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Confirm Your Understanding
+                            </div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" data-step="5" data-check="1">
+                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
+                                    <span class="checkbox-label">I understand how to read the performance metrics</span>
+                                </label>
+                            </div>
+                        </div>
+                        <button class="complete-btn" id="btn-5" onclick="completeStep(5)" disabled>Complete All Checkboxes to Continue →</button>
+                        <p class="btn-hint" id="hint-5">Watch the video and confirm all items above</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 6: Google Meet Setup -->
+            <div class="timeline-item locked" data-step="6">
+                <div class="timeline-marker">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <div class="video-card">
+                    <div class="video-header">
+                        <div class="video-info">
+                            <div>
+                                <div class="video-number">Step 6</div>
+                                <div class="video-title">Preparing for Your Setup Call</div>
+                            </div>
+                        </div>
+                        <div class="video-status locked">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Locked
+                        </div>
+                    </div>
+                    <div class="video-content">
+                        <div class="video-player-wrapper" style="padding-bottom: 60.76%;">
+                            <iframe class="video-player" id="video-6" src="https://www.loom.com/embed/a0f400b331df4af399d6c6500cabf0ad" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                            <div class="video-overlay" id="overlay-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span>Video Completed!</span>
+                            </div>
+                        </div>
+                        <p class="video-description">What to expect on your setup call and how to prepare. Remember: Google Meet setup cannot be done on a phone — you must join on a laptop/computer.</p>
+                        <div class="questionnaire" id="questionnaire-6">
+                            <div class="questionnaire-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Confirm Your Setup
+                            </div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" data-step="6" data-check="1">
+                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
+                                    <span class="checkbox-label">I will join the call on a laptop/computer (not phone)</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" data-step="6" data-check="2">
+                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
+                                    <span class="checkbox-label">I have all my credentials ready for the call</span>
+                                </label>
+                            </div>
+                        </div>
+                        <button class="complete-btn" id="btn-6" onclick="completeStep(6)" disabled>Complete All Checkboxes to Continue →</button>
+                        <p class="btn-hint" id="hint-6">Watch the video and confirm all items above</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 7: Final Review -->
+            <div class="timeline-item locked" data-step="7">
+                <div class="timeline-marker">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <div class="video-card">
+                    <div class="video-header">
+                        <div class="video-info">
+                            <div>
+                                <div class="video-number">Step 7</div>
+                                <div class="video-title">Final Review & Next Steps</div>
+                            </div>
+                        </div>
+                        <div class="video-status locked">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                            Locked
+                        </div>
+                    </div>
+                    <div class="video-content">
+                        <div class="video-player-wrapper" style="padding-bottom: 55%;">
+                            <iframe class="video-player" id="video-7" src="https://www.loom.com/embed/ed997e66e2be4069be5839781adf7e45" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+                            <div class="video-overlay" id="overlay-7">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span>Video Completed!</span>
+                            </div>
+                        </div>
+                        <p class="video-description">Final review of everything you've set up. Complete this to unlock your booking link!</p>
+                        <div class="questionnaire" id="questionnaire-7">
+                            <div class="questionnaire-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Final Confirmation
+                            </div>
+                            <div class="checkbox-group">
+                                <label class="checkbox-item">
+                                    <input type="checkbox" data-step="7" data-check="1">
+                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
+                                    <span class="checkbox-label">I have completed all previous setup steps</span>
+                                </label>
+                                <label class="checkbox-item">
+                                    <input type="checkbox" data-step="7" data-check="2">
+                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
+                                    <span class="checkbox-label">I am ready to book my setup call</span>
+                                </label>
+                            </div>
+                        </div>
+                        <button class="complete-btn" id="btn-7" onclick="completeStep(7)" disabled>Complete & Unlock Your Booking →</button>
+                        <p class="btn-hint" id="hint-7">Watch the video and confirm all items above</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="booking-card locked" id="booking-card">
+            <div class="booking-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+            </div>
+            <h2 class="booking-title">Book Your Setup Call</h2>
+            <p class="booking-subtitle">Complete all 7 video lessons to unlock your exclusive booking link</p>
+            <a href="#" class="booking-btn" id="booking-btn" onclick="handleBooking(event)">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                Complete Videos to Unlock
+            </a>
+        </div>
+
+        <!-- Requirements Reminder -->
+        <div class="requirements-section">
+            <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+                Call Requirements Checklist
+            </h3>
+            <div class="requirement-item">
+                <div class="requirement-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                </div>
+                <div class="requirement-content">
+                    <h4>Join on Laptop/Computer</h4>
+                    <p>Google Meet setup cannot be done on a phone</p>
+                </div>
+            </div>
+            <div class="requirement-item">
+                <div class="requirement-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                </div>
+                <div class="requirement-content">
+                    <h4>TradersPost Account Created</h4>
+                    <p>Sign up at <a href="https://traderspost.io/" target="_blank">traderspost.io</a> with the $49 plan</p>
+                </div>
+            </div>
+            <div class="requirement-item">
+                <div class="requirement-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
+                </div>
+                <div class="requirement-content">
+                    <h4>Broker Credentials Ready</h4>
+                    <p>Have your Tradovate, Apex, or other funded account login ready</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span id="toast-message">Step completed!</span>
+    </div>
+
+    <div class="confetti-container" id="confetti-container"></div>
+
+    <script>
+        // Global user variable
+        let currentUser = null;
+
+        // Check authentication and load user data
+        (async function initAuth() {
+            try {
+                currentUser = await window.getCurrentUser();
+                if (!currentUser) {
+                    window.location.href = '/auth';
+                    return;
+                }
+
+                // Load user profile and display name
+                const profile = await window.getUserProfile(currentUser.id);
+                if (!profile) {
+                    // Profile doesn't exist, clear session and redirect
+                    console.error('User profile not found, clearing session');
+                    await window.supabaseClient.auth.signOut();
+                    window.location.href = '/auth';
+                    return;
+                }
+
+                document.getElementById('user-name').textContent = profile.first_name;
+
+                // Load progress from database
+                await loadProgress();
+            } catch (error) {
+                console.error('Error during initialization:', error);
+                // If there's an error, clear session and redirect to auth page
+                await window.supabaseClient.auth.signOut();
+                window.location.href = '/auth';
+            }
+        })();
+
+        // Auto-logout after 30 minutes of inactivity
+        (function() {
+            let inactivityTimer;
+            const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes in milliseconds
+
+            function resetInactivityTimer() {
+                clearTimeout(inactivityTimer);
+                inactivityTimer = setTimeout(() => {
+                    console.log('Auto-logout due to 30 minutes of inactivity');
+                    window.signOut();
+                }, INACTIVITY_TIMEOUT);
+            }
+
+            // Track user activity
+            const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+            activityEvents.forEach(event => {
+                document.addEventListener(event, resetInactivityTimer, true);
+            });
+
+            // Start the inactivity timer
+            resetInactivityTimer();
+        })();
+
+        // Create particles
+        (function() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.animationDelay = Math.random() * 8 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                container.appendChild(particle);
+            }
+        })();
+
+        let completedSteps = [];
+        let watchedVideos = {};
+        let checkedItems = {};
+        const totalSteps = 7;
+        const BOOKING_URL = 'booking.html';
+
+        // Required checkboxes per step
+        const requiredChecks = {
+            1: 2, 2: 2, 3: 2, 4: 1, 5: 1, 6: 2, 7: 2
+        };
+
+        // Initialize checkbox listeners
+        document.querySelectorAll('.checkbox-item input').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const step = this.dataset.step;
+                if (!checkedItems[step]) checkedItems[step] = {};
+                checkedItems[step][this.dataset.check] = this.checked;
+                checkStepCompletion(parseInt(step));
+                saveProgress();
+            });
+        });
+
+        // Customizable video durations in seconds (adjust based on actual video lengths)
+        const videoDurations = {
+            1: 120,  // Video 1: 2 minutes (120 seconds)
+            2: 180,  // Video 2: 3 minutes (180 seconds)
+            3: 150,  // Video 3: 2.5 minutes (150 seconds)
+            4: 120,  // Video 4: 2 minutes (120 seconds)
+            5: 180,  // Video 5: 3 minutes (180 seconds)
+            6: 120,  // Video 6: 2 minutes (120 seconds)
+            7: 90    // Video 7: 1.5 minutes (90 seconds)
+        };
+
+        let videoTimers = {};
+
+        // Start video timer when step becomes active
+        function startVideoTimer(step) {
+            if (watchedVideos[step] || videoTimers[step]) return; // Already watched or timer running
+            
+            const duration = videoDurations[step] * 1000; // Convert to milliseconds
+            
+            videoTimers[step] = setTimeout(() => {
+                watchedVideos[step] = true;
+                
+                // Show completion badge
+                const overlay = document.getElementById('overlay-' + step);
+                if (overlay) overlay.classList.add('show');
+                
+                // Show questionnaire
+                const questionnaire = document.getElementById('questionnaire-' + step);
+                if (questionnaire) questionnaire.classList.add('show');
+                
+                checkStepCompletion(step);
+                saveProgress();
+            }, duration);
+        }
+
+        // Cancel timer if user navigates away
+        function cancelVideoTimer(step) {
+            if (videoTimers[step]) {
+                clearTimeout(videoTimers[step]);
+                delete videoTimers[step];
+            }
+        }
+
+        // Check if step can be completed
+        function checkStepCompletion(step) {
+            const videoWatched = watchedVideos[step];
+            const checks = checkedItems[step] || {};
+            const checkedCount = Object.values(checks).filter(v => v).length;
+            const required = requiredChecks[step];
+            
+            const btn = document.getElementById('btn-' + step);
+            const hint = document.getElementById('hint-' + step);
+            
+            if (videoWatched && checkedCount >= required) {
+                btn.disabled = false;
+                btn.textContent = step < totalSteps ? 'Continue to Next Step →' : 'Complete & Unlock Your Booking →';
+                hint.style.display = 'none';
+            } else {
+                btn.disabled = true;
+                if (!videoWatched) {
+                    btn.textContent = 'Watch the video first...';
+                } else {
+                    btn.textContent = 'Complete All Checkboxes to Continue →';
+                }
+                hint.style.display = 'block';
+            }
+        }
+
+        // Start video timer when step becomes active
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(mutation => {
+                    const step = parseInt(mutation.target.dataset.step);
+                    if (mutation.target.classList.contains('active')) {
+                        startVideoTimer(step);
+                    } else {
+                        cancelVideoTimer(step);
+                    }
+                });
+            });
+            observer.observe(item, { attributes: true, attributeFilter: ['class'] });
+        });
+
+        // Start first video timer
+        startVideoTimer(1);
+
+        function completeStep(step) {
+            if (completedSteps.includes(step)) return;
+            completedSteps.push(step);
+            updateProgress();
+            updateTimeline(step);
+            showToast('Step ' + step + ' completed!');
+            if (completedSteps.length === totalSteps) unlockBooking();
+            saveProgress();
+        }
+
+        function updateProgress() {
+            const percent = Math.round((completedSteps.length / totalSteps) * 100);
+            document.getElementById('completed-count').textContent = completedSteps.length;
+            document.getElementById('percent-complete').textContent = percent + '%';
+            document.getElementById('locked-count').textContent = Math.max(0, totalSteps - completedSteps.length - 1);
+            document.getElementById('progress-bar').style.width = percent + '%';
+        }
+
+        function updateTimeline(completedStep) {
+            const items = document.querySelectorAll('.timeline-item');
+            items.forEach((item, index) => {
+                const step = index + 1;
+                if (completedSteps.includes(step)) {
+                    item.classList.remove('active', 'locked');
+                    item.classList.add('completed');
+                    item.querySelector('.timeline-marker').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
+                    const status = item.querySelector('.video-status');
+                    status.className = 'video-status completed';
+                    status.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>Completed';
+                } else if (step === completedStep + 1 && step <= totalSteps) {
+                    item.classList.remove('locked');
+                    item.classList.add('active');
+                    item.querySelector('.timeline-marker').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>';
+                    const status = item.querySelector('.video-status');
+                    status.className = 'video-status active';
+                    status.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>Watch Now';
+                    setTimeout(() => {
+                        item.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                }
+            });
+        }
+
+        function unlockBooking() {
+            const bookingCard = document.getElementById('booking-card');
+            const bookingBtn = document.getElementById('booking-btn');
+            bookingCard.classList.remove('locked');
+            bookingCard.classList.add('unlocked');
+            bookingBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>Book Your Setup Call Now';
+            bookingBtn.href = BOOKING_URL;
+            setTimeout(() => bookingCard.scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
+            showConfetti();
+            showToast('🎉 All lessons complete! Book your setup call now!');
+        }
+
+        function handleBooking(event) {
+            if (completedSteps.length < totalSteps) {
+                event.preventDefault();
+                showToast('Complete all videos to unlock booking');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function showConfetti() {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#f0c832', '#f7d954', '#22c55e', '#ffffff', '#fbbf24'];
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = confetti.style.width;
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.animation = 'confettiFall ' + (Math.random() * 3 + 2) + 's linear forwards';
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                container.appendChild(confetti);
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+
+        async function saveProgress() {
+            if (!currentUser) return;
+
+            try {
+                const { error } = await window.supabaseClient
+                    .from('onboarding_progress')
+                    .upsert({
+                        user_id: currentUser.id,
+                        completed_steps: completedSteps,
+                        watched_videos: watchedVideos,
+                        checked_items: checkedItems,
+                        updated_at: new Date().toISOString()
+                    }, {
+                        onConflict: 'user_id'
+                    });
+
+                if (error) {
+                    console.error('Error saving progress:', error);
+                } else {
+                    console.log('Progress saved successfully:', { completedSteps, watchedVideos, checkedItems });
+                }
+            } catch (error) {
+                console.error('Error saving progress:', error);
+            }
+        }
+
+        async function loadProgress() {
+            if (!currentUser) return;
+
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('onboarding_progress')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .single();
+
+                if (error && error.code !== 'PGRST116') {
+                    console.error('Error loading progress:', error);
+                    return;
+                }
+
+                if (data) {
+                    completedSteps = data.completed_steps || [];
+                    watchedVideos = data.watched_videos || {};
+                    checkedItems = data.checked_items || {};
+
+                    // Restore UI state
+                    completedSteps.forEach(step => {
+                        const item = document.querySelector('[data-step="' + step + '"]');
+                        if (item) {
+                            item.classList.remove('active', 'locked');
+                            item.classList.add('completed');
+                            item.querySelector('.timeline-marker').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
+                            const status = item.querySelector('.video-status');
+                            status.className = 'video-status completed';
+                            status.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>Completed';
+                        }
+                    });
+
+                    // Restore watched videos and questionnaires
+                    Object.keys(watchedVideos).forEach(step => {
+                        if (watchedVideos[step]) {
+                            const overlay = document.getElementById('overlay-' + step);
+                            const questionnaire = document.getElementById('questionnaire-' + step);
+                            if (overlay) overlay.classList.add('show');
+                            if (questionnaire) questionnaire.classList.add('show');
+                        }
+                    });
+
+                    // Restore checkboxes
+                    Object.keys(checkedItems).forEach(step => {
+                        Object.keys(checkedItems[step]).forEach(check => {
+                            const checkbox = document.querySelector('input[data-step="' + step + '"][data-check="' + check + '"]');
+                            if (checkbox) checkbox.checked = checkedItems[step][check];
+                        });
+                    });
+
+                    updateProgress();
+
+                    // Activate next step
+                    const nextStep = completedSteps.length > 0 ? Math.max(...completedSteps) + 1 : 1;
+                    if (nextStep <= totalSteps && !completedSteps.includes(nextStep)) {
+                        const nextItem = document.querySelector('[data-step="' + nextStep + '"]');
+                        if (nextItem) {
+                            nextItem.classList.remove('locked');
+                            nextItem.classList.add('active');
+                            nextItem.querySelector('.timeline-marker').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>';
+                            const status = nextItem.querySelector('.video-status');
+                            status.className = 'video-status active';
+                            status.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>Watch Now';
+                            checkStepCompletion(nextStep);
+                        }
+                    }
+
+                    // Check all steps for button state
+                    for (let i = 1; i <= totalSteps; i++) {
+                        checkStepCompletion(i);
+                    }
+
+                    if (completedSteps.length === totalSteps) {
+                        const bookingCard = document.getElementById('booking-card');
+                        const bookingBtn = document.getElementById('booking-btn');
+                        bookingCard.classList.remove('locked');
+                        bookingCard.classList.add('unlocked');
+                        bookingBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>Book Your Setup Call Now';
+                        bookingBtn.href = 'booking.html';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading progress:', error);
+            }
+        }
+    </script>
+</body>
+</html>

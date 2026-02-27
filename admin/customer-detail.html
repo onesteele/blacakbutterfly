@@ -1,0 +1,2330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profit Insider - Customer Detail</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Gilroy ExtraBold';
+            src: url('../Gilroy%20ExtraBold.ttf') format('truetype');
+            font-weight: 800;
+            font-style: normal;
+        }
+
+        :root {
+            --bg-dark: #0a0a0a;
+            --bg-card: #141414;
+            --accent: #f0c832;
+            --accent-light: #f7d954;
+            --accent-dim: rgba(240, 200, 50, 0.15);
+            --accent-glow: rgba(240, 200, 50, 0.4);
+            --text-primary: #ffffff;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border: #2a2a2a;
+            --success: #22c55e;
+            --error: #ef4444;
+            --sidebar-width: 60px;
+            --sidebar-expanded: 240px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Manrope', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ============================================================
+           BACKGROUND ANIMATION
+           ============================================================ */
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .dot-pattern {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: radial-gradient(rgba(240, 200, 50, 0.18) 1px, transparent 1px);
+            background-size: 24px 24px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: floatOrb 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            top: -100px; right: -100px;
+        }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-30px, 30px) scale(1.05); }
+        }
+
+        /* ============================================================
+           SIDEBAR NAVIGATION
+           ============================================================ */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #111111;
+            border-right: 1px solid var(--border);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+            overflow: hidden;
+        }
+
+        .sidebar:hover {
+            width: var(--sidebar-expanded);
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 14px;
+            border-bottom: 1px solid var(--border);
+            min-height: 60px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 10px var(--accent-glow));
+        }
+
+        .sidebar-logo-text {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease 0.1s;
+        }
+
+        .sidebar:hover .sidebar-logo-text {
+            opacity: 1;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 12px 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .sidebar-nav::-webkit-scrollbar {
+            width: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            margin: 2px 8px;
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            position: relative;
+            border-left: 3px solid transparent;
+            margin-left: 0;
+            padding-left: 15px;
+        }
+
+        .nav-item:hover {
+            background: rgba(240, 200, 50, 0.05);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: var(--accent-dim);
+            color: var(--accent);
+            border-left-color: var(--accent);
+        }
+
+        .nav-item.active .nav-icon svg {
+            color: var(--accent);
+        }
+
+        .nav-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .nav-icon svg {
+            width: 20px;
+            height: 20px;
+            color: currentColor;
+            transition: color 0.2s ease;
+        }
+
+        .nav-label {
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.2s ease 0.1s;
+        }
+
+        .sidebar:hover .nav-label {
+            opacity: 1;
+        }
+
+        .sidebar-bottom {
+            border-top: 1px solid var(--border);
+            padding: 12px 0;
+            flex-shrink: 0;
+        }
+
+        .nav-item.signout-item {
+            color: var(--text-muted);
+        }
+
+        .nav-item.signout-item:hover {
+            color: var(--error);
+            background: rgba(239, 68, 68, 0.08);
+        }
+
+        /* ============================================================
+           HAMBURGER MENU (MOBILE)
+           ============================================================ */
+        .hamburger-btn {
+            display: none;
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            z-index: 200;
+            width: 40px;
+            height: 40px;
+            background: #111111;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        .hamburger-btn svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 90;
+        }
+
+        .sidebar-overlay.show {
+            display: block;
+        }
+
+        /* ============================================================
+           MAIN CONTENT
+           ============================================================ */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 32px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .page-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .admin-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .admin-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--accent-dim);
+            border: 1px solid rgba(240, 200, 50, 0.3);
+            padding: 5px 12px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-badge svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* ============================================================
+           PAGE BODY
+           ============================================================ */
+        .page-body {
+            padding: 32px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ============================================================
+           BACK BUTTON
+           ============================================================ */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-bottom: 24px;
+        }
+
+        .back-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .back-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ============================================================
+           PROFILE HEADER
+           ============================================================ */
+        .profile-header {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .profile-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--accent-dim);
+            border: 2px solid rgba(240, 200, 50, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .profile-text h2 {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .profile-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 6px;
+            flex-wrap: wrap;
+        }
+
+        .profile-meta span {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .profile-meta span svg {
+            width: 14px;
+            height: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Status dropdown */
+        .status-dropdown-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: capitalize;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .status-badge:hover {
+            filter: brightness(1.2);
+        }
+
+        .status-badge.onboarding {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+        }
+
+        .status-badge.active {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        .status-badge.inactive {
+            background: rgba(107, 114, 128, 0.15);
+            color: var(--text-muted);
+        }
+
+        .status-badge.churned {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--error);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .status-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            background: #1a1a1a;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 6px;
+            min-width: 160px;
+            z-index: 60;
+            display: none;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .status-dropdown.show {
+            display: block;
+        }
+
+        .status-dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .status-dropdown-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .status-dropdown-item .sdi-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dropdown-item .sdi-dot.onboarding { background: #60a5fa; }
+        .status-dropdown-item .sdi-dot.active { background: var(--success); }
+        .status-dropdown-item .sdi-dot.inactive { background: var(--text-muted); }
+        .status-dropdown-item .sdi-dot.churned { background: var(--error); }
+
+        /* Quick action buttons */
+        .profile-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 16px;
+            background: var(--accent-dim);
+            border: 1px solid rgba(240, 200, 50, 0.25);
+            border-radius: 10px;
+            color: var(--accent);
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .action-btn:hover {
+            background: rgba(240, 200, 50, 0.25);
+            border-color: var(--accent);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(240, 200, 50, 0.15);
+        }
+
+        .action-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .action-btn.whatsapp {
+            background: rgba(37, 211, 102, 0.12);
+            border-color: rgba(37, 211, 102, 0.3);
+            color: #25d366;
+        }
+
+        .action-btn.whatsapp:hover {
+            background: rgba(37, 211, 102, 0.25);
+            border-color: #25d366;
+            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.15);
+        }
+
+        /* ============================================================
+           TABS
+           ============================================================ */
+        .tabs-header {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            background: rgba(20, 20, 20, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 4px;
+            overflow-x: auto;
+        }
+
+        .tabs-header::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tab-btn.active {
+            background: var(--accent-dim);
+            color: var(--accent);
+            box-shadow: 0 2px 8px rgba(240, 200, 50, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ============================================================
+           GLASS CARD (shared)
+           ============================================================ */
+        .glass-card {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 0 40px rgba(240, 200, 50, 0.03);
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* ============================================================
+           OVERVIEW TAB - Profile Grid
+           ============================================================ */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .profile-field {
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .profile-field-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .profile-field-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            word-break: break-word;
+        }
+
+        /* Admin notes */
+        .notes-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .notes-textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(240, 200, 50, 0.1);
+        }
+
+        .notes-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .notes-save-status {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            min-height: 18px;
+        }
+
+        .notes-save-status.saved {
+            color: var(--success);
+        }
+
+        /* ============================================================
+           ACTIVITY LOG TAB
+           ============================================================ */
+        .activity-filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .activity-filter-select {
+            padding: 8px 14px;
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 30px;
+        }
+
+        .activity-filter-select option {
+            background: #1a1a1a;
+        }
+
+        .activity-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .activity-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .activity-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        .activity-entry {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .activity-entry:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon-wrapper {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .activity-icon-wrapper svg {
+            width: 16px;
+            height: 16px;
+            color: var(--accent);
+        }
+
+        .activity-entry-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .activity-entry-action {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .activity-entry-details {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .activity-entry-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .activity-entry-meta span {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .activity-entry-page {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .load-more-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 16px;
+        }
+
+        .load-more-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        /* ============================================================
+           ONBOARDING TAB
+           ============================================================ */
+        .onboarding-progress-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .onboarding-progress-bar {
+            flex: 1;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .onboarding-progress-fill {
+            height: 100%;
+            border-radius: 5px;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 100%);
+            transition: width 0.5s ease;
+        }
+
+        .onboarding-progress-text {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--accent);
+            min-width: 50px;
+            text-align: right;
+        }
+
+        .onboarding-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .onboarding-step {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: border-color 0.2s ease;
+        }
+
+        .onboarding-step.completed {
+            border-color: rgba(34, 197, 94, 0.2);
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            flex-shrink: 0;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+        }
+
+        .onboarding-step.completed .step-number {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .step-info {
+            flex: 1;
+        }
+
+        .step-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .step-video-status {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .step-badge {
+            padding: 3px 10px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .step-badge.completed {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        .step-badge.pending {
+            background: rgba(107, 114, 128, 0.15);
+            color: var(--text-muted);
+        }
+
+        /* ============================================================
+           COMMUNICATION TAB
+           ============================================================ */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        .chat-message {
+            display: flex;
+            max-width: 75%;
+        }
+
+        .chat-message.user {
+            align-self: flex-start;
+        }
+
+        .chat-message.admin {
+            align-self: flex-end;
+        }
+
+        .chat-bubble {
+            padding: 10px 16px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .chat-message.user .chat-bubble {
+            background: rgba(107, 114, 128, 0.2);
+            color: var(--text-primary);
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-message.admin .chat-bubble {
+            background: var(--accent-dim);
+            border: 1px solid rgba(240, 200, 50, 0.2);
+            color: var(--accent);
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-timestamp {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            padding: 0 4px;
+        }
+
+        .chat-message.admin .chat-timestamp {
+            text-align: right;
+        }
+
+        .chat-input-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .chat-input:focus {
+            border-color: var(--accent);
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .chat-send-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .chat-send-btn:hover {
+            background: var(--accent-light);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(240, 200, 50, 0.3);
+        }
+
+        .chat-send-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .chat-empty {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        /* ============================================================
+           WORKFLOW PICKER MODAL
+           ============================================================ */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 500;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 480px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        .modal-close svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .modal-body {
+            padding: 16px 24px 24px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        .workflow-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .workflow-item:hover {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        .workflow-item-info {
+            flex: 1;
+        }
+
+        .workflow-item-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .workflow-item-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .workflow-trigger-btn {
+            padding: 6px 14px;
+            background: var(--accent);
+            border: none;
+            border-radius: 6px;
+            color: #000;
+            font-family: 'Manrope', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .workflow-trigger-btn:hover {
+            background: var(--accent-light);
+        }
+
+        /* ============================================================
+           LOADING / EMPTY
+           ============================================================ */
+        .loading-spinner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        /* ============================================================
+           RESPONSIVE
+           ============================================================ */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: var(--sidebar-expanded);
+                z-index: 150;
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .sidebar.mobile-open .nav-label,
+            .sidebar.mobile-open .sidebar-logo-text {
+                opacity: 1;
+            }
+
+            .hamburger-btn {
+                display: flex;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .top-bar {
+                padding: 16px 16px 16px 64px;
+            }
+
+            .page-body {
+                padding: 20px 16px;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 20px;
+            }
+
+            .profile-actions {
+                width: 100%;
+            }
+
+            .action-btn {
+                flex: 1;
+                justify-content: center;
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs-header {
+                overflow-x: auto;
+            }
+
+            .tab-btn {
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+
+            .chat-message {
+                max-width: 90%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-bar-right {
+                display: none;
+            }
+
+            .profile-text h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background -->
+    <div class="bg-animation">
+        <div class="orb orb-1"></div>
+    </div>
+    <div class="dot-pattern"></div>
+
+    <!-- Mobile Hamburger Button -->
+    <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileSidebar()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+    </button>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleMobileSidebar()"></div>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <img src="../logo.png" alt="Profit Insider">
+            <span class="sidebar-logo-text">Profit Insider</span>
+        </div>
+
+        <div class="sidebar-nav">
+            <a href="/admin/" class="nav-item">
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z" />
+                    </svg>
+                </span>
+                <span class="nav-label">Dashboard</span>
+            </a>
+
+            <!-- Customers (ACTIVE) -->
+            <a href="/admin/customers.html" class="nav-item active">
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </span>
+                <span class="nav-label">Customers</span>
+            </a>
+
+            <a href="/admin/content.html" class="nav-item">
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </span>
+                <span class="nav-label">Content</span>
+            </a>
+
+            <a href="/admin/announcements.html" class="nav-item">
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                    </svg>
+                </span>
+                <span class="nav-label">Announcements</span>
+            </a>
+
+            <a href="/admin/conversations.html" class="nav-item">
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                </span>
+                <span class="nav-label">Conversations</span>
+            </a>
+
+            <a href="/admin/workflows.html" class="nav-item">
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </span>
+                <span class="nav-label">Workflows</span>
+            </a>
+
+            <a href="/admin/notifications.html" class="nav-item">
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                </span>
+                <span class="nav-label">Notifications</span>
+            </a>
+
+            <a href="/admin/settings.html" class="nav-item">
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </span>
+                <span class="nav-label">Settings</span>
+            </a>
+        </div>
+
+        <div class="sidebar-bottom">
+            <a class="nav-item signout-item" onclick="window.signOut()" style="cursor:pointer;">
+                <span class="nav-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                </span>
+                <span class="nav-label">Sign Out</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <h1 class="page-title">Customer Detail</h1>
+            </div>
+            <div class="top-bar-right">
+                <span class="admin-name" id="admin-name">Loading...</span>
+                <span class="admin-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    Admin
+                </span>
+            </div>
+        </div>
+
+        <!-- Page Body -->
+        <div class="page-body" id="page-body">
+            <!-- Loading State -->
+            <div class="loading-spinner" id="loading-state">
+                <div class="spinner"></div>
+            </div>
+
+            <!-- Loaded Content (hidden until data loads) -->
+            <div id="loaded-content" style="display:none;">
+                <!-- Back Button -->
+                <a href="/admin/customers.html" class="back-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Customers
+                </a>
+
+                <!-- Profile Header -->
+                <div class="profile-header">
+                    <div class="profile-info">
+                        <div class="profile-avatar" id="profile-avatar">--</div>
+                        <div class="profile-text">
+                            <h2 id="profile-name">Loading...</h2>
+                            <div class="profile-meta">
+                                <div class="status-dropdown-wrapper" id="status-dropdown-wrapper">
+                                    <span class="status-badge onboarding" id="status-badge" onclick="toggleStatusDropdown()">
+                                        <span class="status-dot"></span>
+                                        <span id="status-label">onboarding</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:12px;height:12px;margin-left:2px;">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </span>
+                                    <div class="status-dropdown" id="status-dropdown">
+                                        <div class="status-dropdown-item" onclick="changeStatus('onboarding')">
+                                            <span class="sdi-dot onboarding"></span> Onboarding
+                                        </div>
+                                        <div class="status-dropdown-item" onclick="changeStatus('active')">
+                                            <span class="sdi-dot active"></span> Active
+                                        </div>
+                                        <div class="status-dropdown-item" onclick="changeStatus('inactive')">
+                                            <span class="sdi-dot inactive"></span> Inactive
+                                        </div>
+                                        <div class="status-dropdown-item" onclick="changeStatus('churned')">
+                                            <span class="sdi-dot churned"></span> Churned
+                                        </div>
+                                    </div>
+                                </div>
+                                <span id="profile-email-meta">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    <span id="meta-email">--</span>
+                                </span>
+                                <span id="profile-phone-meta">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                    </svg>
+                                    <span id="meta-phone">--</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <a class="action-btn" id="email-btn" href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            Email
+                        </a>
+                        <a class="action-btn whatsapp" id="whatsapp-btn" href="#" target="_blank">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px;">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                                <path d="M12 0C5.373 0 0 5.373 0 12c0 2.13.556 4.13 1.531 5.87L.06 23.487a.5.5 0 00.612.612l5.617-1.471A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.94 0-3.79-.516-5.416-1.478l-.388-.231-3.332.873.888-3.242-.253-.403A9.96 9.96 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+                            </svg>
+                            WhatsApp
+                        </a>
+                        <button class="action-btn" onclick="openWorkflowModal()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            Trigger Workflow
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabs Header -->
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+                    <button class="tab-btn" onclick="switchTab('activity')">Activity Log</button>
+                    <button class="tab-btn" onclick="switchTab('onboarding')">Onboarding</button>
+                    <button class="tab-btn" onclick="switchTab('communication')">Communication</button>
+                </div>
+
+                <!-- ============================================================
+                     TAB 1: OVERVIEW
+                     ============================================================ -->
+                <div class="tab-content active" id="tab-overview">
+                    <div class="glass-card" style="margin-bottom:24px;">
+                        <div class="card-header">
+                            <span class="card-title">Profile Information</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="profile-grid" id="profile-grid">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <span class="card-title">Admin Notes</span>
+                        </div>
+                        <div class="card-body">
+                            <textarea class="notes-textarea" id="admin-notes" placeholder="Add notes about this customer..."></textarea>
+                            <div class="notes-save-status" id="notes-save-status"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================
+                     TAB 2: ACTIVITY LOG
+                     ============================================================ -->
+                <div class="tab-content" id="tab-activity">
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <span class="card-title">Activity Log</span>
+                            <select class="activity-filter-select" id="activity-type-filter" onchange="filterActivityLog()">
+                                <option value="all">All Actions</option>
+                                <option value="page_view">Page Views</option>
+                                <option value="login">Logins</option>
+                                <option value="content_access">Content Access</option>
+                                <option value="settings_change">Settings Changes</option>
+                            </select>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-list" id="activity-list">
+                                <div class="loading-spinner"><div class="spinner"></div></div>
+                            </div>
+                            <button class="load-more-btn" id="load-more-activity" onclick="loadMoreActivity()" style="display:none;">Load More</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================
+                     TAB 3: ONBOARDING
+                     ============================================================ -->
+                <div class="tab-content" id="tab-onboarding">
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <span class="card-title">Onboarding Progress</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="onboarding-progress-header">
+                                <div class="onboarding-progress-bar">
+                                    <div class="onboarding-progress-fill" id="onboarding-progress-fill" style="width:0%"></div>
+                                </div>
+                                <span class="onboarding-progress-text" id="onboarding-progress-text">0%</span>
+                            </div>
+                            <div class="onboarding-steps" id="onboarding-steps">
+                                <div class="loading-spinner"><div class="spinner"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ============================================================
+                     TAB 4: COMMUNICATION
+                     ============================================================ -->
+                <div class="tab-content" id="tab-communication">
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <span class="card-title">Messages</span>
+                        </div>
+                        <div class="card-body" style="padding:0;">
+                            <div class="chat-container" style="padding:16px 24px 24px;">
+                                <div class="chat-messages" id="chat-messages">
+                                    <div class="chat-empty" id="chat-empty">No messages yet. Send the first message below.</div>
+                                </div>
+                                <div class="chat-input-bar">
+                                    <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()">
+                                    <button class="chat-send-btn" onclick="sendMessage()">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workflow Picker Modal -->
+    <div class="modal-overlay" id="workflow-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-title">Trigger Workflow</span>
+                <button class="modal-close" onclick="closeWorkflowModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" id="workflow-list">
+                <div class="loading-spinner"><div class="spinner"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase-client.js"></script>
+
+    <script>
+        // ============================================================
+        // STATE
+        // ============================================================
+        const customerId = new URLSearchParams(window.location.search).get('id');
+        let customerData = null;
+        let adminUser = null;
+        let adminProfile = null;
+        let activityData = [];
+        let activityOffset = 0;
+        const activityLimit = 50;
+        let allActivityData = [];
+        let conversationId = null;
+        let autoLogoutTimer = null;
+
+        const ONBOARDING_STEPS = [
+            'Create TradersPost Account',
+            'Connect Broker Account',
+            'Configure Algorithm Parameters',
+            'Understanding Risk Management',
+            'Reading Performance Metrics',
+            'Preparing for Setup Call',
+            'Final Review & Next Steps'
+        ];
+
+        // ============================================================
+        // AUTH + INIT
+        // ============================================================
+        async function initPage() {
+            if (!customerId) {
+                window.location.href = '/admin/customers.html';
+                return;
+            }
+
+            const user = await window.getCurrentUser();
+            if (!user) {
+                window.location.href = '/auth';
+                return;
+            }
+
+            const profile = await window.getUserProfile(user.id);
+            if (!profile || !profile.is_admin) {
+                window.location.href = '/auth';
+                return;
+            }
+
+            adminUser = user;
+            adminProfile = profile;
+            document.getElementById('admin-name').textContent = profile.full_name || profile.email;
+
+            resetAutoLogout();
+            document.addEventListener('mousemove', resetAutoLogout);
+            document.addEventListener('keydown', resetAutoLogout);
+            document.addEventListener('click', resetAutoLogout);
+
+            await loadCustomerData();
+        }
+
+        function resetAutoLogout() {
+            if (autoLogoutTimer) clearTimeout(autoLogoutTimer);
+            autoLogoutTimer = setTimeout(() => {
+                window.signOut();
+            }, 30 * 60 * 1000);
+        }
+
+        // ============================================================
+        // LOAD CUSTOMER DATA
+        // ============================================================
+        async function loadCustomerData() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('id', customerId)
+                    .single();
+
+                if (error || !data) {
+                    console.error('Customer not found:', error);
+                    document.getElementById('loading-state').innerHTML = `
+                        <div class="empty-state">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p>Customer not found.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                customerData = data;
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('loaded-content').style.display = 'block';
+
+                renderProfileHeader();
+                renderOverviewTab();
+                loadActivityLog();
+                loadOnboardingProgress();
+                loadConversation();
+
+            } catch (err) {
+                console.error('Error:', err);
+            }
+        }
+
+        // ============================================================
+        // PROFILE HEADER
+        // ============================================================
+        function renderProfileHeader() {
+            const c = customerData;
+            const initials = (c.full_name || 'NA').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            document.getElementById('profile-avatar').textContent = initials;
+            document.getElementById('profile-name').textContent = c.full_name || 'N/A';
+            document.getElementById('meta-email').textContent = c.email || 'N/A';
+            document.getElementById('meta-phone').textContent = c.phone || 'N/A';
+
+            // Status badge
+            const status = c.status || 'onboarding';
+            const badge = document.getElementById('status-badge');
+            badge.className = `status-badge ${status}`;
+            document.getElementById('status-label').textContent = status;
+
+            // Email button
+            if (c.email) {
+                document.getElementById('email-btn').href = `mailto:${c.email}`;
+            }
+
+            // WhatsApp button
+            if (c.phone) {
+                const cleanPhone = c.phone.replace(/[^0-9]/g, '');
+                document.getElementById('whatsapp-btn').href = `https://wa.me/${cleanPhone}`;
+            }
+        }
+
+        // ============================================================
+        // STATUS DROPDOWN
+        // ============================================================
+        function toggleStatusDropdown() {
+            const dd = document.getElementById('status-dropdown');
+            dd.classList.toggle('show');
+        }
+
+        async function changeStatus(newStatus) {
+            document.getElementById('status-dropdown').classList.remove('show');
+            if (newStatus === customerData.status) return;
+
+            const success = await window.updateUserStatus(customerId, newStatus);
+            if (success) {
+                customerData.status = newStatus;
+                renderProfileHeader();
+                renderOverviewTab();
+            } else {
+                alert('Failed to update status.');
+            }
+        }
+
+        // Close dropdown on outside click
+        document.addEventListener('click', (e) => {
+            const wrapper = document.getElementById('status-dropdown-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                document.getElementById('status-dropdown').classList.remove('show');
+            }
+        });
+
+        // ============================================================
+        // OVERVIEW TAB
+        // ============================================================
+        function renderOverviewTab() {
+            const c = customerData;
+            const fields = [
+                { label: 'Full Name', value: c.full_name || 'N/A' },
+                { label: 'Email', value: c.email || 'N/A' },
+                { label: 'Phone', value: c.phone || 'N/A' },
+                { label: 'IP Address', value: c.ip_address || 'N/A' },
+                { label: 'Account Created', value: window.formatFullDate(c.created_at) },
+                { label: 'Last Login', value: window.formatFullDate(c.last_login) },
+                { label: 'Onboarding Completed', value: c.onboarding_completed_at ? window.formatFullDate(c.onboarding_completed_at) : 'Not completed' },
+                { label: 'Status', value: c.status || 'onboarding' }
+            ];
+
+            document.getElementById('profile-grid').innerHTML = fields.map(f => `
+                <div class="profile-field">
+                    <div class="profile-field-label">${f.label}</div>
+                    <div class="profile-field-value">${escapeHtml(f.value)}</div>
+                </div>
+            `).join('');
+
+            // Admin notes
+            document.getElementById('admin-notes').value = c.notes || '';
+        }
+
+        // Auto-save notes on blur
+        let notesSaveTimer = null;
+        document.getElementById('admin-notes').addEventListener('blur', async () => {
+            const notes = document.getElementById('admin-notes').value;
+            const statusEl = document.getElementById('notes-save-status');
+            statusEl.textContent = 'Saving...';
+            statusEl.className = 'notes-save-status';
+
+            const success = await window.updateUserNotes(customerId, notes);
+            if (success) {
+                statusEl.textContent = 'Saved';
+                statusEl.className = 'notes-save-status saved';
+                customerData.notes = notes;
+            } else {
+                statusEl.textContent = 'Failed to save';
+                statusEl.className = 'notes-save-status';
+                statusEl.style.color = 'var(--error)';
+            }
+
+            setTimeout(() => { statusEl.textContent = ''; }, 3000);
+        });
+
+        // ============================================================
+        // ACTIVITY LOG TAB
+        // ============================================================
+        async function loadActivityLog() {
+            try {
+                const data = await window.getActivityLog(customerId, activityLimit, activityOffset);
+                allActivityData = [...allActivityData, ...data];
+                activityOffset += data.length;
+
+                renderActivityLog();
+
+                // Show/hide load more
+                const loadMoreBtn = document.getElementById('load-more-activity');
+                if (data.length >= activityLimit) {
+                    loadMoreBtn.style.display = 'block';
+                } else {
+                    loadMoreBtn.style.display = 'none';
+                }
+            } catch (err) {
+                console.error('Error loading activity:', err);
+            }
+        }
+
+        function filterActivityLog() {
+            renderActivityLog();
+        }
+
+        function renderActivityLog() {
+            const filter = document.getElementById('activity-type-filter').value;
+            const filtered = filter === 'all' ? allActivityData : allActivityData.filter(a => a.action === filter);
+            const listEl = document.getElementById('activity-list');
+
+            if (filtered.length === 0) {
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <p>No activity recorded yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = filtered.map(a => {
+                const icon = getActivityIcon(a.action);
+                const timestamp = window.formatFullDate(a.created_at);
+                return `
+                    <div class="activity-entry">
+                        <div class="activity-icon-wrapper">${icon}</div>
+                        <div class="activity-entry-body">
+                            <div class="activity-entry-action">${escapeHtml(a.action || 'Unknown action')}</div>
+                            <div class="activity-entry-details">${escapeHtml(a.details || '')}</div>
+                            <div class="activity-entry-meta">
+                                <span>${timestamp}</span>
+                                ${a.page ? `<span class="activity-entry-page">${escapeHtml(a.page)}</span>` : ''}
+                                ${a.ip_address ? `<span>IP: ${escapeHtml(a.ip_address)}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function loadMoreActivity() {
+            const btn = document.getElementById('load-more-activity');
+            btn.textContent = 'Loading...';
+            await loadActivityLog();
+            btn.textContent = 'Load More';
+        }
+
+        function getActivityIcon(action) {
+            switch (action) {
+                case 'page_view':
+                    return `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>`;
+                case 'login':
+                    return `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>`;
+                case 'content_access':
+                    return `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+                case 'settings_change':
+                    return `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>`;
+                default:
+                    return `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+            }
+        }
+
+        // ============================================================
+        // ONBOARDING TAB
+        // ============================================================
+        async function loadOnboardingProgress() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('onboarding_progress')
+                    .select('*')
+                    .eq('user_id', customerId)
+                    .order('step_number', { ascending: true });
+
+                const progressMap = {};
+                if (data) {
+                    data.forEach(p => {
+                        progressMap[p.step_number] = p;
+                    });
+                }
+
+                let completedCount = 0;
+                const stepsHtml = ONBOARDING_STEPS.map((name, idx) => {
+                    const stepNum = idx + 1;
+                    const progress = progressMap[stepNum];
+                    const isCompleted = progress ? progress.completed : false;
+                    if (isCompleted) completedCount++;
+                    const videoWatched = progress && progress.video_watched;
+
+                    return `
+                        <div class="onboarding-step ${isCompleted ? 'completed' : ''}">
+                            <div class="step-number">${stepNum}</div>
+                            <div class="step-info">
+                                <div class="step-name">${name}</div>
+                                <div class="step-video-status">${videoWatched ? 'Video watched' : 'Video not watched'}</div>
+                            </div>
+                            <span class="step-badge ${isCompleted ? 'completed' : 'pending'}">${isCompleted ? 'Completed' : 'Pending'}</span>
+                        </div>
+                    `;
+                }).join('');
+
+                const percent = Math.round((completedCount / ONBOARDING_STEPS.length) * 100);
+                document.getElementById('onboarding-progress-fill').style.width = `${percent}%`;
+                document.getElementById('onboarding-progress-text').textContent = `${percent}%`;
+                document.getElementById('onboarding-steps').innerHTML = stepsHtml;
+
+            } catch (err) {
+                console.error('Error loading onboarding:', err);
+            }
+        }
+
+        // ============================================================
+        // COMMUNICATION TAB
+        // ============================================================
+        async function loadConversation() {
+            try {
+                // Find existing conversation for this user
+                const { data: convos, error } = await window.supabaseClient
+                    .from('chat_conversations')
+                    .select('*')
+                    .eq('user_id', customerId)
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+
+                if (convos && convos.length > 0) {
+                    conversationId = convos[0].id;
+                    await loadMessages();
+                } else {
+                    // No conversation yet
+                    conversationId = null;
+                    document.getElementById('chat-messages').innerHTML = `
+                        <div class="chat-empty">No messages yet. Send the first message below.</div>
+                    `;
+                }
+            } catch (err) {
+                console.error('Error loading conversation:', err);
+            }
+        }
+
+        async function loadMessages() {
+            if (!conversationId) return;
+
+            try {
+                const { data: messages, error } = await window.supabaseClient
+                    .from('chat_messages')
+                    .select('*')
+                    .eq('conversation_id', conversationId)
+                    .order('created_at', { ascending: true });
+
+                const chatEl = document.getElementById('chat-messages');
+
+                if (!messages || messages.length === 0) {
+                    chatEl.innerHTML = `<div class="chat-empty">No messages yet. Send the first message below.</div>`;
+                    return;
+                }
+
+                chatEl.innerHTML = messages.map(m => {
+                    const isAdmin = m.sender_id !== customerId;
+                    const time = window.formatRelativeTime(m.created_at);
+                    return `
+                        <div class="chat-message ${isAdmin ? 'admin' : 'user'}">
+                            <div>
+                                <div class="chat-bubble">${escapeHtml(m.content || m.message || '')}</div>
+                                <div class="chat-timestamp">${time}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                chatEl.scrollTop = chatEl.scrollHeight;
+
+            } catch (err) {
+                console.error('Error loading messages:', err);
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            input.value = '';
+
+            try {
+                // If no conversation exists, create one
+                if (!conversationId) {
+                    const { data: newConvo, error: convoError } = await window.supabaseClient
+                        .from('chat_conversations')
+                        .insert({
+                            user_id: customerId,
+                            admin_id: adminUser.id,
+                            status: 'active'
+                        })
+                        .select()
+                        .single();
+
+                    if (convoError) {
+                        console.error('Error creating conversation:', convoError);
+                        alert('Failed to start conversation.');
+                        return;
+                    }
+
+                    conversationId = newConvo.id;
+                }
+
+                // Insert message
+                const { error: msgError } = await window.supabaseClient
+                    .from('chat_messages')
+                    .insert({
+                        conversation_id: conversationId,
+                        sender_id: adminUser.id,
+                        content: message
+                    });
+
+                if (msgError) {
+                    console.error('Error sending message:', msgError);
+                    alert('Failed to send message.');
+                    return;
+                }
+
+                await loadMessages();
+
+            } catch (err) {
+                console.error('Error:', err);
+            }
+        }
+
+        // ============================================================
+        // WORKFLOW MODAL
+        // ============================================================
+        async function openWorkflowModal() {
+            const modal = document.getElementById('workflow-modal');
+            modal.classList.add('show');
+
+            const listEl = document.getElementById('workflow-list');
+            listEl.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+
+            try {
+                const { data: workflows, error } = await window.supabaseClient
+                    .from('workflows')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('name', { ascending: true });
+
+                if (!workflows || workflows.length === 0) {
+                    listEl.innerHTML = `
+                        <div class="empty-state">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            <p>No active workflows available.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                listEl.innerHTML = workflows.map(w => `
+                    <div class="workflow-item">
+                        <div class="workflow-item-info">
+                            <div class="workflow-item-name">${escapeHtml(w.name)}</div>
+                            <div class="workflow-item-desc">${escapeHtml(w.description || '')}</div>
+                        </div>
+                        <button class="workflow-trigger-btn" onclick="triggerWorkflowAction('${w.id}', this)">Trigger</button>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error('Error loading workflows:', err);
+                listEl.innerHTML = '<div class="empty-state"><p>Failed to load workflows.</p></div>';
+            }
+        }
+
+        function closeWorkflowModal() {
+            document.getElementById('workflow-modal').classList.remove('show');
+        }
+
+        // Close modal on overlay click
+        document.getElementById('workflow-modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('workflow-modal')) {
+                closeWorkflowModal();
+            }
+        });
+
+        async function triggerWorkflowAction(workflowId, btnEl) {
+            btnEl.textContent = 'Running...';
+            btnEl.disabled = true;
+
+            const result = await window.triggerWorkflow(workflowId, {
+                id: customerData.id,
+                full_name: customerData.full_name,
+                email: customerData.email,
+                phone: customerData.phone,
+                status: customerData.status,
+                triggered_by_id: adminUser.id
+            }, adminProfile.email);
+
+            if (result.success) {
+                btnEl.textContent = 'Sent!';
+                btnEl.style.background = 'var(--success)';
+                setTimeout(() => {
+                    btnEl.textContent = 'Trigger';
+                    btnEl.style.background = '';
+                    btnEl.disabled = false;
+                }, 2000);
+            } else {
+                btnEl.textContent = 'Failed';
+                btnEl.style.background = 'var(--error)';
+                btnEl.style.color = '#fff';
+                setTimeout(() => {
+                    btnEl.textContent = 'Trigger';
+                    btnEl.style.background = '';
+                    btnEl.style.color = '';
+                    btnEl.disabled = false;
+                }, 2000);
+            }
+        }
+
+        // ============================================================
+        // TAB SWITCHING
+        // ============================================================
+        function switchTab(tabName) {
+            // Update buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+
+            // Activate selected
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+
+        // ============================================================
+        // UTILITIES
+        // ============================================================
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function toggleMobileSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('mobile-open');
+            overlay.classList.toggle('show');
+        }
+
+        // ============================================================
+        // INIT
+        // ============================================================
+        initPage();
+    </script>
+</body>
+</html>
