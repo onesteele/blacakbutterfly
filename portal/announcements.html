@@ -619,38 +619,11 @@
     </div>
     <div class="dot-pattern"></div>
 
-    <!-- Top Navbar -->
-    <nav class="top-navbar">
-        <div class="navbar-inner">
-            <a href="/" class="navbar-brand">
-                <img src="../logo.png" alt="Profit Insider" class="navbar-logo">
-                <span class="navbar-brand-text">Profit Insider</span>
-            </a>
-
-            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-            </button>
-
-            <div class="navbar-links" id="navLinks">
-                <a href="/">Dashboard</a>
-                <a href="/portal/content">Content</a>
-                <a href="/portal/announcements" class="active">Announcements</a>
-                <a href="/portal/account">Account</a>
-            </div>
-
-            <div class="navbar-right">
-                <span class="navbar-user">Welcome, <span class="navbar-user-name" id="navUserName">...</span></span>
-                <button class="signout-btn" onclick="window.signOut()">Sign Out</button>
-            </div>
-        </div>
-    </nav>
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
 
     <!-- Main Content -->
-    <div class="container">
+    <div class="cs-main-content container">
         <!-- Page Header -->
         <div class="page-header">
             <h1 class="page-title">Announcements</h1>
@@ -741,8 +714,8 @@
                     return;
                 }
 
-                const displayName = profile.full_name || profile.first_name || user.email;
-                document.getElementById('navUserName').textContent = displayName;
+                // Inject sidebar
+                window.injectClientSidebar('announcements', '../logo.png');
 
                 resetAutoLogout();
 
@@ -766,8 +739,8 @@
                 const { data, error } = await supabaseClient
                     .from('announcements')
                     .select('*')
-                    .eq('published', true)
-                    .order('pinned', { ascending: false })
+                    .eq('is_published', true)
+                    .order('is_pinned', { ascending: false })
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
@@ -779,8 +752,8 @@
                     return;
                 }
 
-                const pinned = announcements.filter(a => a.pinned);
-                const unpinned = announcements.filter(a => !a.pinned);
+                const pinned = announcements.filter(a => a.is_pinned);
+                const unpinned = announcements.filter(a => !a.is_pinned);
 
                 renderAnnouncements(pinned, unpinned);
             } catch (err) {

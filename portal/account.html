@@ -697,38 +697,11 @@
     </div>
     <div class="dot-pattern"></div>
 
-    <!-- Top Navbar -->
-    <nav class="top-navbar">
-        <div class="navbar-inner">
-            <a href="/" class="navbar-brand">
-                <img src="../logo.png" alt="Profit Insider" class="navbar-logo">
-                <span class="navbar-brand-text">Profit Insider</span>
-            </a>
-
-            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle menu">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <line x1="3" y1="12" x2="21" y2="12"></line>
-                    <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-            </button>
-
-            <div class="navbar-links" id="navLinks">
-                <a href="/">Dashboard</a>
-                <a href="/portal/content">Content</a>
-                <a href="/portal/announcements">Announcements</a>
-                <a href="/portal/account" class="active">Account</a>
-            </div>
-
-            <div class="navbar-right">
-                <span class="navbar-user">Welcome, <span class="navbar-user-name" id="navUserName">...</span></span>
-                <button class="signout-btn" onclick="window.signOut()">Sign Out</button>
-            </div>
-        </div>
-    </nav>
+    <!-- Sidebar -->
+    <div id="sidebar-container"></div>
 
     <!-- Main Content -->
-    <div class="container" id="mainContent" style="display: none;">
+    <div class="cs-main-content container" id="mainContent" style="display: none;">
         <!-- Page Header -->
         <div class="page-header">
             <h1 class="page-title">Account Settings</h1>
@@ -1000,7 +973,7 @@
                 }
 
                 const displayName = profile.full_name || profile.first_name || user.email;
-                document.getElementById('navUserName').textContent = displayName;
+                window.injectClientSidebar('account', '../logo.png');
 
                 resetAutoLogout();
 
@@ -1136,9 +1109,8 @@
                 populateProfile();
                 cancelProfileEdit();
 
-                // Update navbar name
+                // Update sidebar name if needed
                 const displayName = currentProfile.full_name || currentProfile.first_name || currentUser.email;
-                document.getElementById('navUserName').textContent = displayName;
 
                 // Track activity
                 if (typeof window.trackActivity === 'function') {
