@@ -1148,7 +1148,7 @@
                 }
 
                 const profile = await window.getUserProfile(user.id);
-                if (!profile || !profile.is_admin) {
+                if (!profile || !window.hasAdminAccess(profile)) {
                     alert('Access denied. Admin privileges required.');
                     await window.supabaseClient.auth.signOut();
                     window.location.href = '/auth';
@@ -1157,6 +1157,15 @@
 
                 adminProfile = profile;
                 document.getElementById('admin-name').textContent = `${profile.first_name} ${profile.last_name}`;
+
+                // Apply role-based sidebar
+                window.applySidebarRole(profile, 'dashboard');
+
+                // Hide stats for sales team
+                const userRole = window.getUserRole(profile);
+                if (userRole === 'sales_team') {
+                    document.querySelectorAll('.stat-card').forEach(el => el.style.display = 'none');
+                }
 
                 // Load all dashboard data in parallel
                 await Promise.all([

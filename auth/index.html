@@ -517,10 +517,15 @@
                     const profile = await window.getUserProfile(user.id);
                     if (profile) {
                         // Valid session and profile exists, redirect appropriately
-                        if (profile.is_admin) {
+                        if (window.hasAdminAccess(profile)) {
                             window.location.href = '/admin';
                         } else {
-                            window.location.href = '/onboarding';
+                            const status = (profile.status || 'onboarding').toLowerCase();
+                            if (['member', 'verified_member', 'active'].includes(status)) {
+                                window.location.href = '/';
+                            } else {
+                                window.location.href = '/onboarding';
+                            }
                         }
                     } else {
                         // Profile doesn't exist, clear the invalid session
@@ -639,7 +644,7 @@
                 if (session) {
                     // Check user profile for routing
                     const userProfile = await window.getUserProfile(data.user.id);
-                    if (userProfile?.is_admin) {
+                    if (window.hasAdminAccess(userProfile)) {
                         window.location.href = '/admin';
                     } else {
                         const status = (userProfile?.status || 'onboarding').toLowerCase();

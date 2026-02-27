@@ -90,7 +90,7 @@ SET search_path = public
 AS $$
 BEGIN
   RETURN (
-    SELECT COALESCE(is_admin, FALSE)
+    SELECT COALESCE(role, 'user') IN ('owner', 'super_admin', 'admin', 'sales_team')
     FROM public.users
     WHERE id = user_id
     LIMIT 1
@@ -111,8 +111,10 @@ ALTER TABLE users ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'onboarding';
 ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS notes TEXT;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS full_name TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'user';
 
 CREATE INDEX IF NOT EXISTS idx_users_status ON users(status);
+CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 
 
 -- ============================================================================
@@ -394,7 +396,7 @@ LANGUAGE plpgsql
 SECURITY DEFINER SET search_path = public
 AS $$
 BEGIN
-    INSERT INTO public.users (id, email, first_name, last_name, full_name, phone, ip_address, created_at, last_login, is_admin, onboarding_completed, status)
+    INSERT INTO public.users (id, email, first_name, last_name, full_name, phone, ip_address, created_at, last_login, is_admin, onboarding_completed, status, role)
     VALUES (
         NEW.id,
         NEW.email,
@@ -410,7 +412,8 @@ BEGIN
         NOW(),
         FALSE,
         FALSE,
-        'onboarding'
+        'onboarding',
+        'user'
     );
 
     INSERT INTO public.onboarding_progress (user_id, completed_steps, watched_videos, checked_items)
@@ -473,12 +476,19 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
+  -- Protect default owner: cannot remove admin flag
   IF OLD.email = 'steeleblue07@gmail.com' AND OLD.is_admin = TRUE AND NEW.is_admin = FALSE THEN
     RAISE EXCEPTION 'Cannot remove admin privileges from the default admin account.';
   END IF;
 
+  -- Protect default owner: cannot change email
   IF OLD.email = 'steeleblue07@gmail.com' AND NEW.email != 'steeleblue07@gmail.com' THEN
     RAISE EXCEPTION 'Cannot change the email of the default admin account.';
+  END IF;
+
+  -- Protect default owner: cannot change role away from owner
+  IF OLD.email = 'steeleblue07@gmail.com' AND OLD.role = 'owner' AND NEW.role != 'owner' THEN
+    RAISE EXCEPTION 'Cannot change the role of the default owner account.';
   END IF;
 
   RETURN NEW;
@@ -490,6 +500,17 @@ CREATE TRIGGER protect_default_admin_trigger
   BEFORE UPDATE ON users
   FOR EACH ROW
   EXECUTE FUNCTION public.protect_default_admin();
+
+
+-- ============================================================================
+-- STEP 20: DATA MIGRATION - Set roles for existing users
+-- ============================================================================
+-- Owner: steeleblue07@gmail.com gets 'owner' role
+-- Existing admins get 'admin' role
+-- Everyone else stays 'user'
+
+UPDATE users SET role = 'owner' WHERE email = 'steeleblue07@gmail.com';
+UPDATE users SET role = 'admin' WHERE is_admin = TRUE AND email != 'steeleblue07@gmail.com' AND (role IS NULL OR role = 'user');
 
 
 -- ============================================================================

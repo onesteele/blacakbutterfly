@@ -1372,18 +1372,26 @@
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                             </svg>
-                            Add Admin
+                            Add Team Member
                         </div>
                         <div class="add-admin-row">
                             <div class="form-group">
                                 <label class="form-label" for="promote-email">Search user by email</label>
                                 <input type="email" class="form-input" id="promote-email" placeholder="user@example.com">
                             </div>
-                            <button class="btn-promote" id="promote-btn" onclick="promoteToAdmin()" style="height:46px; margin-bottom:0; flex-shrink:0;">
+                            <div class="form-group" style="min-width:160px;">
+                                <label class="form-label" for="promote-role">Role</label>
+                                <select class="form-input" id="promote-role">
+                                    <option value="sales_team">Sales Team</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="super_admin">Super Admin</option>
+                                </select>
+                            </div>
+                            <button class="btn-promote" id="promote-btn" onclick="addTeamMember()" style="height:46px; margin-bottom:0; flex-shrink:0;">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                                 </svg>
-                                Promote to Admin
+                                Add Member
                             </button>
                         </div>
                     </div>
@@ -1511,15 +1519,24 @@
                 }
 
                 const profile = await window.getUserProfile(user.id);
-                if (!profile || !profile.is_admin) {
+                if (!profile || !window.hasAdminAccess(profile)) {
                     alert('Access denied. Admin privileges required.');
                     await window.supabaseClient.auth.signOut();
                     window.location.href = '/auth';
                     return;
                 }
 
+                // Settings requires owner or super_admin
+                if (!window.canManageSettings(profile)) {
+                    window.location.href = '/admin/customers.html';
+                    return;
+                }
+
                 adminProfile = profile;
                 document.getElementById('admin-name').textContent = `${profile.first_name} ${profile.last_name}`;
+
+                // Apply role-based sidebar
+                window.applySidebarRole(profile, 'settings');
 
                 // Populate profile card
                 const initials = `${(profile.first_name || '').charAt(0)}${(profile.last_name || '').charAt(0)}`.toUpperCase();
@@ -1675,8 +1692,8 @@
             try {
                 const { data, error } = await window.supabaseClient
                     .from('users')
-                    .select('id, first_name, last_name, email, is_admin')
-                    .eq('is_admin', true)
+                    .select('id, first_name, last_name, email, is_admin, role')
+                    .in('role', ['owner', 'super_admin', 'admin', 'sales_team'])
                     .order('created_at', { ascending: true });
 
                 if (error) throw error;
@@ -1696,6 +1713,14 @@
             }
         }
 
+        const ROLE_LABELS = {
+            owner: 'Owner',
+            super_admin: 'Super Admin',
+            admin: 'Admin',
+            sales_team: 'Sales Team',
+            user: 'User'
+        };
+
         function renderAdminList() {
             const container = document.getElementById('admin-list');
 
@@ -1705,31 +1730,43 @@
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                         </svg>
-                        <p>No admin users found</p>
+                        <p>No team members found</p>
                     </div>`;
                 return;
             }
 
             const DEFAULT_ADMIN_EMAIL = 'steeleblue07@gmail.com';
+            const myRole = window.getUserRole(adminProfile);
 
             container.innerHTML = adminUsers.map(admin => {
                 const name = `${admin.first_name || ''} ${admin.last_name || ''}`.trim() || 'Unnamed';
                 const initials = name.split(' ').map(n => n.charAt(0).toUpperCase()).join('').substring(0, 2);
                 const isCurrentUser = adminProfile && admin.id === adminProfile.id;
                 const isDefaultAdmin = (admin.email || '').toLowerCase() === DEFAULT_ADMIN_EMAIL.toLowerCase();
+                const role = admin.role || 'user';
+                const roleLabel = ROLE_LABELS[role] || role;
 
                 let actionHtml;
                 if (isDefaultAdmin) {
+                    // Owner - cannot be changed
                     actionHtml = '<span class="you-badge" style="background:var(--accent-dim);color:var(--accent);">Owner</span>';
                 } else if (isCurrentUser) {
-                    actionHtml = '<span class="you-badge">You</span>';
+                    actionHtml = `<span class="you-badge">${roleLabel}</span>`;
                 } else {
-                    actionHtml = `<button class="btn-danger-sm" onclick="openConfirmRemoveAdmin('${admin.id}', '${escapeHtml(name)}')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6" />
-                                    </svg>
-                                    Remove Admin
-                                </button>`;
+                    // Show role dropdown + remove button
+                    const roleOptions = ['super_admin', 'admin', 'sales_team']
+                        .map(r => `<option value="${r}" ${role === r ? 'selected' : ''}>${ROLE_LABELS[r]}</option>`)
+                        .join('');
+                    actionHtml = `
+                        <select class="form-input" style="padding:6px 10px;font-size:12px;min-width:130px;height:34px;" onchange="changeTeamRole('${admin.id}', this.value)">
+                            ${roleOptions}
+                        </select>
+                        <button class="btn-danger-sm" onclick="openConfirmRemoveAdmin('${admin.id}', '${escapeHtml(name)}')" style="margin-left:8px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6" />
+                            </svg>
+                            Remove
+                        </button>`;
                 }
 
                 return `
@@ -1739,7 +1776,7 @@
                             <div class="admin-list-name">${escapeHtml(name)}${isDefaultAdmin ? ' <span style="font-size:11px;color:var(--accent);font-weight:400;">(Default)</span>' : ''}</div>
                             <div class="admin-list-email">${escapeHtml(admin.email || '')}</div>
                         </div>
-                        <div class="admin-list-actions">
+                        <div class="admin-list-actions" style="display:flex;align-items:center;gap:8px;">
                             ${actionHtml}
                         </div>
                     </div>`;
@@ -1749,8 +1786,9 @@
         /* ============================================================
            PROMOTE TO ADMIN
            ============================================================ */
-        async function promoteToAdmin() {
+        async function addTeamMember() {
             const email = document.getElementById('promote-email').value.trim();
+            const role = document.getElementById('promote-role').value;
             if (!email) {
                 showToast('Please enter an email address.', 'error');
                 return;
@@ -1764,7 +1802,7 @@
                 // Find user by email
                 const { data: users, error: findError } = await window.supabaseClient
                     .from('users')
-                    .select('id, first_name, last_name, email, is_admin')
+                    .select('id, first_name, last_name, email, is_admin, role')
                     .eq('email', email)
                     .limit(1);
 
@@ -1777,29 +1815,47 @@
 
                 const user = users[0];
 
-                if (user.is_admin) {
-                    showToast('This user is already an admin.', 'error');
+                if (['owner', 'super_admin', 'admin', 'sales_team'].includes(user.role)) {
+                    showToast('This user already has a team role. Change their role from the list below.', 'error');
                     return;
                 }
 
-                // Promote to admin
+                // Set role and is_admin flag
                 const { error: updateError } = await window.supabaseClient
                     .from('users')
-                    .update({ is_admin: true })
+                    .update({ is_admin: true, role: role })
                     .eq('id', user.id);
 
                 if (updateError) throw updateError;
 
-                showToast(`${user.first_name || user.email} has been promoted to admin!`, 'success');
+                showToast(`${user.first_name || user.email} has been added as ${ROLE_LABELS[role]}!`, 'success');
                 document.getElementById('promote-email').value = '';
                 await loadAdminUsers();
 
             } catch (error) {
-                console.error('Error promoting user:', error);
-                showToast('Failed to promote user. Please try again.', 'error');
+                console.error('Error adding team member:', error);
+                showToast('Failed to add team member. Please try again.', 'error');
             } finally {
                 btn.disabled = false;
                 btn.style.opacity = '1';
+            }
+        }
+
+        async function changeTeamRole(userId, newRole) {
+            try {
+                const { error } = await window.supabaseClient
+                    .from('users')
+                    .update({ role: newRole })
+                    .eq('id', userId);
+
+                if (error) throw error;
+
+                showToast(`Role updated to ${ROLE_LABELS[newRole]}.`, 'success');
+                await loadAdminUsers();
+            } catch (error) {
+                console.error('Error changing role:', error);
+                showToast('Failed to update role.', 'error');
+                await loadAdminUsers();
             }
         }
 
@@ -1842,7 +1898,7 @@
 
                 const { error } = await window.supabaseClient
                     .from('users')
-                    .update({ is_admin: false })
+                    .update({ is_admin: false, role: 'user' })
                     .eq('id', removeTargetId);
 
                 if (error) throw error;

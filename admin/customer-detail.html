@@ -612,6 +612,129 @@
             box-shadow: 0 4px 16px rgba(37, 211, 102, 0.15);
         }
 
+        .action-btn.danger {
+            background: rgba(239, 68, 68, 0.12);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: var(--error);
+        }
+
+        .action-btn.danger:hover {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: var(--error);
+            box-shadow: 0 4px 16px rgba(239, 68, 68, 0.15);
+        }
+
+        /* Delete Confirmation Modal */
+        .confirm-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .confirm-overlay.show {
+            display: flex;
+        }
+
+        .confirm-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .confirm-card .confirm-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(239, 68, 68, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .confirm-card .confirm-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--error);
+        }
+
+        .confirm-card h3 {
+            font-family: 'Gilroy ExtraBold', sans-serif;
+            font-size: 20px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .confirm-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .confirm-card .confirm-name {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .confirm-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .btn-cancel {
+            padding: 10px 24px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--text-muted);
+            color: var(--text-primary);
+        }
+
+        .btn-confirm-delete {
+            padding: 10px 24px;
+            background: var(--error);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-confirm-delete:hover {
+            background: #dc2626;
+        }
+
+        .btn-confirm-delete:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         /* ============================================================
            TABS
            ============================================================ */
@@ -1625,6 +1748,12 @@
                             </svg>
                             Trigger Workflow
                         </button>
+                        <button class="action-btn danger" onclick="openDeleteConfirm()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            Delete
+                        </button>
                     </div>
                 </div>
 
@@ -1755,6 +1884,23 @@
     </div>
 
     <!-- Supabase -->
+    <!-- Delete Confirmation Modal -->
+    <div class="confirm-overlay" id="delete-confirm">
+        <div class="confirm-card">
+            <div class="confirm-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+            </div>
+            <h3>Delete Customer</h3>
+            <p>Are you sure you want to permanently delete <span class="confirm-name" id="delete-confirm-name"></span>? This action cannot be undone.</p>
+            <div class="confirm-actions">
+                <button class="btn-cancel" onclick="closeDeleteConfirm()">Cancel</button>
+                <button class="btn-confirm-delete" id="btn-confirm-delete" onclick="confirmDeleteCustomer()">Delete Customer</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../supabase-client.js"></script>
 
@@ -1799,7 +1945,7 @@
             }
 
             const profile = await window.getUserProfile(user.id);
-            if (!profile || !profile.is_admin) {
+            if (!profile || !window.hasAdminAccess(profile)) {
                 window.location.href = '/auth';
                 return;
             }
@@ -1807,6 +1953,21 @@
             adminUser = user;
             adminProfile = profile;
             document.getElementById('admin-name').textContent = profile.full_name || profile.email;
+
+            // Apply role-based sidebar
+            window.applySidebarRole(profile, 'customers');
+
+            // Hide delete button if not allowed
+            if (!window.canDeleteCustomers(profile)) {
+                const deleteBtn = document.querySelector('.action-btn.danger');
+                if (deleteBtn) deleteBtn.style.display = 'none';
+            }
+
+            // Hide status dropdown if not allowed
+            if (!window.canChangeStatus(profile)) {
+                const statusDropdown = document.querySelector('.status-dropdown');
+                if (statusDropdown) statusDropdown.style.display = 'none';
+            }
 
             resetAutoLogout();
             document.addEventListener('mousemove', resetAutoLogout);
@@ -1906,10 +2067,50 @@
             const success = await window.updateUserStatus(customerId, newStatus);
             if (success) {
                 customerData.status = newStatus;
+                const isCompleted = ['member', 'verified_member', 'active'].includes(newStatus);
+                customerData.onboarding_completed = isCompleted;
+                if (isCompleted) customerData.onboarding_completed_at = new Date().toISOString();
                 renderProfileHeader();
                 renderOverviewTab();
             } else {
                 alert('Failed to update status.');
+            }
+        }
+
+        // ============================================================
+        // DELETE CUSTOMER
+        // ============================================================
+        function openDeleteConfirm() {
+            const name = customerData.full_name || customerData.email || 'this customer';
+            document.getElementById('delete-confirm-name').textContent = name;
+            document.getElementById('delete-confirm').classList.add('show');
+        }
+
+        function closeDeleteConfirm() {
+            document.getElementById('delete-confirm').classList.remove('show');
+        }
+
+        async function confirmDeleteCustomer() {
+            const btn = document.getElementById('btn-confirm-delete');
+            btn.disabled = true;
+            btn.textContent = 'Deleting...';
+
+            try {
+                const success = await window.deleteUser(customerId);
+                if (success) {
+                    // Redirect back to customers list
+                    window.location.href = '/admin/customers.html';
+                } else {
+                    alert('Failed to delete customer. Please try again.');
+                    closeDeleteConfirm();
+                }
+            } catch (error) {
+                console.error('Error deleting customer:', error);
+                alert('Error: ' + (error.message || 'Failed to delete customer.'));
+                closeDeleteConfirm();
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Delete Customer';
             }
         }
 

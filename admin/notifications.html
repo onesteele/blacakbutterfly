@@ -1430,15 +1430,24 @@
                 }
 
                 const profile = await window.getUserProfile(user.id);
-                if (!profile || !profile.is_admin) {
+                if (!profile || !window.hasAdminAccess(profile)) {
                     alert('Access denied. Admin privileges required.');
                     await window.supabaseClient.auth.signOut();
                     window.location.href = '/auth';
                     return;
                 }
 
+                // Notifications management requires admin+ role
+                if (!window.canManageContent(profile)) {
+                    window.location.href = '/admin/customers.html';
+                    return;
+                }
+
                 adminProfile = profile;
                 document.getElementById('admin-name').textContent = `${profile.first_name} ${profile.last_name}`;
+
+                // Apply role-based sidebar
+                window.applySidebarRole(profile, 'notifications');
 
                 await Promise.all([
                     loadUsers(),

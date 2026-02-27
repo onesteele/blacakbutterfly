@@ -31,13 +31,13 @@ window.getUserProfile = async function(userId) {
     return data;
 };
 
-// Helper function to check if user is admin
+// Helper function to check if user is admin (uses role-based check)
 window.isAdmin = async function() {
     const user = await window.getCurrentUser();
     if (!user) return false;
 
     const profile = await window.getUserProfile(user.id);
-    return profile?.is_admin || false;
+    return window.hasAdminAccess(profile);
 };
 
 // Helper function to update last login
@@ -88,6 +88,96 @@ window.signOut = async function() {
 };
 
 // ============================================================
+// ROLE-BASED PERMISSION HELPERS
+// ============================================================
+// Roles: owner, super_admin, admin, sales_team, user
+
+window.getUserRole = function(profile) {
+    return profile?.role || 'user';
+};
+
+// Can access admin panel at all
+window.hasAdminAccess = function(profile) {
+    return ['owner', 'super_admin', 'admin', 'sales_team'].includes(profile?.role);
+};
+
+// Can delete customers (owner + super_admin only)
+window.canDeleteCustomers = function(profile) {
+    return ['owner', 'super_admin'].includes(profile?.role);
+};
+
+// Can manage content, announcements, workflows, notifications
+window.canManageContent = function(profile) {
+    return ['owner', 'super_admin', 'admin'].includes(profile?.role);
+};
+
+// Can access settings page and manage team
+window.canManageSettings = function(profile) {
+    return ['owner', 'super_admin'].includes(profile?.role);
+};
+
+// Can manage team members (assign roles)
+window.canManageTeam = function(profile) {
+    return ['owner', 'super_admin'].includes(profile?.role);
+};
+
+// Can create new users from admin panel
+window.canCreateUsers = function(profile) {
+    return ['owner', 'super_admin', 'admin'].includes(profile?.role);
+};
+
+// Can change customer status
+window.canChangeStatus = function(profile) {
+    return ['owner', 'super_admin', 'admin'].includes(profile?.role);
+};
+
+// SVG icons for sidebar
+window._sidebarIcons = {
+    dashboard: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z" /></svg>',
+    customers: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>',
+    conversations: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>',
+    content: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>',
+    announcements: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>',
+    workflows: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>',
+    notifications: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>',
+    settings: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>'
+};
+
+// Apply role-based sidebar filtering - call after auth check
+window.applySidebarRole = function(profile, activePage) {
+    const role = window.getUserRole(profile);
+    const navEl = document.querySelector('.sidebar-nav');
+    if (!navEl) return;
+
+    const allRoles = ['owner', 'super_admin', 'admin', 'sales_team'];
+    const contentRoles = ['owner', 'super_admin', 'admin'];
+    const settingsRoles = ['owner', 'super_admin'];
+
+    const items = [
+        { href: '/admin/', icon: 'dashboard', label: 'Dashboard', roles: allRoles, id: 'dashboard' },
+        { href: '/admin/customers.html', icon: 'customers', label: 'Customers', roles: allRoles, id: 'customers' },
+        { href: '/admin/conversations.html', icon: 'conversations', label: 'Conversations', roles: allRoles, id: 'conversations' },
+        { href: '/admin/content.html', icon: 'content', label: 'Content', roles: contentRoles, id: 'content' },
+        { href: '/admin/announcements.html', icon: 'announcements', label: 'Announcements', roles: contentRoles, id: 'announcements' },
+        { href: '/admin/workflows.html', icon: 'workflows', label: 'Workflows', roles: contentRoles, id: 'workflows' },
+        { href: '/admin/notifications.html', icon: 'notifications', label: 'Notifications', roles: contentRoles, id: 'notifications' },
+        { href: '/admin/settings.html', icon: 'settings', label: 'Settings', roles: settingsRoles, id: 'settings' },
+    ];
+
+    let html = '';
+    for (const item of items) {
+        if (!item.roles.includes(role)) continue;
+        const activeClass = activePage === item.id ? ' active' : '';
+        html += `<a href="${item.href}" class="nav-item${activeClass}">
+            <span class="nav-icon">${window._sidebarIcons[item.icon]}</span>
+            <span class="nav-label">${item.label}</span>
+        </a>\n`;
+    }
+
+    navEl.innerHTML = html;
+};
+
+// ============================================================
 // CRM HELPER FUNCTIONS
 // ============================================================
 
@@ -109,15 +199,38 @@ window.markOnboardingComplete = async function(userId) {
     return true;
 };
 
-// Update user status
+// Update user status (also syncs onboarding_completed flag)
 window.updateUserStatus = async function(userId, status) {
+    const isCompleted = ['member', 'verified_member', 'active'].includes(status);
+    const updateData = {
+        status: status,
+        onboarding_completed: isCompleted
+    };
+    if (isCompleted) {
+        updateData.onboarding_completed_at = new Date().toISOString();
+    }
+
     const { error } = await window.supabaseClient
         .from('users')
-        .update({ status: status })
+        .update(updateData)
         .eq('id', userId);
 
     if (error) {
         console.error('Error updating user status:', error);
+        return false;
+    }
+    return true;
+};
+
+// Delete a user (admin only) - removes from users table; auth user remains but can't access anything
+window.deleteUser = async function(userId) {
+    const { error } = await window.supabaseClient
+        .from('users')
+        .delete()
+        .eq('id', userId);
+
+    if (error) {
+        console.error('Error deleting user:', error);
         return false;
     }
     return true;

@@ -1783,7 +1783,7 @@
                 }
 
                 const profile = await window.getUserProfile(user.id);
-                if (!profile || !profile.is_admin) {
+                if (!profile || !window.hasAdminAccess(profile)) {
                     alert('Access denied. Admin privileges required.');
                     await window.supabaseClient.auth.signOut();
                     window.location.href = '/auth';
@@ -1793,6 +1793,9 @@
                 adminUser = user;
                 adminProfile = profile;
                 document.getElementById('admin-name').textContent = `${profile.first_name} ${profile.last_name}`;
+
+                // Apply role-based sidebar
+                window.applySidebarRole(profile, 'conversations');
 
                 // Setup search input
                 const searchInput = document.getElementById('conv-search');

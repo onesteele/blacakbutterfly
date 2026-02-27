@@ -1188,7 +1188,7 @@
                     return;
                 }
 
-                if (profile.is_admin) {
+                if (window.hasAdminAccess && window.hasAdminAccess(profile)) {
                     window.location.href = '/admin';
                     return;
                 }
