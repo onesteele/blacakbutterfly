@@ -417,7 +417,7 @@ window.CLIENT_SIDEBAR_CSS = `
 `;
 
 // Client sidebar HTML template
-window.CLIENT_SIDEBAR_HTML = \`
+window.CLIENT_SIDEBAR_HTML = `
     <button class="cs-mobile-toggle" onclick="toggleClientSidebar()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
@@ -426,7 +426,7 @@ window.CLIENT_SIDEBAR_HTML = \`
     <div class="cs-overlay" id="cs-overlay" onclick="toggleClientSidebar()"></div>
     <nav class="client-sidebar" id="client-sidebar">
         <div class="cs-logo">
-            <img src="\${window._csLogoPath || 'logo.png'}" alt="Profit Insider">
+            <img src="${window._csLogoPath || 'logo.png'}" alt="Profit Insider">
             <span class="cs-logo-text">Profit Insider</span>
         </div>
         <div class="client-sidebar-nav"></div>
@@ -439,7 +439,7 @@ window.CLIENT_SIDEBAR_HTML = \`
             </button>
         </div>
     </nav>
-\`;
+`;
 
 window.toggleClientSidebar = function() {
     document.getElementById('client-sidebar').classList.toggle('open');
