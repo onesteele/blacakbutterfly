@@ -380,9 +380,9 @@
         .main-content {
             position: relative;
             z-index: 10;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 32px 24px 60px;
+            padding: 40px 40px 80px;
             display: none;
         }
 
@@ -392,13 +392,13 @@
 
         /* ── Welcome banner ── */
         .welcome-banner {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 36px 32px;
-            margin-bottom: 28px;
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(42, 42, 42, 0.7);
+            border-radius: 20px;
+            padding: 44px 40px;
+            margin-bottom: 36px;
             position: relative;
             overflow: hidden;
         }
@@ -414,21 +414,21 @@
         .welcome-banner::after {
             content: '';
             position: absolute;
-            top: -50%; right: -10%;
-            width: 350px; height: 350px;
-            background: radial-gradient(circle, var(--accent-dim) 0%, transparent 70%);
+            top: -40%; right: -5%;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(240, 200, 50, 0.06) 0%, transparent 70%);
             pointer-events: none;
         }
 
         .welcome-title {
             font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
-            font-size: 32px;
+            font-size: 34px;
             font-weight: 800;
             background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 50%, #e6b800 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             position: relative;
             z-index: 1;
         }
@@ -438,24 +438,26 @@
             font-size: 15px;
             position: relative;
             z-index: 1;
+            max-width: 600px;
+            line-height: 1.7;
         }
 
         /* ── Notification banner ── */
         .notification-area {
-            margin-bottom: 28px;
+            margin-bottom: 36px;
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
 
         .notification-banner {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(240, 200, 50, 0.25);
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(240, 200, 50, 0.2);
             border-left: 4px solid var(--accent);
-            border-radius: 12px;
-            padding: 16px 20px;
+            border-radius: 14px;
+            padding: 18px 22px;
             display: flex;
             align-items: flex-start;
             gap: 14px;
@@ -469,9 +471,9 @@
 
         .notification-icon {
             flex-shrink: 0;
-            width: 36px; height: 36px;
+            width: 38px; height: 38px;
             background: var(--accent-dim);
-            border-radius: 8px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -529,21 +531,29 @@
             width: 16px; height: 16px;
         }
 
+        /* ── Two-column layout ── */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-bottom: 36px;
+        }
+
         /* ── Section headers ── */
         .section {
-            margin-bottom: 32px;
+            margin-bottom: 36px;
         }
 
         .section-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .section-title {
             font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
             color: var(--text-primary);
             display: flex;
@@ -552,7 +562,7 @@
         }
 
         .section-title svg {
-            width: 22px; height: 22px;
+            width: 20px; height: 20px;
             color: var(--accent);
         }
 
@@ -576,56 +586,81 @@
         }
 
         /* ── Pinned announcements ── */
-        .pinned-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 16px;
+        .pinned-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .pinned-card {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(240, 200, 50, 0.35);
-            border-radius: 14px;
-            padding: 22px 24px;
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(240, 200, 50, 0.2);
+            border-radius: 16px;
+            padding: 24px 26px;
             position: relative;
             transition: transform 0.2s ease, border-color 0.2s ease;
             cursor: pointer;
             text-decoration: none;
-            display: block;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
             color: inherit;
         }
 
         .pinned-card:hover {
             transform: translateY(-2px);
-            border-color: var(--accent);
+            border-color: rgba(240, 200, 50, 0.45);
+        }
+
+        .pinned-card-icon {
+            flex-shrink: 0;
+            width: 42px; height: 42px;
+            background: var(--accent-dim);
+            border: 1px solid rgba(240, 200, 50, 0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pinned-card-icon svg {
+            width: 18px; height: 18px;
+            color: var(--accent);
+        }
+
+        .pinned-card-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .pinned-card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
         .pinned-badge {
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: var(--accent);
             background: var(--accent-dim);
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 100px;
-            margin-bottom: 12px;
-        }
-
-        .pinned-badge svg {
-            width: 12px; height: 12px;
         }
 
         .pinned-card-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             line-height: 1.4;
         }
 
@@ -634,30 +669,30 @@
             color: var(--text-secondary);
             line-height: 1.6;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
 
         .pinned-card-date {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-muted);
-            margin-top: 12px;
+            margin-top: 10px;
         }
 
         /* ── Content grid ── */
         .content-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 16px;
         }
 
         .content-card {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 14px;
+            border-radius: 16px;
             overflow: hidden;
             transition: transform 0.2s ease, border-color 0.2s ease;
             cursor: pointer;
@@ -668,7 +703,7 @@
         }
 
         .content-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             border-color: rgba(240, 200, 50, 0.3);
         }
 
@@ -691,7 +726,7 @@
 
         .content-play-icon {
             position: absolute;
-            width: 48px; height: 48px;
+            width: 44px; height: 44px;
             background: rgba(240, 200, 50, 0.9);
             border-radius: 50%;
             display: flex;
@@ -705,13 +740,13 @@
         }
 
         .content-play-icon svg {
-            width: 20px; height: 20px;
+            width: 18px; height: 18px;
             color: #0a0a0a;
             margin-left: 2px;
         }
 
         .content-info {
-            padding: 16px;
+            padding: 18px 20px;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -720,7 +755,7 @@
         .content-category {
             display: inline-flex;
             align-self: flex-start;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -762,15 +797,15 @@
         }
 
         .announcement-item {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 18px 22px;
+            border-radius: 14px;
+            padding: 20px 24px;
             display: flex;
             align-items: flex-start;
-            gap: 14px;
+            gap: 16px;
             transition: border-color 0.2s ease;
             cursor: pointer;
             text-decoration: none;
@@ -828,23 +863,23 @@
         }
 
         .stat-card {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 22px 24px;
+            border-radius: 16px;
+            padding: 26px 24px;
             text-align: center;
         }
 
         .stat-icon {
-            width: 40px; height: 40px;
+            width: 42px; height: 42px;
             background: var(--accent-dim);
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
+            margin: 0 auto 14px;
         }
 
         .stat-icon svg {
@@ -853,7 +888,7 @@
         }
 
         .stat-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
@@ -886,46 +921,26 @@
 
         /* ── Responsive ── */
         @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
             .content-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
 
         @media (max-width: 640px) {
-            .navbar-nav,
-            .navbar-right {
-                display: none;
-            }
-
-            .menu-toggle {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .navbar-inner {
-                height: 60px;
-            }
-
-            .navbar-brand-text {
-                font-size: 18px;
-            }
-
-            .navbar-logo {
-                width: 34px; height: 34px;
-            }
-
             .main-content {
-                padding: 20px 16px 50px;
+                padding: 24px 20px 50px;
             }
 
             .welcome-banner {
-                padding: 28px 22px;
-                border-radius: 14px;
+                padding: 32px 24px;
+                border-radius: 16px;
             }
 
             .welcome-title {
-                font-size: 24px;
+                font-size: 26px;
             }
 
             .welcome-subtitle {
@@ -933,11 +948,7 @@
             }
 
             .section-title {
-                font-size: 17px;
-            }
-
-            .pinned-grid {
-                grid-template-columns: 1fr;
+                font-size: 16px;
             }
 
             .content-grid {
@@ -992,49 +1003,57 @@
         <!-- Notification area -->
         <div class="notification-area" id="notificationArea"></div>
 
-        <!-- Pinned announcements -->
-        <div class="section" id="pinnedSection" style="display:none;">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                    Pinned Announcements
-                </h2>
-                <a href="/portal/announcements" class="section-link">
-                    View all
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                </a>
+        <!-- Two-column grid: Pinned + Content side by side -->
+        <div class="dashboard-grid">
+            <!-- Left: Pinned Announcements -->
+            <div class="section" id="pinnedSection" style="margin-bottom:0;">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        Pinned
+                    </h2>
+                    <a href="/portal/announcements.html" class="section-link">
+                        View all
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                </div>
+                <div class="pinned-list" id="pinnedGrid">
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                        <p>No pinned announcements.</p>
+                    </div>
+                </div>
             </div>
-            <div class="pinned-grid" id="pinnedGrid"></div>
-        </div>
 
-        <!-- Recent content -->
-        <div class="section" id="contentSection">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-                    Recent Content
-                </h2>
-                <a href="/portal/content" class="section-link">
-                    View all
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                </a>
-            </div>
-            <div class="content-grid" id="contentGrid">
-                <div class="empty-state">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-                    <p>No content available yet. Check back soon.</p>
+            <!-- Right: Recent Content -->
+            <div class="section" id="contentSection" style="margin-bottom:0;">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                        Recent Content
+                    </h2>
+                    <a href="/portal/content.html" class="section-link">
+                        View all
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                </div>
+                <div class="content-grid" id="contentGrid">
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                        <p>No content available yet. Check back soon.</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Recent announcements -->
+        <!-- Recent announcements (full width) -->
         <div class="section" id="announcementsSection">
             <div class="section-header">
                 <h2 class="section-title">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
                     Recent Announcements
                 </h2>
-                <a href="/portal/announcements" class="section-link">
+                <a href="/portal/announcements.html" class="section-link">
                     View all
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                 </a>
@@ -1249,10 +1268,8 @@
 
                 // Pinned
                 const pinned = all.filter(a => a.is_pinned);
+                const grid = document.getElementById('pinnedGrid');
                 if (pinned.length > 0) {
-                    const section = document.getElementById('pinnedSection');
-                    const grid = document.getElementById('pinnedGrid');
-                    section.style.display = '';
                     grid.innerHTML = '';
                     pinned.forEach(a => grid.appendChild(createPinnedCard(a)));
                 }
@@ -1273,23 +1290,27 @@
 
         function createPinnedCard(a) {
             const el = document.createElement('a');
-            el.href = '/portal/announcements';
+            el.href = '/portal/announcements.html';
             el.className = 'pinned-card';
             el.innerHTML = `
-                <div class="pinned-badge">
+                <div class="pinned-card-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                    Pinned
                 </div>
-                <div class="pinned-card-title">${escapeHtml(a.title)}</div>
-                <div class="pinned-card-excerpt">${escapeHtml(a.content || '')}</div>
-                <div class="pinned-card-date">${formatDate(a.created_at)}</div>
+                <div class="pinned-card-body">
+                    <div class="pinned-card-header">
+                        <span class="pinned-badge">Pinned</span>
+                    </div>
+                    <div class="pinned-card-title">${escapeHtml(a.title)}</div>
+                    <div class="pinned-card-excerpt">${escapeHtml(a.content || '')}</div>
+                    <div class="pinned-card-date">${formatDate(a.created_at)}</div>
+                </div>
             `;
             return el;
         }
 
         function createAnnouncementItem(a) {
             const el = document.createElement('a');
-            el.href = '/portal/announcements';
+            el.href = '/portal/announcements.html';
             el.className = 'announcement-item';
             el.innerHTML = `
                 <div class="announcement-dot"></div>
@@ -1321,7 +1342,7 @@
 
         function createContentCard(p) {
             const el = document.createElement('a');
-            el.href = '/portal/content';
+            el.href = '/portal/content.html';
             el.className = 'content-card';
 
             const thumbHtml = p.thumbnail_url

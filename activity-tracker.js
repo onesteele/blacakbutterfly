@@ -19,6 +19,8 @@
         '/portal/chat.html': 'Messages',
         '/portal/account': 'Account Settings',
         '/portal/account.html': 'Account Settings',
+        '/portal/performance': 'Performance',
+        '/portal/performance.html': 'Performance',
         '/onboarding': 'Onboarding',
         '/onboarding/': 'Onboarding',
         '/auth': 'Login',

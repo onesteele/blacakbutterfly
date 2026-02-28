@@ -578,7 +578,10 @@
 
             } catch (err) {
                 console.error('Init error:', err);
-                window.location.href = '/auth';
+                // Only redirect if it's truly an auth issue
+                if (!currentUser) {
+                    window.location.href = '/auth';
+                }
             }
         })();
 

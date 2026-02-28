@@ -258,6 +258,9 @@ CREATE POLICY "Users can view own conversations" ON chat_conversations
 CREATE POLICY "Users can insert own conversations" ON chat_conversations
     FOR INSERT WITH CHECK (auth.uid() = user_id OR public.is_user_admin(auth.uid()) = TRUE);
 
+CREATE POLICY "Users can update own conversations" ON chat_conversations
+    FOR UPDATE USING (auth.uid() = user_id);
+
 CREATE POLICY "Admins can manage all conversations" ON chat_conversations
     FOR ALL USING (public.is_user_admin(auth.uid()) = TRUE);
 

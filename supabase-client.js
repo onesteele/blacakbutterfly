@@ -212,6 +212,7 @@ window._clientSidebarIcons = {
     content: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
     announcements: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>',
     messages: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>',
+    performance: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>',
     account: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
 };
 
@@ -221,6 +222,7 @@ window.applyClientSidebar = function(activePage) {
 
     const items = [
         { href: '/', icon: 'dashboard', label: 'Dashboard', id: 'dashboard' },
+        { href: '/portal/performance.html', icon: 'performance', label: 'Performance', id: 'performance' },
         { href: '/portal/content.html', icon: 'content', label: 'Content', id: 'content' },
         { href: '/portal/announcements.html', icon: 'announcements', label: 'Announcements', id: 'announcements' },
         { href: '/portal/chat.html', icon: 'messages', label: 'Messages', id: 'messages' },
@@ -260,7 +262,8 @@ window.CLIENT_SIDEBAR_CSS = `
         background: rgba(10, 10, 10, 0.95);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border-right: 1px solid #2a2a2a;
+        border-right: 1px solid rgba(42, 42, 42, 0.6);
+        border-radius: 0;
         z-index: 200;
         display: flex;
         flex-direction: column;
@@ -274,11 +277,10 @@ window.CLIENT_SIDEBAR_CSS = `
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 16px;
-        padding-left: 14px;
+        padding: 18px 14px;
         border-bottom: 1px solid #2a2a2a;
         flex-shrink: 0;
-        height: 64px;
+        height: 68px;
         overflow: hidden;
     }
     .cs-logo img {
@@ -318,13 +320,12 @@ window.CLIENT_SIDEBAR_CSS = `
         align-items: center;
         gap: 14px;
         padding: 14px 0;
-        padding-left: 18px;
-        margin: 0 6px;
-        border-radius: 10px;
+        padding-left: 16px;
+        margin: 0 8px;
+        border-radius: 12px;
         text-decoration: none;
         color: #9ca3af;
         transition: all 0.2s ease;
-        border-left: 3px solid transparent;
         white-space: nowrap;
         overflow: hidden;
         min-height: 48px;
@@ -334,9 +335,9 @@ window.CLIENT_SIDEBAR_CSS = `
         color: #ffffff;
     }
     .cs-nav-item.active {
-        background: rgba(240, 200, 50, 0.15);
+        background: rgba(240, 200, 50, 0.12);
         color: #f0c832;
-        border-left-color: #f0c832;
+        box-shadow: inset 3px 0 0 #f0c832;
     }
     .cs-nav-icon {
         width: 22px;
@@ -370,8 +371,8 @@ window.CLIENT_SIDEBAR_CSS = `
         gap: 14px;
         padding: 14px 0;
         padding-left: 18px;
-        margin: 0 6px;
-        border-radius: 10px;
+        margin: 0 8px;
+        border-radius: 12px;
         text-decoration: none;
         color: #9ca3af;
         cursor: pointer;
