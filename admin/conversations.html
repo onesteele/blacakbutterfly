@@ -347,6 +347,7 @@
         .conversations-container {
             display: flex;
             flex: 1;
+            min-height: 0;
             overflow: hidden;
         }
 
@@ -601,7 +602,9 @@
             display: flex;
             flex-direction: column;
             min-width: 0;
+            min-height: 0;
             background: rgba(10, 10, 10, 0.4);
+            overflow: hidden;
         }
 
         /* Empty state */
@@ -1682,7 +1685,7 @@
                 </div>
 
                 <!-- Chat View (hidden until conversation selected) -->
-                <div id="chat-view" style="display:none; flex:1; display:none; flex-direction:column;">
+                <div id="chat-view" style="display:none; flex:1; flex-direction:column; overflow:hidden; min-height:0;">
                     <!-- Chat Header -->
                     <div class="chat-header">
                         <div class="chat-header-left">
@@ -1915,6 +1918,12 @@
                 if (error) throw error;
 
                 allConversations = data || [];
+
+                // Re-link selectedConversation reference after reload
+                if (selectedConversationId) {
+                    selectedConversation = allConversations.find(c => c.id === selectedConversationId) || selectedConversation;
+                }
+
                 applyFilters();
 
             } catch (error) {
@@ -1948,8 +1957,8 @@
                     schema: 'public',
                     table: 'chat_messages'
                 }, (payload) => {
-                    // If this message is for the currently selected conversation, add it live
-                    if (selectedConversationId && payload.new.conversation_id === selectedConversationId) {
+                    // Only append if it's NOT from us (our sendMessage already appends locally)
+                    if (selectedConversationId && payload.new.conversation_id === selectedConversationId && payload.new.sender_id !== adminUser.id) {
                         appendMessage(payload.new);
                     }
                     // Refresh conversation list for updated previews
@@ -2076,9 +2085,7 @@
             // Show chat view, hide empty state
             document.getElementById('chat-empty-state').style.display = 'none';
             const chatView = document.getElementById('chat-view');
-            chatView.style.display = 'flex';
-            chatView.style.flexDirection = 'column';
-            chatView.style.flex = '1';
+            chatView.style.cssText = 'display:flex; flex-direction:column; flex:1; min-height:0; overflow:hidden;';
 
             // Mobile: slide list away
             if (window.innerWidth <= 768) {
@@ -2420,23 +2427,14 @@
                 input.value = '';
                 input.style.height = 'auto';
 
-                // The real-time subscription will handle adding the message visually
-                // But if real-time is slow, we can append it directly
+                // Append message locally (realtime subscription skips our own messages)
                 if (newMsg) {
-                    // Check if the message was already added by real-time
-                    const container = document.getElementById('chat-messages');
-                    const existingMsgs = container.querySelectorAll('.msg-row');
-                    const lastMsg = existingMsgs[existingMsgs.length - 1];
-                    const lastBubble = lastMsg?.querySelector('.msg-bubble');
-
-                    if (!lastBubble || lastBubble.textContent !== text) {
-                        await appendMessage({
-                            ...newMsg,
-                            sender_id: adminUser.id,
-                            sender_type: 'admin',
-                            content: text
-                        });
-                    }
+                    await appendMessage({
+                        ...newMsg,
+                        sender_id: adminUser.id,
+                        sender_type: 'admin',
+                        content: text
+                    });
                 }
 
             } catch (error) {
