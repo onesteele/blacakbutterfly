@@ -381,7 +381,7 @@
             <form id="login-form">
                 <div class="auth-header">
                     <h1 class="auth-title">Welcome Back</h1>
-                    <p class="auth-subtitle">Sign in to continue your onboarding journey</p>
+                    <p class="auth-subtitle">Sign in to access your member portal</p>
                 </div>
 
                 <div class="form-group">
@@ -620,20 +620,24 @@
                     return;
                 }
 
-                // Update IP address on login
+                // Update IP address and location on login
                 const currentIP = await window.getUserIP();
-                const { data: updateData, error: updateError } = await window.supabaseClient
+                const geo = window._geoData || {};
+                const locationUpdate = {
+                    last_login: new Date().toISOString(),
+                    ip_address: currentIP
+                };
+                if (geo.city) locationUpdate.city = geo.city;
+                if (geo.region) locationUpdate.region = geo.region;
+                if (geo.country) locationUpdate.country = geo.country;
+
+                const { error: updateError } = await window.supabaseClient
                     .from('users')
-                    .update({
-                        last_login: new Date().toISOString(),
-                        ip_address: currentIP
-                    })
+                    .update(locationUpdate)
                     .eq('id', data.user.id);
 
                 if (updateError) {
-                    console.error('Error updating IP address and last login:', updateError);
-                } else {
-                    console.log('Successfully updated IP address to:', currentIP);
+                    console.error('Error updating login info:', updateError);
                 }
 
                 // Wait a moment to ensure session is fully established

@@ -55,12 +55,28 @@ window.updateLastLogin = async function(userId) {
 // Helper function to get user IP address
 window.getUserIP = async function() {
     try {
-        const response = await fetch('https://api.ipify.org?format=json');
+        const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
-        return data.ip;
+        // Cache the full geo data for use by login flow
+        window._geoData = {
+            ip: data.ip || 'Unknown',
+            city: data.city || '',
+            region: data.region || '',
+            country: data.country_name || ''
+        };
+        return data.ip || 'Unknown';
     } catch (error) {
         console.error('Error getting IP:', error);
-        return 'Unknown';
+        // Fallback to ipify
+        try {
+            const resp = await fetch('https://api.ipify.org?format=json');
+            const d = await resp.json();
+            window._geoData = { ip: d.ip || 'Unknown', city: '', region: '', country: '' };
+            return d.ip || 'Unknown';
+        } catch (e) {
+            window._geoData = { ip: 'Unknown', city: '', region: '', country: '' };
+            return 'Unknown';
+        }
     }
 };
 
@@ -175,6 +191,16 @@ window.applySidebarRole = function(profile, activePage) {
     }
 
     navEl.innerHTML = html;
+
+    // Prefetch admin pages for instant navigation
+    items.forEach(item => {
+        if (item.roles.includes(role) && activePage !== item.id) {
+            const link = document.createElement('link');
+            link.rel = 'prefetch';
+            link.href = item.href;
+            document.head.appendChild(link);
+        }
+    });
 };
 
 // ============================================================
@@ -211,6 +237,16 @@ window.applyClientSidebar = function(activePage) {
     }
 
     navEl.innerHTML = html;
+
+    // Prefetch client pages for instant navigation
+    items.forEach(item => {
+        if (activePage !== item.id) {
+            const link = document.createElement('link');
+            link.rel = 'prefetch';
+            link.href = item.href;
+            document.head.appendChild(link);
+        }
+    });
 };
 
 // Client sidebar CSS (injected once per page)
@@ -367,9 +403,9 @@ window.CLIENT_SIDEBAR_CSS = `
         opacity: 1;
     }
     .cs-main-content {
-        margin-left: 60px;
+        padding-left: 60px;
         min-height: 100vh;
-        transition: margin-left 0.3s ease;
+        transition: padding-left 0.3s ease;
     }
     /* Mobile sidebar */
     .cs-mobile-toggle {
@@ -418,13 +454,14 @@ window.CLIENT_SIDEBAR_CSS = `
             display: block;
         }
         .cs-main-content {
-            margin-left: 0;
+            padding-left: 0;
         }
     }
 `;
 
-// Client sidebar HTML template
-window.CLIENT_SIDEBAR_HTML = `
+// Client sidebar HTML builder (function so logoPath resolves at call time)
+window.buildClientSidebarHTML = function(logoPath) {
+    return `
     <button class="cs-mobile-toggle" onclick="toggleClientSidebar()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
@@ -433,7 +470,7 @@ window.CLIENT_SIDEBAR_HTML = `
     <div class="cs-overlay" id="cs-overlay" onclick="toggleClientSidebar()"></div>
     <nav class="client-sidebar" id="client-sidebar">
         <div class="cs-logo">
-            <img src="${window._csLogoPath || 'logo.png'}" alt="Profit Insider">
+            <img src="${logoPath || 'logo.png'}" alt="Profit Insider">
             <span class="cs-logo-text">Profit Insider</span>
         </div>
         <div class="client-sidebar-nav"></div>
@@ -445,8 +482,8 @@ window.CLIENT_SIDEBAR_HTML = `
                 <span class="cs-signout-label">Sign Out</span>
             </button>
         </div>
-    </nav>
-`;
+    </nav>`;
+};
 
 window.toggleClientSidebar = function() {
     document.getElementById('client-sidebar').classList.toggle('open');
@@ -454,7 +491,6 @@ window.toggleClientSidebar = function() {
 };
 
 window.injectClientSidebar = function(activePage, logoPath) {
-    window._csLogoPath = logoPath || 'logo.png';
     // Inject CSS
     if (!document.getElementById('client-sidebar-css')) {
         const style = document.createElement('style');
@@ -465,7 +501,7 @@ window.injectClientSidebar = function(activePage, logoPath) {
     // Inject HTML
     const sidebarContainer = document.getElementById('sidebar-container');
     if (sidebarContainer) {
-        sidebarContainer.innerHTML = window.CLIENT_SIDEBAR_HTML;
+        sidebarContainer.innerHTML = window.buildClientSidebarHTML(logoPath);
         window.applyClientSidebar(activePage);
     }
 };

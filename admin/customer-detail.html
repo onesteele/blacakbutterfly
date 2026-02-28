@@ -1725,6 +1725,13 @@
                                     </svg>
                                     <span id="meta-phone">--</span>
                                 </span>
+                                <span id="profile-location-meta">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    <span id="meta-location">--</span>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -2033,6 +2040,8 @@
             document.getElementById('profile-name').textContent = c.full_name || 'N/A';
             document.getElementById('meta-email').textContent = c.email || 'N/A';
             document.getElementById('meta-phone').textContent = c.phone || 'N/A';
+            const locParts = [c.city, c.region, c.country].filter(Boolean);
+            document.getElementById('meta-location').textContent = locParts.length > 0 ? locParts.join(', ') : 'Unknown';
 
             // Status badge
             const status = c.status || 'onboarding';
@@ -2127,10 +2136,15 @@
         // ============================================================
         function renderOverviewTab() {
             const c = customerData;
+            // Build location string
+            const locationParts = [c.city, c.region, c.country].filter(Boolean);
+            const locationStr = locationParts.length > 0 ? locationParts.join(', ') : 'N/A';
+
             const fields = [
                 { label: 'Full Name', value: c.full_name || 'N/A' },
                 { label: 'Email', value: c.email || 'N/A' },
                 { label: 'Phone', value: c.phone || 'N/A' },
+                { label: 'Location', value: locationStr },
                 { label: 'IP Address', value: c.ip_address || 'N/A' },
                 { label: 'Account Created', value: window.formatFullDate(c.created_at) },
                 { label: 'Last Login', value: window.formatFullDate(c.last_login) },
@@ -2218,16 +2232,17 @@
             listEl.innerHTML = filtered.map(a => {
                 const icon = getActivityIcon(a.action);
                 const timestamp = window.formatFullDate(a.created_at);
+                const details = (typeof a.details === 'object' && a.details) ? a.details : {};
+                const pageName = details.page_name || a.page || '';
+                const actionLabel = formatActionLabel(a.action, pageName, details);
                 return `
                     <div class="activity-entry">
                         <div class="activity-icon-wrapper">${icon}</div>
                         <div class="activity-entry-body">
-                            <div class="activity-entry-action">${escapeHtml(a.action || 'Unknown action')}</div>
-                            <div class="activity-entry-details">${escapeHtml(a.details || '')}</div>
+                            <div class="activity-entry-action">${actionLabel}</div>
                             <div class="activity-entry-meta">
                                 <span>${timestamp}</span>
-                                ${a.page ? `<span class="activity-entry-page">${escapeHtml(a.page)}</span>` : ''}
-                                ${a.ip_address ? `<span>IP: ${escapeHtml(a.ip_address)}</span>` : ''}
+                                ${a.ip_address && a.ip_address !== 'Unknown' ? `<span>IP: ${escapeHtml(a.ip_address)}</span>` : ''}
                             </div>
                         </div>
                     </div>
@@ -2240,6 +2255,26 @@
             btn.textContent = 'Loading...';
             await loadActivityLog();
             btn.textContent = 'Load More';
+        }
+
+        function formatActionLabel(action, pageName, details) {
+            switch (action) {
+                case 'page_view':
+                    return `Viewed <strong>${escapeHtml(pageName || 'page')}</strong>`;
+                case 'login':
+                    return 'Signed in';
+                case 'content_access':
+                    return details.title
+                        ? `Accessed content: <strong>${escapeHtml(details.title)}</strong>`
+                        : 'Accessed content';
+                case 'settings_change':
+                case 'profile_update':
+                    return 'Updated profile settings';
+                case 'message_sent':
+                    return 'Sent a message';
+                default:
+                    return escapeHtml(action || 'Unknown action');
+            }
         }
 
         function getActivityIcon(action) {
