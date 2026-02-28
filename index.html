@@ -137,257 +137,13 @@
             to { transform: rotate(360deg); }
         }
 
-        /* ── Navbar ── */
-        .navbar {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(10, 10, 10, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            padding: 0 24px;
-        }
-
-        .navbar-inner {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            height: 70px;
-            gap: 16px;
-        }
-
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            flex-shrink: 0;
-        }
-
-        .navbar-logo {
-            width: 40px; height: 40px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 12px var(--accent-glow));
-        }
-
-        .navbar-brand-text {
-            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
-            font-size: 22px;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .navbar-nav {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            list-style: none;
-        }
-
-        .navbar-nav a {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .navbar-nav a:hover {
-            color: var(--text-primary);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .navbar-nav a.active {
-            color: var(--accent);
-            background: var(--accent-dim);
-        }
-
-        .navbar-nav a svg {
-            width: 16px; height: 16px;
-            flex-shrink: 0;
-        }
-
-        .navbar-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex-shrink: 0;
-        }
-
-        .user-greeting {
-            font-size: 13px;
-            color: var(--text-secondary);
-            white-space: nowrap;
-        }
-
-        .user-greeting strong {
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .signout-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            background: transparent;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-secondary);
-            font-family: 'Manrope', sans-serif;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-        }
-
-        .signout-btn:hover {
-            background: rgba(239, 68, 68, 0.1);
-            border-color: rgba(239, 68, 68, 0.3);
-            color: var(--error);
-        }
-
-        .signout-btn svg {
-            width: 14px; height: 14px;
-        }
-
-        /* ── Mobile menu toggle ── */
-        .menu-toggle {
-            display: none;
-            background: transparent;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 8px;
-            cursor: pointer;
-            color: var(--text-secondary);
-            transition: all 0.2s ease;
-        }
-
-        .menu-toggle:hover {
-            color: var(--text-primary);
-            border-color: var(--accent);
-        }
-
-        .menu-toggle svg {
-            width: 22px; height: 22px;
-            display: block;
-        }
-
-        .mobile-nav {
-            display: none;
-            position: fixed;
-            top: 70px; left: 0;
-            width: 100%; height: calc(100vh - 70px);
-            background: rgba(10, 10, 10, 0.97);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            z-index: 99;
-            padding: 24px;
-            flex-direction: column;
-            gap: 8px;
-            overflow-y: auto;
-        }
-
-        .mobile-nav.open {
-            display: flex;
-        }
-
-        .mobile-nav a {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px 16px;
-            border-radius: 10px;
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-size: 16px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .mobile-nav a:hover {
-            color: var(--text-primary);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .mobile-nav a.active {
-            color: var(--accent);
-            background: var(--accent-dim);
-        }
-
-        .mobile-nav a svg {
-            width: 20px; height: 20px;
-            flex-shrink: 0;
-        }
-
-        .mobile-nav-divider {
-            height: 1px;
-            background: var(--border);
-            margin: 12px 0;
-        }
-
-        .mobile-nav .mobile-user-info {
-            padding: 14px 16px;
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .mobile-nav .mobile-user-info strong {
-            color: var(--text-primary);
-        }
-
-        .mobile-signout-btn {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px 16px;
-            border-radius: 10px;
-            background: transparent;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            color: var(--error);
-            font-family: 'Manrope', sans-serif;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-            text-align: left;
-        }
-
-        .mobile-signout-btn:hover {
-            background: rgba(239, 68, 68, 0.1);
-        }
-
-        .mobile-signout-btn svg {
-            width: 20px; height: 20px;
-            flex-shrink: 0;
-        }
-
-        /* ── Main content ── */
-        .main-content {
+        /* ── Dashboard layout ── */
+        .dashboard-page {
             position: relative;
             z-index: 10;
-            max-width: 1200px;
+            padding: 48px 56px 80px;
+            max-width: 1300px;
             margin: 0 auto;
-            padding: 40px 40px 80px;
-            display: none;
-        }
-
-        .main-content.visible {
-            display: block;
         }
 
         /* ── Welcome banner ── */
@@ -397,8 +153,8 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(42, 42, 42, 0.7);
             border-radius: 20px;
-            padding: 44px 40px;
-            margin-bottom: 36px;
+            padding: 48px 48px;
+            margin-bottom: 40px;
             position: relative;
             overflow: hidden;
         }
@@ -422,7 +178,7 @@
 
         .welcome-title {
             font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
-            font-size: 34px;
+            font-size: 36px;
             font-weight: 800;
             background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 50%, #e6b800 100%);
             -webkit-background-clip: text;
@@ -442,9 +198,64 @@
             line-height: 1.7;
         }
 
+        /* ── Quick stats row ── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px 28px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .stat-icon {
+            width: 48px; height: 48px;
+            background: var(--accent-dim);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon svg {
+            width: 22px; height: 22px;
+            color: var(--accent);
+        }
+
+        .stat-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
         /* ── Notification banner ── */
         .notification-area {
-            margin-bottom: 36px;
+            margin-bottom: 32px;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -457,7 +268,7 @@
             border: 1px solid rgba(240, 200, 50, 0.2);
             border-left: 4px solid var(--accent);
             border-radius: 14px;
-            padding: 18px 22px;
+            padding: 18px 24px;
             display: flex;
             align-items: flex-start;
             gap: 14px;
@@ -531,19 +342,7 @@
             width: 16px; height: 16px;
         }
 
-        /* ── Two-column layout ── */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 28px;
-            margin-bottom: 36px;
-        }
-
         /* ── Section headers ── */
-        .section {
-            margin-bottom: 36px;
-        }
-
         .section-header {
             display: flex;
             align-items: center;
@@ -553,7 +352,7 @@
 
         .section-title {
             font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 800;
             color: var(--text-primary);
             display: flex;
@@ -562,7 +361,7 @@
         }
 
         .section-title svg {
-            width: 20px; height: 20px;
+            width: 22px; height: 22px;
             color: var(--accent);
         }
 
@@ -585,11 +384,23 @@
             width: 14px; height: 14px;
         }
 
+        /* ── Two-column layout ── */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
+        }
+
+        .dashboard-section {
+            min-width: 0;
+        }
+
         /* ── Pinned announcements ── */
         .pinned-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
         }
 
         .pinned-card {
@@ -598,48 +409,18 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(240, 200, 50, 0.2);
             border-radius: 16px;
-            padding: 24px 26px;
+            padding: 24px 28px;
             position: relative;
             transition: transform 0.2s ease, border-color 0.2s ease;
             cursor: pointer;
             text-decoration: none;
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
+            display: block;
             color: inherit;
         }
 
         .pinned-card:hover {
             transform: translateY(-2px);
             border-color: rgba(240, 200, 50, 0.45);
-        }
-
-        .pinned-card-icon {
-            flex-shrink: 0;
-            width: 42px; height: 42px;
-            background: var(--accent-dim);
-            border: 1px solid rgba(240, 200, 50, 0.15);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .pinned-card-icon svg {
-            width: 18px; height: 18px;
-            color: var(--accent);
-        }
-
-        .pinned-card-body {
-            flex: 1;
-            min-width: 0;
-        }
-
-        .pinned-card-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
         }
 
         .pinned-badge {
@@ -652,15 +433,16 @@
             letter-spacing: 0.5px;
             color: var(--accent);
             background: var(--accent-dim);
-            padding: 3px 8px;
+            padding: 3px 10px;
             border-radius: 100px;
+            margin-bottom: 12px;
         }
 
         .pinned-card-title {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             line-height: 1.4;
         }
 
@@ -677,14 +459,14 @@
         .pinned-card-date {
             font-size: 11px;
             color: var(--text-muted);
-            margin-top: 10px;
+            margin-top: 12px;
         }
 
         /* ── Content grid ── */
-        .content-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
+        .content-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
 
         .content-card {
@@ -698,7 +480,8 @@
             cursor: pointer;
             text-decoration: none;
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            gap: 0;
             color: inherit;
         }
 
@@ -708,14 +491,14 @@
         }
 
         .content-thumb {
-            width: 100%;
-            aspect-ratio: 16/9;
+            width: 120px;
+            height: 80px;
             background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
+            flex-shrink: 0;
         }
 
         .content-thumb img {
@@ -726,7 +509,7 @@
 
         .content-play-icon {
             position: absolute;
-            width: 44px; height: 44px;
+            width: 36px; height: 36px;
             background: rgba(240, 200, 50, 0.9);
             border-radius: 50%;
             display: flex;
@@ -740,16 +523,15 @@
         }
 
         .content-play-icon svg {
-            width: 18px; height: 18px;
+            width: 14px; height: 14px;
             color: #0a0a0a;
             margin-left: 2px;
         }
 
         .content-info {
-            padding: 18px 20px;
+            padding: 16px 22px;
             flex: 1;
-            display: flex;
-            flex-direction: column;
+            min-width: 0;
         }
 
         .content-category {
@@ -761,39 +543,40 @@
             letter-spacing: 0.5px;
             color: var(--accent);
             background: var(--accent-dim);
-            padding: 3px 8px;
+            padding: 2px 8px;
             border-radius: 4px;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
 
         .content-title {
             font-size: 14px;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            white-space: nowrap;
             overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .content-desc {
             font-size: 12px;
             color: var(--text-muted);
             line-height: 1.5;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            white-space: nowrap;
             overflow: hidden;
-            flex: 1;
+            text-overflow: ellipsis;
         }
 
         /* ── Recent announcements list ── */
+        .announcements-section {
+            margin-bottom: 40px;
+        }
+
         .announcements-list {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .announcement-item {
@@ -802,7 +585,7 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border);
             border-radius: 14px;
-            padding: 20px 24px;
+            padding: 22px 28px;
             display: flex;
             align-items: flex-start;
             gap: 16px;
@@ -854,54 +637,6 @@
             margin-top: 2px;
         }
 
-        /* ── Quick stats ── */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-top: 8px;
-        }
-
-        .stat-card {
-            background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 26px 24px;
-            text-align: center;
-        }
-
-        .stat-icon {
-            width: 42px; height: 42px;
-            background: var(--accent-dim);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 14px;
-        }
-
-        .stat-icon svg {
-            width: 20px; height: 20px;
-            color: var(--accent);
-        }
-
-        .stat-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-
-        .stat-value {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
         /* ── Empty state ── */
         .empty-state {
             text-align: center;
@@ -924,13 +659,10 @@
             .dashboard-grid {
                 grid-template-columns: 1fr;
             }
-            .content-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
         }
 
-        @media (max-width: 640px) {
-            .main-content {
+        @media (max-width: 768px) {
+            .dashboard-page {
                 padding: 24px 20px 50px;
             }
 
@@ -943,20 +675,21 @@
                 font-size: 26px;
             }
 
-            .welcome-subtitle {
-                font-size: 13px;
-            }
-
-            .section-title {
-                font-size: 16px;
-            }
-
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-
             .stats-row {
                 grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .content-card {
+                flex-direction: column;
+            }
+
+            .content-thumb {
+                width: 100%;
+                height: 140px;
             }
 
             .announcement-item {
@@ -992,114 +725,114 @@
     <div id="sidebar-container"></div>
 
     <!-- Main dashboard content -->
-    <main class="cs-main-content" id="mainContent" style="display:none;">
+    <div class="cs-main-content" id="mainContent" style="display:none;">
+        <div class="dashboard-page">
 
-        <!-- Welcome banner -->
-        <div class="welcome-banner">
-            <h1 class="welcome-title" id="welcomeTitle">Welcome back!</h1>
-            <p class="welcome-subtitle">Your Profit Insider member portal — access exclusive content, announcements, and resources.</p>
-        </div>
+            <!-- Welcome banner -->
+            <div class="welcome-banner">
+                <h1 class="welcome-title" id="welcomeTitle">Welcome back!</h1>
+                <p class="welcome-subtitle">Your Profit Insider member portal — access exclusive content, announcements, and resources.</p>
+            </div>
 
-        <!-- Notification area -->
-        <div class="notification-area" id="notificationArea"></div>
+            <!-- Quick stats -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">Member Since</div>
+                        <div class="stat-value" id="statMemberSince">--</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">Onboarding Completed</div>
+                        <div class="stat-value" id="statOnboardingDate">--</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-label">Last Login</div>
+                        <div class="stat-value" id="statLastLogin">--</div>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Two-column grid: Pinned + Content side by side -->
-        <div class="dashboard-grid">
-            <!-- Left: Pinned Announcements -->
-            <div class="section" id="pinnedSection" style="margin-bottom:0;">
+            <!-- Notification area -->
+            <div class="notification-area" id="notificationArea"></div>
+
+            <!-- Two-column grid: Pinned + Content side by side -->
+            <div class="dashboard-grid">
+                <!-- Left: Pinned Announcements -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                            Pinned Announcements
+                        </h2>
+                        <a href="/portal/announcements.html" class="section-link">
+                            View all
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </a>
+                    </div>
+                    <div class="pinned-list" id="pinnedGrid">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                            <p>No pinned announcements.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Recent Content -->
+                <div class="dashboard-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                            Recent Content
+                        </h2>
+                        <a href="/portal/content.html" class="section-link">
+                            View all
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </a>
+                    </div>
+                    <div class="content-list" id="contentGrid">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                            <p>No content available yet. Check back soon.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent announcements (full width) -->
+            <div class="announcements-section" id="announcementsSection">
                 <div class="section-header">
                     <h2 class="section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                        Pinned
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        Recent Announcements
                     </h2>
                     <a href="/portal/announcements.html" class="section-link">
                         View all
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                     </a>
                 </div>
-                <div class="pinned-list" id="pinnedGrid">
+                <div class="announcements-list" id="announcementsList">
                     <div class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                        <p>No pinned announcements.</p>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                        <p>No announcements yet.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Right: Recent Content -->
-            <div class="section" id="contentSection" style="margin-bottom:0;">
-                <div class="section-header">
-                    <h2 class="section-title">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-                        Recent Content
-                    </h2>
-                    <a href="/portal/content.html" class="section-link">
-                        View all
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                    </a>
-                </div>
-                <div class="content-grid" id="contentGrid">
-                    <div class="empty-state">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-                        <p>No content available yet. Check back soon.</p>
-                    </div>
-                </div>
-            </div>
         </div>
-
-        <!-- Recent announcements (full width) -->
-        <div class="section" id="announcementsSection">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                    Recent Announcements
-                </h2>
-                <a href="/portal/announcements.html" class="section-link">
-                    View all
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                </a>
-            </div>
-            <div class="announcements-list" id="announcementsList">
-                <div class="empty-state">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                    <p>No announcements yet.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick stats -->
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-                    Quick Stats
-                </h2>
-            </div>
-            <div class="stats-row">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                    </div>
-                    <div class="stat-label">Member Since</div>
-                    <div class="stat-value" id="statMemberSince">--</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                    </div>
-                    <div class="stat-label">Onboarding Completed</div>
-                    <div class="stat-value" id="statOnboardingDate">--</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    </div>
-                    <div class="stat-label">Last Login</div>
-                    <div class="stat-value" id="statLastLogin">--</div>
-                </div>
-            </div>
-        </div>
-
-    </main>
+    </div>
 
     <!-- External scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1187,14 +920,13 @@
             // Inject sidebar and show content
             window.injectClientSidebar('dashboard', 'logo.png');
             document.getElementById('mainContent').style.display = '';
-            document.getElementById('mainContent').classList.add('visible');
             document.getElementById('loadingScreen').classList.add('hidden');
         }
 
         // ── Load all dashboard data ──
         async function loadDashboardData() {
             // Load data in parallel
-            const [notifications, announcements, content] = await Promise.all([
+            await Promise.all([
                 loadNotifications(),
                 loadAnnouncements(),
                 loadContent()
@@ -1293,17 +1025,10 @@
             el.href = '/portal/announcements.html';
             el.className = 'pinned-card';
             el.innerHTML = `
-                <div class="pinned-card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                </div>
-                <div class="pinned-card-body">
-                    <div class="pinned-card-header">
-                        <span class="pinned-badge">Pinned</span>
-                    </div>
-                    <div class="pinned-card-title">${escapeHtml(a.title)}</div>
-                    <div class="pinned-card-excerpt">${escapeHtml(a.content || '')}</div>
-                    <div class="pinned-card-date">${formatDate(a.created_at)}</div>
-                </div>
+                <span class="pinned-badge">Pinned</span>
+                <div class="pinned-card-title">${escapeHtml(a.title)}</div>
+                <div class="pinned-card-excerpt">${escapeHtml(a.content || '')}</div>
+                <div class="pinned-card-date">${formatDate(a.created_at)}</div>
             `;
             return el;
         }
@@ -1378,29 +1103,8 @@
         function resetInactivityTimer() {
             if (inactivityTimer) clearTimeout(inactivityTimer);
             inactivityTimer = setTimeout(() => {
-                handleSignOut();
+                window.signOut();
             }, INACTIVITY_TIMEOUT);
-        }
-
-        // ── Sign out ──
-        function handleSignOut() {
-            if (inactivityTimer) clearTimeout(inactivityTimer);
-            window.signOut();
-        }
-
-        // ── Mobile nav toggle ──
-        function toggleMobileNav() {
-            const nav = document.getElementById('mobileNav');
-            const btn = document.getElementById('menuToggle');
-            const isOpen = nav.classList.contains('open');
-
-            if (isOpen) {
-                nav.classList.remove('open');
-                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>';
-            } else {
-                nav.classList.add('open');
-                btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
-            }
         }
 
         // ── Helpers ──

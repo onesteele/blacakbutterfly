@@ -608,12 +608,13 @@
                         document.getElementById('resolvedBanner').style.display = '';
                     }
 
-                    // Mark user unread as read
+                    // Mark user unread as read (non-blocking, won't break page if RLS missing)
                     if (convs[0].user_unread_count > 0) {
-                        await window.supabaseClient
+                        window.supabaseClient
                             .from('chat_conversations')
                             .update({ user_unread_count: 0 })
-                            .eq('id', conversationId);
+                            .eq('id', conversationId)
+                            .then(({ error: ue }) => { if (ue) console.warn('Could not mark as read:', ue.message); });
                     }
 
                     // Load messages

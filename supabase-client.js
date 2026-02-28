@@ -55,28 +55,24 @@ window.updateLastLogin = async function(userId) {
 // Helper function to get user IP address
 window.getUserIP = async function() {
     try {
-        const response = await fetch('https://ipapi.co/json/');
+        const response = await fetch('https://api.ipify.org?format=json');
         const data = await response.json();
-        // Cache the full geo data for use by login flow
-        window._geoData = {
-            ip: data.ip || 'Unknown',
-            city: data.city || '',
-            region: data.region || '',
-            country: data.country_name || ''
-        };
-        return data.ip || 'Unknown';
+        const ip = data.ip || 'Unknown';
+        window._geoData = { ip: ip, city: '', region: '', country: '' };
+        // Try to get geo data in background (non-blocking)
+        fetch('https://ip-api.com/json/' + ip + '?fields=city,regionName,country')
+            .then(r => r.json())
+            .then(geo => {
+                window._geoData.city = geo.city || '';
+                window._geoData.region = geo.regionName || '';
+                window._geoData.country = geo.country || '';
+            })
+            .catch(() => {});
+        return ip;
     } catch (error) {
         console.error('Error getting IP:', error);
-        // Fallback to ipify
-        try {
-            const resp = await fetch('https://api.ipify.org?format=json');
-            const d = await resp.json();
-            window._geoData = { ip: d.ip || 'Unknown', city: '', region: '', country: '' };
-            return d.ip || 'Unknown';
-        } catch (e) {
-            window._geoData = { ip: 'Unknown', city: '', region: '', country: '' };
-            return 'Unknown';
-        }
+        window._geoData = { ip: 'Unknown', city: '', region: '', country: '' };
+        return 'Unknown';
     }
 };
 
