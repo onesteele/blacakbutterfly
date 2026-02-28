@@ -521,6 +521,28 @@
             flex-shrink: 0;
         }
 
+        .conv-item-ticket {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 2px;
+        }
+
+        .conv-ticket-num {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .conv-ticket-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .conv-item-bottom {
             display: flex;
             justify-content: space-between;
@@ -696,6 +718,13 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+
+        .chat-ticket-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 1px;
         }
 
         .chat-header-name .status-badge {
@@ -1611,6 +1640,10 @@
         </div>
 
         <div class="sidebar-bottom">
+            <a class="nav-item" onclick="window.toggleTheme()" style="cursor:pointer;">
+                <span class="nav-icon"><span class="theme-toggle-icon"></span></span>
+                <span class="nav-label theme-toggle-label"></span>
+            </a>
             <a class="nav-item signout-item" onclick="window.signOut()" style="cursor:pointer;">
                 <span class="nav-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -1700,6 +1733,7 @@
                                     <span id="chat-customer-name">Customer Name</span>
                                     <span class="status-badge" id="chat-status-badge">Open</span>
                                 </div>
+                                <div class="chat-ticket-label" id="chat-ticket-info"></div>
                                 <div class="chat-header-meta">
                                     <span id="chat-customer-email">email@example.com</span>
                                     <span class="sep">|</span>
@@ -1750,8 +1784,12 @@
     <div class="modal-overlay" id="new-chat-modal" style="display:none;">
         <div class="modal-card">
             <div class="modal-header">
-                <h3>Start New Conversation</h3>
+                <h3>Start New Ticket</h3>
                 <button class="modal-close" onclick="closeNewChatModal()">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Ticket Subject</label>
+                <input type="text" id="nc-title" placeholder="e.g. Account setup, Billing question..." maxlength="120" style="margin-bottom: 12px;">
             </div>
             <div class="form-group">
                 <label>Search User</label>
@@ -1987,7 +2025,9 @@
                 // Search filter
                 if (searchQuery) {
                     const name = getCustomerName(conv).toLowerCase();
-                    if (!name.includes(searchQuery)) return false;
+                    const title = (conv.title || '').toLowerCase();
+                    const ticketNum = conv.ticket_number ? String(conv.ticket_number) : '';
+                    if (!name.includes(searchQuery) && !title.includes(searchQuery) && !ticketNum.includes(searchQuery)) return false;
                 }
 
                 return true;
@@ -2052,6 +2092,9 @@
                     : window.formatRelativeTime(conv.created_at);
                 const hasUnread = conv.admin_unread_count > 0;
 
+                const ticketNum = conv.ticket_number ? `#${conv.ticket_number}` : '';
+                const ticketTitle = conv.title || 'Support Request';
+
                 return `
                     <div class="conv-item ${isActive ? 'active' : ''}" onclick="selectConversation('${conv.id}')">
                         <div class="conv-item-avatar">${initials}</div>
@@ -2060,6 +2103,7 @@
                                 <span class="conv-item-name">${escapeHtml(name)}</span>
                                 <span class="conv-item-time">${timeStr}</span>
                             </div>
+                            <div class="conv-item-ticket">${ticketNum ? '<span class="conv-ticket-num">' + ticketNum + '</span>' : ''}<span class="conv-ticket-title">${escapeHtml(ticketTitle)}</span></div>
                             <div class="conv-item-bottom">
                                 <span class="conv-item-preview">${preview}</span>
                                 ${hasUnread ? '<span class="conv-item-unread"></span>' : ''}
@@ -2099,10 +2143,13 @@
             const email = selectedConversation.user?.email || 'N/A';
             const userId = selectedConversation.user_id;
             const isOpen = selectedConversation.status === 'open';
+            const ticketNum = selectedConversation.ticket_number ? `#${selectedConversation.ticket_number}` : '';
+            const ticketTitle = selectedConversation.title || 'Support Request';
 
             document.getElementById('chat-avatar').textContent = initials;
             document.getElementById('chat-customer-name').textContent = name;
             document.getElementById('chat-customer-email').textContent = email;
+            document.getElementById('chat-ticket-info').textContent = ticketNum ? `${ticketNum} · ${ticketTitle}` : ticketTitle;
             document.getElementById('chat-profile-link').href = `/admin/customer-detail.html?id=${userId}`;
 
             updateStatusBadge(isOpen);
@@ -2520,8 +2567,9 @@
 
         async function openNewChatModal() {
             document.getElementById('new-chat-modal').style.display = 'flex';
+            document.getElementById('nc-title').value = '';
             document.getElementById('nc-search').value = '';
-            document.getElementById('nc-search').focus();
+            document.getElementById('nc-title').focus();
 
             // Load all non-admin users
             const listEl = document.getElementById('nc-user-list');
@@ -2604,11 +2652,14 @@
 
             // Create a new conversation
             try {
+                const ticketTitle = (document.getElementById('nc-title').value || '').trim() || 'Support Request';
+
                 const { data: newConv, error } = await window.supabaseClient
                     .from('chat_conversations')
                     .insert({
                         user_id: userId,
                         status: 'open',
+                        title: ticketTitle,
                         last_message_at: new Date().toISOString()
                     })
                     .select(`

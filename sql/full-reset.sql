@@ -536,6 +536,25 @@ ALTER PUBLICATION supabase_realtime ADD TABLE chat_conversations;
 
 
 -- ============================================================================
+-- STEP 22: Ticket system - allow multiple conversations per user
+-- ============================================================================
+
+-- Remove UNIQUE constraint on user_id to allow multiple tickets per user
+ALTER TABLE chat_conversations DROP CONSTRAINT IF EXISTS chat_conversations_user_id_key;
+
+-- Add ticket-specific columns
+ALTER TABLE chat_conversations ADD COLUMN IF NOT EXISTS ticket_number SERIAL;
+ALTER TABLE chat_conversations ADD COLUMN IF NOT EXISTS title TEXT DEFAULT 'Support Request';
+
+-- Index for ticket number (unique)
+CREATE UNIQUE INDEX IF NOT EXISTS idx_chat_conversations_ticket ON chat_conversations(ticket_number);
+
+-- Index for user conversations (no longer unique)
+DROP INDEX IF EXISTS idx_chat_conversations_user;
+CREATE INDEX IF NOT EXISTS idx_chat_conversations_user_created ON chat_conversations(user_id, created_at DESC);
+
+
+-- ============================================================================
 -- DONE! You should see "Success. No rows returned" - that's normal.
 -- ============================================================================
 -- All tables, policies, functions, and triggers are now set up.

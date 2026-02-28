@@ -1137,6 +1137,136 @@
         /* ============================================================
            COMMUNICATION TAB
            ============================================================ */
+        /* Ticket History List */
+        .ticket-history-list {
+            padding: 0;
+        }
+
+        .ticket-history-item {
+            border-bottom: 1px solid var(--border);
+            padding: 14px 24px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .ticket-history-item:last-child {
+            border-bottom: none;
+        }
+
+        .ticket-history-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .ticket-history-item.expanded {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .ticket-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .ticket-item-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .ticket-item-num {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .ticket-item-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ticket-item-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .ticket-item-date {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .ticket-item-status {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .ticket-item-status.open {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .ticket-item-status.resolved {
+            background: rgba(107, 114, 128, 0.1);
+            color: var(--text-muted);
+            border: 1px solid rgba(107, 114, 128, 0.15);
+        }
+
+        .ticket-item-preview {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ticket-item-chevron {
+            width: 16px;
+            height: 16px;
+            color: var(--text-muted);
+            transition: transform 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .ticket-history-item.expanded .ticket-item-chevron {
+            transform: rotate(90deg);
+        }
+
+        /* Inline ticket messages */
+        .ticket-messages-inline {
+            display: none;
+            padding: 12px 0 4px 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .ticket-messages-inline::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .ticket-messages-inline::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        .ticket-history-item.expanded .ticket-messages-inline {
+            display: block;
+        }
+
         .chat-container {
             display: flex;
             flex-direction: column;
@@ -1266,6 +1396,14 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            padding: 40px 0;
+        }
+
+        .ticket-empty-state {
+            padding: 40px 24px;
+            text-align: center;
             color: var(--text-muted);
             font-size: 14px;
         }
@@ -1631,6 +1769,10 @@
         </div>
 
         <div class="sidebar-bottom">
+            <a class="nav-item" onclick="window.toggleTheme()" style="cursor:pointer;">
+                <span class="nav-icon"><span class="theme-toggle-icon"></span></span>
+                <span class="nav-label theme-toggle-label"></span>
+            </a>
             <a class="nav-item signout-item" onclick="window.signOut()" style="cursor:pointer;">
                 <span class="nav-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -1850,21 +1992,11 @@
                 <div class="tab-content" id="tab-communication">
                     <div class="glass-card">
                         <div class="card-header">
-                            <span class="card-title">Messages</span>
+                            <span class="card-title">Ticket History</span>
                         </div>
                         <div class="card-body" style="padding:0;">
-                            <div class="chat-container" style="padding:16px 24px 24px;">
-                                <div class="chat-messages" id="chat-messages">
-                                    <div class="chat-empty" id="chat-empty">No messages yet. Send the first message below.</div>
-                                </div>
-                                <div class="chat-input-bar">
-                                    <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMessage()">
-                                    <button class="chat-send-btn" onclick="sendMessage()">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                                        </svg>
-                                    </button>
-                                </div>
+                            <div class="ticket-history-list" id="ticket-history-list">
+                                <div class="ticket-empty-state">Loading tickets...</div>
                             </div>
                         </div>
                     </div>
@@ -1924,6 +2056,7 @@
         const activityLimit = 50;
         let allActivityData = [];
         let conversationId = null;
+        let customerTickets = [];
         let autoLogoutTimer = null;
 
         const ONBOARDING_STEPS = [
@@ -2341,51 +2474,102 @@
         }
 
         // ============================================================
-        // COMMUNICATION TAB
+        // COMMUNICATION TAB — TICKET HISTORY
         // ============================================================
         async function loadConversation() {
+            const listEl = document.getElementById('ticket-history-list');
+            listEl.innerHTML = '<div class="ticket-empty-state">Loading tickets...</div>';
+
             try {
-                // Find existing conversation for this user
-                const { data: convos, error } = await window.supabaseClient
+                const { data: tickets, error } = await window.supabaseClient
                     .from('chat_conversations')
                     .select('*')
                     .eq('user_id', customerId)
-                    .order('created_at', { ascending: false })
-                    .limit(1);
+                    .order('created_at', { ascending: false });
 
-                if (convos && convos.length > 0) {
-                    conversationId = convos[0].id;
-                    await loadMessages();
-                } else {
-                    // No conversation yet
-                    conversationId = null;
-                    document.getElementById('chat-messages').innerHTML = `
-                        <div class="chat-empty">No messages yet. Send the first message below.</div>
-                    `;
-                }
+                if (error) throw error;
+
+                customerTickets = tickets || [];
+                renderTicketHistory();
+
             } catch (err) {
-                console.error('Error loading conversation:', err);
+                console.error('Error loading tickets:', err);
+                listEl.innerHTML = '<div class="ticket-empty-state">Failed to load tickets.</div>';
             }
         }
 
-        async function loadMessages() {
-            if (!conversationId) return;
+        function renderTicketHistory() {
+            const listEl = document.getElementById('ticket-history-list');
+
+            if (customerTickets.length === 0) {
+                listEl.innerHTML = '<div class="ticket-empty-state">No support tickets for this customer yet.</div>';
+                return;
+            }
+
+            listEl.innerHTML = customerTickets.map(ticket => {
+                const status = ticket.status || 'open';
+                const isOpen = status === 'open';
+                const ticketNum = ticket.ticket_number ? `#${ticket.ticket_number}` : '';
+                const title = escapeHtml(ticket.title || 'Support Request');
+                const preview = ticket.last_message_preview ? escapeHtml(ticket.last_message_preview) : 'No messages';
+                const dateStr = window.formatRelativeTime(ticket.last_message_at || ticket.created_at);
+
+                return `
+                    <div class="ticket-history-item" id="ticket-${ticket.id}" onclick="toggleTicketExpand('${ticket.id}')">
+                        <div class="ticket-item-header">
+                            <div class="ticket-item-left">
+                                <svg class="ticket-item-chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                </svg>
+                                <span class="ticket-item-num">${ticketNum}</span>
+                                <span class="ticket-item-title">${title}</span>
+                            </div>
+                            <div class="ticket-item-right">
+                                <span class="ticket-item-date">${dateStr}</span>
+                                <span class="ticket-item-status ${isOpen ? 'open' : 'resolved'}">${isOpen ? 'Open' : 'Resolved'}</span>
+                            </div>
+                        </div>
+                        <div class="ticket-item-preview">${preview}</div>
+                        <div class="ticket-messages-inline" id="ticket-msgs-${ticket.id}">
+                            <div class="chat-empty">Loading messages...</div>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        async function toggleTicketExpand(ticketId) {
+            const item = document.getElementById('ticket-' + ticketId);
+            if (!item) return;
+
+            const wasExpanded = item.classList.contains('expanded');
+
+            // Collapse all
+            document.querySelectorAll('.ticket-history-item.expanded').forEach(el => {
+                el.classList.remove('expanded');
+            });
+
+            if (wasExpanded) return;
+
+            // Expand this one and load messages
+            item.classList.add('expanded');
+            const msgsEl = document.getElementById('ticket-msgs-' + ticketId);
+            msgsEl.innerHTML = '<div class="chat-empty">Loading messages...</div>';
 
             try {
                 const { data: messages, error } = await window.supabaseClient
                     .from('chat_messages')
                     .select('*')
-                    .eq('conversation_id', conversationId)
+                    .eq('conversation_id', ticketId)
                     .order('created_at', { ascending: true });
 
-                const chatEl = document.getElementById('chat-messages');
+                if (error) throw error;
 
                 if (!messages || messages.length === 0) {
-                    chatEl.innerHTML = `<div class="chat-empty">No messages yet. Send the first message below.</div>`;
+                    msgsEl.innerHTML = '<div class="chat-empty">No messages in this ticket.</div>';
                     return;
                 }
 
-                chatEl.innerHTML = messages.map(m => {
+                msgsEl.innerHTML = messages.map(m => {
                     const isAdmin = m.sender_id !== customerId;
                     const time = window.formatRelativeTime(m.created_at);
                     return `
@@ -2394,65 +2578,14 @@
                                 <div class="chat-bubble">${escapeHtml(m.content || m.message || '')}</div>
                                 <div class="chat-timestamp">${time}</div>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 }).join('');
 
-                chatEl.scrollTop = chatEl.scrollHeight;
+                msgsEl.scrollTop = msgsEl.scrollHeight;
 
             } catch (err) {
-                console.error('Error loading messages:', err);
-            }
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const message = input.value.trim();
-            if (!message) return;
-
-            input.value = '';
-
-            try {
-                // If no conversation exists, create one
-                if (!conversationId) {
-                    const { data: newConvo, error: convoError } = await window.supabaseClient
-                        .from('chat_conversations')
-                        .insert({
-                            user_id: customerId,
-                            admin_id: adminUser.id,
-                            status: 'active'
-                        })
-                        .select()
-                        .single();
-
-                    if (convoError) {
-                        console.error('Error creating conversation:', convoError);
-                        alert('Failed to start conversation.');
-                        return;
-                    }
-
-                    conversationId = newConvo.id;
-                }
-
-                // Insert message
-                const { error: msgError } = await window.supabaseClient
-                    .from('chat_messages')
-                    .insert({
-                        conversation_id: conversationId,
-                        sender_id: adminUser.id,
-                        content: message
-                    });
-
-                if (msgError) {
-                    console.error('Error sending message:', msgError);
-                    alert('Failed to send message.');
-                    return;
-                }
-
-                await loadMessages();
-
-            } catch (err) {
-                console.error('Error:', err);
+                console.error('Error loading ticket messages:', err);
+                msgsEl.innerHTML = '<div class="chat-empty">Failed to load messages.</div>';
             }
         }
 

@@ -197,6 +197,19 @@ window.applySidebarRole = function(profile, activePage) {
             document.head.appendChild(link);
         }
     });
+
+    // Populate theme toggle icons in admin sidebar
+    window.initAdminThemeToggle();
+};
+
+window.initAdminThemeToggle = function() {
+    var isDark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
+    document.querySelectorAll('.theme-toggle-icon').forEach(function(el) {
+        el.innerHTML = isDark ? window._themeSunIcon : window._themeMoonIcon;
+    });
+    document.querySelectorAll('.theme-toggle-label').forEach(function(el) {
+        el.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+    });
 };
 
 // ============================================================
@@ -247,6 +260,104 @@ window.applyClientSidebar = function(activePage) {
     });
 };
 
+// ============================================================
+// THEME SYSTEM (dark/light mode)
+// ============================================================
+window.THEME_LIGHT_CSS = `
+    [data-theme="light"] {
+        --bg-dark: #f5f5f7;
+        --bg-card: #ffffff;
+        --accent: #c49b00;
+        --accent-light: #b38d00;
+        --accent-dim: rgba(196, 155, 0, 0.1);
+        --accent-glow: rgba(196, 155, 0, 0.15);
+        --text-primary: #111111;
+        --text-secondary: #4b5563;
+        --text-muted: #9ca3af;
+        --border: #e5e7eb;
+        --success: #16a34a;
+        --error: #dc2626;
+    }
+    [data-theme="light"] .client-sidebar,
+    [data-theme="light"] .sidebar {
+        background: rgba(255, 255, 255, 0.97) !important;
+        border-right-color: var(--border) !important;
+    }
+    [data-theme="light"] .cs-logo,
+    [data-theme="light"] .cs-bottom {
+        border-color: var(--border) !important;
+    }
+    [data-theme="light"] .cs-nav-item {
+        color: var(--text-secondary);
+    }
+    [data-theme="light"] .cs-nav-item:hover {
+        color: var(--text-primary);
+    }
+    [data-theme="light"] .cs-nav-item.active {
+        color: var(--accent);
+    }
+    [data-theme="light"] .cs-signout,
+    [data-theme="light"] .cs-theme-toggle {
+        color: var(--text-secondary);
+    }
+    [data-theme="light"] .cs-mobile-toggle {
+        background: rgba(255, 255, 255, 0.95);
+        border-color: var(--border);
+        color: var(--text-primary);
+    }
+    [data-theme="light"] .dot-pattern {
+        background-image: radial-gradient(rgba(196, 155, 0, 0.08) 1px, transparent 1px) !important;
+    }
+    [data-theme="light"] .sidebar-logo {
+        border-color: var(--border) !important;
+    }
+    [data-theme="light"] .sidebar-bottom {
+        border-color: var(--border) !important;
+    }
+    [data-theme="light"] .nav-item {
+        color: var(--text-secondary);
+    }
+    [data-theme="light"] .nav-item:hover {
+        color: var(--text-primary);
+    }
+    [data-theme="light"] .nav-item.active {
+        color: var(--accent);
+        background: var(--accent-dim);
+    }
+`;
+
+window._themeSunIcon = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
+window._themeMoonIcon = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>';
+
+window.initTheme = function() {
+    var saved = localStorage.getItem('pi-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+    // Inject light mode CSS if not present
+    if (!document.getElementById('pi-theme-css')) {
+        var s = document.createElement('style');
+        s.id = 'pi-theme-css';
+        s.textContent = window.THEME_LIGHT_CSS;
+        document.head.appendChild(s);
+    }
+};
+
+window.toggleTheme = function() {
+    var current = document.documentElement.getAttribute('data-theme') || 'dark';
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('pi-theme', next);
+    // Update all toggle icons/labels
+    document.querySelectorAll('.theme-toggle-icon').forEach(function(el) {
+        el.innerHTML = next === 'dark' ? window._themeSunIcon : window._themeMoonIcon;
+    });
+    document.querySelectorAll('.theme-toggle-label').forEach(function(el) {
+        el.textContent = next === 'dark' ? 'Light Mode' : 'Dark Mode';
+    });
+};
+
+// Apply theme immediately on script load
+window.initTheme();
+
 // Client sidebar CSS (injected once per page)
 window.CLIENT_SIDEBAR_CSS = `
     .client-sidebar {
@@ -259,12 +370,12 @@ window.CLIENT_SIDEBAR_CSS = `
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border-right: 1px solid rgba(42, 42, 42, 0.6);
-        border-radius: 0;
         z-index: 200;
         display: flex;
         flex-direction: column;
-        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         overflow: hidden;
+        will-change: width;
     }
     .client-sidebar:hover {
         width: 240px;
@@ -273,16 +384,20 @@ window.CLIENT_SIDEBAR_CSS = `
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 18px 14px;
+        padding: 18px 0;
+        padding-left: 15px;
         border-bottom: 1px solid #2a2a2a;
         flex-shrink: 0;
         height: 68px;
         overflow: hidden;
+        transition: padding-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .client-sidebar:hover .cs-logo {
+        padding-left: 16px;
     }
     .cs-logo img {
         width: 30px;
         height: 30px;
-        margin-left: 1px;
         object-fit: contain;
         flex-shrink: 0;
         filter: drop-shadow(0 0 8px rgba(240, 200, 50, 0.4));
@@ -297,7 +412,7 @@ window.CLIENT_SIDEBAR_CSS = `
         background-clip: text;
         white-space: nowrap;
         opacity: 0;
-        transition: opacity 0.2s ease 0.1s;
+        transition: opacity 0.15s ease 0.05s;
     }
     .client-sidebar:hover .cs-logo-text {
         opacity: 1;
@@ -307,7 +422,7 @@ window.CLIENT_SIDEBAR_CSS = `
         display: flex;
         flex-direction: column;
         padding: 16px 0;
-        gap: 4px;
+        gap: 2px;
         overflow-y: auto;
         overflow-x: hidden;
     }
@@ -315,25 +430,39 @@ window.CLIENT_SIDEBAR_CSS = `
         display: flex;
         align-items: center;
         gap: 14px;
-        padding: 14px 0;
-        padding-left: 16px;
-        margin: 0 8px;
-        border-radius: 12px;
+        padding: 12px 0;
+        margin: 0 6px;
+        border-radius: 10px;
         text-decoration: none;
         color: #9ca3af;
         transition: all 0.2s ease;
         white-space: nowrap;
         overflow: hidden;
-        min-height: 48px;
+        min-height: 44px;
+        position: relative;
+        justify-content: center;
+    }
+    .client-sidebar:hover .cs-nav-item {
+        justify-content: flex-start;
+        padding-left: 16px;
     }
     .cs-nav-item:hover {
-        background: rgba(240, 200, 50, 0.05);
+        background: rgba(255, 255, 255, 0.05);
         color: #ffffff;
     }
     .cs-nav-item.active {
-        background: rgba(240, 200, 50, 0.12);
+        background: rgba(255, 255, 255, 0.04);
         color: #f0c832;
-        box-shadow: inset 3px 0 0 #f0c832;
+    }
+    .cs-nav-item.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 25%;
+        height: 50%;
+        width: 2px;
+        background: #f0c832;
+        border-radius: 2px;
     }
     .cs-nav-icon {
         width: 22px;
@@ -351,24 +480,24 @@ window.CLIENT_SIDEBAR_CSS = `
         font-size: 14px;
         font-weight: 600;
         opacity: 0;
-        transition: opacity 0.2s ease 0.1s;
+        transition: opacity 0.15s ease 0.05s;
     }
     .client-sidebar:hover .cs-nav-label {
         opacity: 1;
     }
     .cs-bottom {
         border-top: 1px solid #2a2a2a;
-        padding: 12px 0;
+        padding: 8px 0;
         flex-shrink: 0;
     }
+    .cs-theme-toggle,
     .cs-signout {
         display: flex;
         align-items: center;
         gap: 14px;
-        padding: 14px 0;
-        padding-left: 18px;
-        margin: 0 8px;
-        border-radius: 12px;
+        padding: 12px 0;
+        margin: 0 6px;
+        border-radius: 10px;
         text-decoration: none;
         color: #9ca3af;
         cursor: pointer;
@@ -376,33 +505,47 @@ window.CLIENT_SIDEBAR_CSS = `
         border: none;
         background: none;
         font-family: 'Manrope', sans-serif;
+        font-size: 14px;
         width: calc(100% - 12px);
         white-space: nowrap;
         overflow: hidden;
-        min-height: 48px;
+        min-height: 44px;
+        justify-content: center;
+    }
+    .client-sidebar:hover .cs-theme-toggle,
+    .client-sidebar:hover .cs-signout {
+        justify-content: flex-start;
+        padding-left: 16px;
+    }
+    .cs-theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: #ffffff;
     }
     .cs-signout:hover {
-        background: rgba(239, 68, 68, 0.1);
+        background: rgba(239, 68, 68, 0.08);
         color: #ef4444;
     }
+    .cs-theme-toggle svg,
     .cs-signout svg {
         width: 20px;
         height: 20px;
         flex-shrink: 0;
     }
-    .cs-signout-label {
-        font-size: 14px;
+    .cs-signout-label,
+    .cs-theme-label {
+        font-size: 13px;
         font-weight: 600;
         opacity: 0;
-        transition: opacity 0.2s ease 0.1s;
+        transition: opacity 0.15s ease 0.05s;
     }
-    .client-sidebar:hover .cs-signout-label {
+    .client-sidebar:hover .cs-signout-label,
+    .client-sidebar:hover .cs-theme-label {
         opacity: 1;
     }
     .cs-main-content {
         padding-left: 60px;
         min-height: 100vh;
-        transition: padding-left 0.3s ease;
+        transition: padding-left 0.25s ease;
     }
     /* Mobile sidebar */
     .cs-mobile-toggle {
@@ -439,9 +582,19 @@ window.CLIENT_SIDEBAR_CSS = `
         .client-sidebar.open {
             transform: translateX(0);
         }
+        .client-sidebar.open .cs-nav-item {
+            justify-content: flex-start;
+            padding-left: 16px;
+        }
+        .client-sidebar.open .cs-theme-toggle,
+        .client-sidebar.open .cs-signout {
+            justify-content: flex-start;
+            padding-left: 16px;
+        }
         .client-sidebar.open .cs-nav-label,
         .client-sidebar.open .cs-logo-text,
-        .client-sidebar.open .cs-signout-label {
+        .client-sidebar.open .cs-signout-label,
+        .client-sidebar.open .cs-theme-label {
             opacity: 1;
         }
         .cs-overlay.open {
@@ -458,6 +611,9 @@ window.CLIENT_SIDEBAR_CSS = `
 
 // Client sidebar HTML builder (function so logoPath resolves at call time)
 window.buildClientSidebarHTML = function(logoPath) {
+    var isDark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
+    var themeIcon = isDark ? window._themeSunIcon : window._themeMoonIcon;
+    var themeLabel = isDark ? 'Light Mode' : 'Dark Mode';
     return `
     <button class="cs-mobile-toggle" onclick="toggleClientSidebar()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -472,6 +628,10 @@ window.buildClientSidebarHTML = function(logoPath) {
         </div>
         <div class="client-sidebar-nav"></div>
         <div class="cs-bottom">
+            <button class="cs-theme-toggle" onclick="window.toggleTheme()">
+                <span class="theme-toggle-icon">${themeIcon}</span>
+                <span class="cs-theme-label theme-toggle-label">${themeLabel}</span>
+            </button>
             <button class="cs-signout" onclick="window.signOut()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
