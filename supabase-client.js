@@ -60,12 +60,12 @@ window.getUserIP = async function() {
         const ip = data.ip || 'Unknown';
         window._geoData = { ip: ip, city: '', region: '', country: '' };
         // Try to get geo data in background (non-blocking)
-        fetch('https://ip-api.com/json/' + ip + '?fields=city,regionName,country')
+        fetch('https://freeipapi.com/api/json/' + ip)
             .then(r => r.json())
             .then(geo => {
-                window._geoData.city = geo.city || '';
+                window._geoData.city = geo.cityName || '';
                 window._geoData.region = geo.regionName || '';
-                window._geoData.country = geo.country || '';
+                window._geoData.country = geo.countryName || '';
             })
             .catch(() => {});
         return ip;
