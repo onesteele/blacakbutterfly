@@ -621,8 +621,9 @@
                     // Load messages
                     await loadMessages();
 
-                    // Subscribe to realtime
+                    // Subscribe to realtime + polling fallback
                     subscribeToMessages();
+                    startPolling();
                 } else {
                     // No conversation yet - show start prompt
                     showStartState();
@@ -651,7 +652,8 @@
                             first_name,
                             last_name,
                             email,
-                            is_admin
+                            is_admin,
+                            chat_display_name
                         )
                     `)
                     .eq('conversation_id', conversationId)
@@ -660,6 +662,9 @@
                 if (error) throw error;
 
                 renderMessages(data || []);
+                if (data && data.length > 0) {
+                    lastMessageTimestamp = data[data.length - 1].created_at;
+                }
 
             } catch (err) {
                 console.error('Error loading messages:', err);
@@ -708,11 +713,12 @@
                 }
 
                 const isMe = msg.sender_id === currentUser.id;
-                const senderName = msg.sender
-                    ? ((msg.sender.first_name || '') + ' ' + (msg.sender.last_name || '')).trim() || msg.sender.email
-                    : (isMe ? 'You' : 'Team');
-                const initials = msg.sender
-                    ? ((msg.sender.first_name || '')[0] || '') + ((msg.sender.last_name || '')[0] || '')
+                const senderName = msg.display_name_override
+                    || (msg.sender ? (msg.sender.chat_display_name || ((msg.sender.first_name || '') + ' ' + (msg.sender.last_name || '')).trim() || msg.sender.email) : null)
+                    || (isMe ? 'You' : 'Team');
+                const initialsSource = msg.display_name_override || (msg.sender ? (msg.sender.chat_display_name || ((msg.sender.first_name || '') + ' ' + (msg.sender.last_name || '')).trim()) : null);
+                const initials = initialsSource
+                    ? initialsSource.split(' ').map(n => n[0]).join('').substring(0, 2)
                     : (isMe ? 'Y' : 'T');
                 const timeStr = new Date(msg.created_at).toLocaleTimeString('en-US', {
                     hour: 'numeric',
@@ -721,7 +727,7 @@
                 });
 
                 html += `
-                    <div class="msg-row ${isMe ? 'me' : 'them'}">
+                    <div class="msg-row ${isMe ? 'me' : 'them'}" data-msg-id="${msg.id}">
                         <div class="msg-avatar">${(initials || '?').toUpperCase()}</div>
                         <div class="msg-content">
                             <div class="msg-bubble">${escapeHtml(msg.content || msg.message || '')}</div>
@@ -788,6 +794,10 @@
                     if (payload.new.sender_id !== currentUser.id) {
                         appendMessage(payload.new);
                     }
+                    // Update timestamp for polling dedup
+                    if (payload.new.created_at) {
+                        lastMessageTimestamp = payload.new.created_at;
+                    }
                 })
                 .on('postgres_changes', {
                     event: '*',
@@ -809,7 +819,49 @@
                         }
                     }
                 })
-                .subscribe();
+                .subscribe((status) => {
+                    console.log('Realtime status:', status);
+                });
+        }
+
+        // ============================================================
+        // POLLING FALLBACK (every 12s, in case Realtime is not enabled)
+        // ============================================================
+        let pollingInterval = null;
+        let lastMessageTimestamp = null;
+
+        function startPolling() {
+            pollingInterval = setInterval(async () => {
+                if (!conversationId) return;
+                try {
+                    let query = window.supabaseClient
+                        .from('chat_messages')
+                        .select('*, sender:users!chat_messages_sender_id_fkey (id, first_name, last_name, email, is_admin, chat_display_name)')
+                        .eq('conversation_id', conversationId)
+                        .order('created_at', { ascending: false })
+                        .limit(5);
+
+                    if (lastMessageTimestamp) {
+                        query = query.gt('created_at', lastMessageTimestamp);
+                    }
+
+                    const { data, error } = await query;
+                    if (error) throw error;
+
+                    if (data && data.length > 0) {
+                        const newMsgs = data.reverse();
+                        for (const msg of newMsgs) {
+                            if (msg.sender_id === currentUser.id) continue;
+                            // Simple dedup: check if msg ID already in DOM
+                            if (document.querySelector(`[data-msg-id="${msg.id}"]`)) continue;
+                            appendMessage(msg);
+                        }
+                        lastMessageTimestamp = newMsgs[newMsgs.length - 1].created_at;
+                    }
+                } catch (err) {
+                    console.error('Polling error:', err);
+                }
+            }, 12000);
         }
 
         // ============================================================
@@ -828,18 +880,19 @@
             if (msg.sender_id) {
                 const { data } = await window.supabaseClient
                     .from('users')
-                    .select('id, first_name, last_name, email, is_admin')
+                    .select('id, first_name, last_name, email, is_admin, chat_display_name')
                     .eq('id', msg.sender_id)
                     .single();
                 sender = data;
             }
 
             const isMe = msg.sender_id === currentUser.id;
-            const senderName = sender
-                ? ((sender.first_name || '') + ' ' + (sender.last_name || '')).trim() || sender.email
-                : (isMe ? 'You' : 'Team');
-            const initials = sender
-                ? ((sender.first_name || '')[0] || '') + ((sender.last_name || '')[0] || '')
+            const senderName = msg.display_name_override
+                || (sender ? (sender.chat_display_name || ((sender.first_name || '') + ' ' + (sender.last_name || '')).trim() || sender.email) : null)
+                || (isMe ? 'You' : 'Team');
+            const initialsSource = msg.display_name_override || (sender ? (sender.chat_display_name || ((sender.first_name || '') + ' ' + (sender.last_name || '')).trim()) : null);
+            const initials = initialsSource
+                ? initialsSource.split(' ').map(n => n[0]).join('').substring(0, 2)
                 : (isMe ? 'Y' : 'T');
             const timeStr = new Date(msg.created_at).toLocaleTimeString('en-US', {
                 hour: 'numeric',
@@ -848,7 +901,7 @@
             });
 
             const msgHtml = `
-                <div class="msg-row ${isMe ? 'me' : 'them'}">
+                <div class="msg-row ${isMe ? 'me' : 'them'}" data-msg-id="${msg.id}">
                     <div class="msg-avatar">${(initials || '?').toUpperCase()}</div>
                     <div class="msg-content">
                         <div class="msg-bubble">${escapeHtml(msg.content || msg.message || '')}</div>
@@ -901,6 +954,7 @@
 
                     // Start subscription now
                     subscribeToMessages();
+                    startPolling();
                 }
 
                 // If conversation was resolved, reopen it
@@ -1030,6 +1084,7 @@
 
         // Cleanup on page leave
         window.addEventListener('beforeunload', () => {
+            if (pollingInterval) clearInterval(pollingInterval);
             if (messagesSubscription) {
                 window.supabaseClient.removeChannel(messagesSubscription);
             }

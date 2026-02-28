@@ -621,7 +621,7 @@
                 }
 
                 document.getElementById('mainContent').style.display = '';
-                renderPerformance();
+                await loadAndRenderPerformance();
 
             } catch (err) {
                 console.error('Init error:', err);
@@ -632,8 +632,35 @@
         })();
 
         // ============================================================
-        // DEMO PERFORMANCE DATA
-        // These can be replaced with real data from Supabase tables
+        // LOAD PERFORMANCE DATA FROM DB
+        // ============================================================
+        async function loadAndRenderPerformance() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .select('value')
+                    .eq('key', 'performance_data')
+                    .single();
+
+                if (error && error.code !== 'PGRST116') throw error;
+
+                if (data && data.value) {
+                    const dbData = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+                    // Merge DB data over demo defaults
+                    Object.assign(DEMO_DATA, dbData);
+                    // Ensure monthlyReturns structure is preserved
+                    if (dbData.monthlyReturns) {
+                        DEMO_DATA.monthlyReturns = Object.assign(DEMO_DATA.monthlyReturns, dbData.monthlyReturns);
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading performance data:', err);
+            }
+            renderPerformance();
+        }
+
+        // ============================================================
+        // DEMO PERFORMANCE DATA (fallback defaults)
         // ============================================================
         const DEMO_DATA = {
             totalReturn: '+47.3%',

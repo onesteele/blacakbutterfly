@@ -1323,6 +1323,56 @@
         }
 
         /* ============================================================
+           IDENTITY SWITCHER
+           ============================================================ */
+        .identity-switcher {
+            padding: 8px 24px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(20, 20, 20, 0.6);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .identity-switcher label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .identity-select {
+            flex: 1;
+            max-width: 280px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%239ca3af' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 28px;
+        }
+
+        .identity-select:focus {
+            border-color: var(--accent);
+        }
+
+        .identity-select option {
+            background: #1a1a1a;
+            color: var(--text-primary);
+        }
+
+        /* ============================================================
            RESPONSIVE
            ============================================================ */
         @media (max-width: 900px) {
@@ -1671,6 +1721,12 @@
                         </div>
                     </div>
 
+                    <!-- Identity Switcher -->
+                    <div class="identity-switcher" id="identity-switcher" style="display: none;">
+                        <label>Chatting as:</label>
+                        <select class="identity-select" id="identity-select"></select>
+                    </div>
+
                     <!-- Input Area -->
                     <div class="chat-input-area">
                         <div class="chat-input-wrap">
@@ -1827,6 +1883,7 @@
 
                 await loadConversations();
                 subscribeToConversations();
+                loadTeamIdentities();
 
             } catch (error) {
                 console.error('Admin init error:', error);
@@ -2111,7 +2168,8 @@
                             first_name,
                             last_name,
                             email,
-                            is_admin
+                            is_admin,
+                            chat_display_name
                         )
                     `)
                     .eq('conversation_id', convId)
@@ -2169,11 +2227,12 @@
                 }
 
                 const isAdmin = msg.sender?.is_admin || msg.sender_type === 'admin';
-                const senderName = msg.sender
-                    ? ((msg.sender.first_name || '') + ' ' + (msg.sender.last_name || '')).trim() || msg.sender.email
-                    : (isAdmin ? 'Admin' : 'Customer');
-                const initials = msg.sender
-                    ? ((msg.sender.first_name || '')[0] || '') + ((msg.sender.last_name || '')[0] || '')
+                const senderName = msg.display_name_override
+                    || (msg.sender ? (msg.sender.chat_display_name || ((msg.sender.first_name || '') + ' ' + (msg.sender.last_name || '')).trim() || msg.sender.email) : null)
+                    || (isAdmin ? 'Admin' : 'Customer');
+                const initialsSource = msg.display_name_override || (msg.sender ? (msg.sender.chat_display_name || ((msg.sender.first_name || '') + ' ' + (msg.sender.last_name || '')).trim()) : null);
+                const initials = initialsSource
+                    ? initialsSource.split(' ').map(n => n[0]).join('').substring(0, 2)
                     : (isAdmin ? 'A' : 'C');
                 const timeStr = new Date(msg.created_at).toLocaleTimeString('en-US', {
                     hour: 'numeric',
@@ -2218,18 +2277,19 @@
             if (msg.sender_id) {
                 const { data } = await window.supabaseClient
                     .from('users')
-                    .select('id, first_name, last_name, email, is_admin')
+                    .select('id, first_name, last_name, email, is_admin, chat_display_name')
                     .eq('id', msg.sender_id)
                     .single();
                 sender = data;
             }
 
             const isAdmin = sender?.is_admin || msg.sender_type === 'admin';
-            const senderName = sender
-                ? ((sender.first_name || '') + ' ' + (sender.last_name || '')).trim() || sender.email
-                : (isAdmin ? 'Admin' : 'Customer');
-            const initials = sender
-                ? ((sender.first_name || '')[0] || '') + ((sender.last_name || '')[0] || '')
+            const senderName = msg.display_name_override
+                || (sender ? (sender.chat_display_name || ((sender.first_name || '') + ' ' + (sender.last_name || '')).trim() || sender.email) : null)
+                || (isAdmin ? 'Admin' : 'Customer');
+            const initialsSource = msg.display_name_override || (sender ? (sender.chat_display_name || ((sender.first_name || '') + ' ' + (sender.last_name || '')).trim()) : null);
+            const initials = initialsSource
+                ? initialsSource.split(' ').map(n => n[0]).join('').substring(0, 2)
                 : (isAdmin ? 'A' : 'C');
             const timeStr = new Date(msg.created_at).toLocaleTimeString('en-US', {
                 hour: 'numeric',
@@ -2258,6 +2318,57 @@
         }
 
         /* ============================================================
+           IDENTITY SWITCHING
+           ============================================================ */
+        let teamIdentities = [];
+        let selectedIdentityId = null;
+
+        async function loadTeamIdentities() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('users')
+                    .select('id, first_name, last_name, email, chat_display_name, is_admin, role')
+                    .or('is_admin.eq.true,role.in.(admin,super_admin,moderator)')
+                    .order('first_name', { ascending: true });
+
+                if (error) throw error;
+                teamIdentities = data || [];
+
+                const select = document.getElementById('identity-select');
+                select.innerHTML = teamIdentities.map(member => {
+                    const displayName = member.chat_display_name
+                        || ((member.first_name || '') + ' ' + (member.last_name || '')).trim()
+                        || member.email;
+                    const youTag = member.id === adminUser.id ? ' (You)' : '';
+                    return `<option value="${member.id}">${escapeHtml(displayName)}${youTag}</option>`;
+                }).join('');
+
+                // Default to current admin
+                select.value = adminUser.id;
+                selectedIdentityId = adminUser.id;
+
+                select.addEventListener('change', () => {
+                    selectedIdentityId = select.value;
+                });
+
+                // Show the switcher
+                document.getElementById('identity-switcher').style.display = 'flex';
+
+            } catch (err) {
+                console.error('Error loading team identities:', err);
+            }
+        }
+
+        function getSelectedIdentityName() {
+            if (!selectedIdentityId || selectedIdentityId === adminUser.id) return null;
+            const member = teamIdentities.find(m => m.id === selectedIdentityId);
+            if (!member) return null;
+            return member.chat_display_name
+                || ((member.first_name || '') + ' ' + (member.last_name || '')).trim()
+                || member.email;
+        }
+
+        /* ============================================================
            SEND MESSAGE
            ============================================================ */
         async function sendMessage() {
@@ -2271,16 +2382,23 @@
             input.disabled = true;
 
             try {
+                // Build message payload
+                const identityName = getSelectedIdentityName();
+                const msgPayload = {
+                    conversation_id: selectedConversationId,
+                    sender_id: adminUser.id,
+                    sender_type: 'admin',
+                    content: text,
+                    message: text
+                };
+                if (identityName) {
+                    msgPayload.display_name_override = identityName;
+                }
+
                 // Insert message
                 const { data: newMsg, error: msgError } = await window.supabaseClient
                     .from('chat_messages')
-                    .insert({
-                        conversation_id: selectedConversationId,
-                        sender_id: adminUser.id,
-                        sender_type: 'admin',
-                        content: text,
-                        message: text
-                    })
+                    .insert(msgPayload)
                     .select()
                     .single();
 

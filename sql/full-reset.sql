@@ -258,9 +258,6 @@ CREATE POLICY "Users can view own conversations" ON chat_conversations
 CREATE POLICY "Users can insert own conversations" ON chat_conversations
     FOR INSERT WITH CHECK (auth.uid() = user_id OR public.is_user_admin(auth.uid()) = TRUE);
 
-CREATE POLICY "Users can update own conversations" ON chat_conversations
-    FOR UPDATE USING (auth.uid() = user_id);
-
 CREATE POLICY "Admins can manage all conversations" ON chat_conversations
     FOR ALL USING (public.is_user_admin(auth.uid()) = TRUE);
 
@@ -517,6 +514,25 @@ CREATE TRIGGER protect_default_admin_trigger
 
 UPDATE users SET role = 'owner' WHERE email = 'steeleblue07@gmail.com';
 UPDATE users SET role = 'admin' WHERE is_admin = TRUE AND email != 'steeleblue07@gmail.com' AND (role IS NULL OR role = 'user');
+
+
+-- ============================================================================
+-- STEP 21: Chat display names & performance data
+-- ============================================================================
+
+-- Chat display name for admin aliases (appears in chat instead of real name)
+ALTER TABLE users ADD COLUMN IF NOT EXISTS chat_display_name TEXT;
+
+-- Per-message display name override (for admin identity switching)
+ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS display_name_override TEXT;
+
+-- Allow authenticated users to read performance_data from admin_settings
+CREATE POLICY "Authenticated users can read performance data" ON admin_settings
+    FOR SELECT USING (key = 'performance_data' AND auth.uid() IS NOT NULL);
+
+-- Enable Realtime for chat tables
+ALTER PUBLICATION supabase_realtime ADD TABLE chat_messages;
+ALTER PUBLICATION supabase_realtime ADD TABLE chat_conversations;
 
 
 -- ============================================================================

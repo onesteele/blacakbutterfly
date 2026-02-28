@@ -1088,6 +1088,125 @@
                 flex-direction: column;
             }
         }
+
+        /* ============================================================
+           TAB NAVIGATION
+           ============================================================ */
+        .settings-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 28px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 4px;
+            overflow-x: auto;
+        }
+        .settings-tab {
+            flex: 1;
+            padding: 10px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            color: var(--text-muted);
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            text-align: center;
+        }
+        .settings-tab:hover {
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+        .settings-tab.active {
+            background: var(--accent-dim);
+            color: var(--accent);
+            border: 1px solid rgba(240, 200, 50, 0.25);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* ============================================================
+           PERFORMANCE EDITOR
+           ============================================================ */
+        .perf-stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .perf-list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .perf-list-item:last-child { border-bottom: none; }
+        .perf-list-fields {
+            flex: 1;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .perf-list-fields .form-input {
+            margin-bottom: 0;
+        }
+        .perf-period-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+        .perf-period-tab {
+            padding: 6px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: none;
+            font-family: 'Manrope', sans-serif;
+            transition: all 0.2s ease;
+        }
+        .perf-period-tab.active {
+            background: var(--accent-dim);
+            color: var(--accent);
+            border-color: rgba(240, 200, 50, 0.3);
+        }
+        .perf-remove-btn {
+            background: transparent;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--error);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+        .perf-remove-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        .perf-remove-btn svg { width: 14px; height: 14px; }
+        .perf-status-badge {
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            font-family: 'Manrope', sans-serif;
+        }
+        .perf-status-badge.active { background: rgba(34,197,94,0.15); color: var(--success); }
+        .perf-status-badge.paused { background: rgba(107,114,128,0.15); color: var(--text-muted); }
     </style>
 </head>
 <body>
@@ -1231,6 +1350,18 @@
         <!-- Page Body -->
         <div class="dashboard-body">
 
+            <!-- Tab Navigation -->
+            <div class="settings-tabs">
+                <button class="settings-tab active" onclick="switchTab('profile')" data-tab="profile">Profile</button>
+                <button class="settings-tab" onclick="switchTab('integrations')" data-tab="integrations">Integrations</button>
+                <button class="settings-tab" onclick="switchTab('team')" data-tab="team">Team</button>
+                <button class="settings-tab" onclick="switchTab('performance')" data-tab="performance">Performance</button>
+                <button class="settings-tab" onclick="switchTab('export')" data-tab="export">Export</button>
+            </div>
+
+            <!-- Tab 1: Profile -->
+            <div class="tab-content active" id="tab-profile">
+
             <!-- 1. Admin Profile Card -->
             <div class="settings-card">
                 <div class="card-header">
@@ -1283,8 +1414,37 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Chat Display Name -->
+                    <div class="form-divider"></div>
+                    <div class="form-section-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                        Chat Display Name
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="chat-display-name">Display Name in Chat</label>
+                        <input type="text" class="form-input" id="chat-display-name" placeholder="e.g., Support Team, Alex from PI">
+                        <p style="font-size:11px; color:var(--text-muted); margin-top:6px;">
+                            This name will appear to customers in chat instead of your real name. Leave blank to use your actual name.
+                        </p>
+                    </div>
+                    <div class="form-actions" style="border-top:none; padding-top:0; margin-top:12px;">
+                        <button class="btn-primary" onclick="saveChatDisplayName()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Save Display Name
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            </div><!-- end tab-profile -->
+
+            <!-- Tab 2: Integrations -->
+            <div class="tab-content" id="tab-integrations">
 
             <!-- 2. Integration Settings Card -->
             <div class="settings-card">
@@ -1345,6 +1505,11 @@
                 </div>
             </div>
 
+            </div><!-- end tab-integrations -->
+
+            <!-- Tab 3: Team -->
+            <div class="tab-content" id="tab-team">
+
             <!-- 3. Team Management Card -->
             <div class="settings-card">
                 <div class="card-header">
@@ -1397,6 +1562,116 @@
                     </div>
                 </div>
             </div>
+
+            </div><!-- end tab-team -->
+
+            <!-- Tab 4: Performance -->
+            <div class="tab-content" id="tab-performance">
+            <div class="settings-card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <div class="card-header-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="card-title">Performance Data</h2>
+                            <p class="card-subtitle">Manage algorithm performance stats shown to clients</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Stat Cards -->
+                    <div class="form-section-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                        Stat Cards
+                    </div>
+                    <div class="perf-stat-grid">
+                        <div class="form-group">
+                            <label class="form-label">Total Return</label>
+                            <input type="text" class="form-input" id="perf-total-return" placeholder="+47.3%">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Return Badge Text</label>
+                            <input type="text" class="form-input" id="perf-return-badge" placeholder="+12.1% this month">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Win Rate</label>
+                            <input type="text" class="form-input" id="perf-win-rate" placeholder="68.4%">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Win Badge Text</label>
+                            <input type="text" class="form-input" id="perf-win-badge" placeholder="Above avg">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Total Trades</label>
+                            <input type="text" class="form-input" id="perf-total-trades" placeholder="1,247">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Active Strategies</label>
+                            <input type="text" class="form-input" id="perf-active-strategies" placeholder="3">
+                        </div>
+                    </div>
+
+                    <div class="form-divider"></div>
+
+                    <!-- Monthly Returns -->
+                    <div class="form-section-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        Monthly Returns
+                    </div>
+                    <div class="perf-period-tabs" id="perf-period-tabs">
+                        <button class="perf-period-tab active" onclick="switchPerfPeriod('6m')">6M</button>
+                        <button class="perf-period-tab" onclick="switchPerfPeriod('1y')">1Y</button>
+                        <button class="perf-period-tab" onclick="switchPerfPeriod('all')">All</button>
+                    </div>
+                    <div id="perf-returns-editor"></div>
+                    <button class="btn-secondary" onclick="addReturnEntry()" style="margin-top:12px;">+ Add Entry</button>
+
+                    <div class="form-divider"></div>
+
+                    <!-- Strategies -->
+                    <div class="form-section-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        Strategies
+                    </div>
+                    <div id="perf-strategies-editor"></div>
+                    <button class="btn-secondary" onclick="addStrategy()" style="margin-top:12px;">+ Add Strategy</button>
+
+                    <div class="form-divider"></div>
+
+                    <!-- Key Metrics -->
+                    <div class="form-section-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                        Key Metrics
+                    </div>
+                    <div id="perf-metrics-editor"></div>
+                    <button class="btn-secondary" onclick="addMetric()" style="margin-top:12px;">+ Add Metric</button>
+
+                    <!-- Save -->
+                    <div class="form-actions">
+                        <button class="btn-primary" id="save-performance-btn" onclick="savePerformanceData()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Save Performance Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+            </div><!-- end tab-performance -->
+
+            <!-- Tab 5: Export -->
+            <div class="tab-content" id="tab-export">
 
             <!-- 4. Email Export Settings Card -->
             <div class="settings-card">
@@ -1456,6 +1731,8 @@
                     </div>
                 </div>
             </div>
+
+            </div><!-- end tab-export -->
 
         </div>
     </div>
@@ -1547,7 +1824,9 @@
                 await Promise.all([
                     loadIntegrationSettings(),
                     loadAdminUsers(),
-                    loadExportSettings()
+                    loadExportSettings(),
+                    loadPerformanceData(),
+                    loadChatDisplayName()
                 ]);
 
             } catch (error) {
@@ -1993,6 +2272,257 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        /* ============================================================
+           TAB SWITCHING
+           ============================================================ */
+        function switchTab(tabId) {
+            document.querySelectorAll('.settings-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        /* ============================================================
+           CHAT DISPLAY NAME
+           ============================================================ */
+        async function loadChatDisplayName() {
+            if (!adminProfile) return;
+            document.getElementById('chat-display-name').value = adminProfile.chat_display_name || '';
+        }
+
+        async function saveChatDisplayName() {
+            const name = document.getElementById('chat-display-name').value.trim();
+            try {
+                const { error } = await window.supabaseClient
+                    .from('users')
+                    .update({ chat_display_name: name || null })
+                    .eq('id', adminProfile.id);
+                if (error) throw error;
+                adminProfile.chat_display_name = name || null;
+                showToast('Chat display name saved!', 'success');
+            } catch (error) {
+                console.error('Error saving chat display name:', error);
+                showToast('Failed to save chat display name.', 'error');
+            }
+        }
+
+        /* ============================================================
+           PERFORMANCE DATA MANAGEMENT
+           ============================================================ */
+        let perfData = {
+            totalReturn: '', returnBadge: '', winRate: '', winBadge: '',
+            totalTrades: '', activeStrategies: '',
+            monthlyReturns: { '6m': [], '1y': [], 'all': [] },
+            strategies: [],
+            metrics: []
+        };
+        let currentPerfPeriod = '6m';
+
+        async function loadPerformanceData() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .select('value')
+                    .eq('key', 'performance_data')
+                    .single();
+
+                if (error && error.code !== 'PGRST116') throw error;
+
+                if (data && data.value) {
+                    const loaded = typeof data.value === 'string' ? JSON.parse(data.value) : data.value;
+                    perfData = Object.assign(perfData, loaded);
+                }
+
+                populatePerformanceForm();
+            } catch (error) {
+                console.error('Error loading performance data:', error);
+                populatePerformanceForm();
+            }
+        }
+
+        function populatePerformanceForm() {
+            document.getElementById('perf-total-return').value = perfData.totalReturn || '';
+            document.getElementById('perf-return-badge').value = perfData.returnBadge || '';
+            document.getElementById('perf-win-rate').value = perfData.winRate || '';
+            document.getElementById('perf-win-badge').value = perfData.winBadge || '';
+            document.getElementById('perf-total-trades').value = perfData.totalTrades || '';
+            document.getElementById('perf-active-strategies').value = perfData.activeStrategies || '';
+            renderReturnsEditor();
+            renderStrategiesEditor();
+            renderMetricsEditor();
+        }
+
+        // ── Monthly Returns Editor ──
+        function switchPerfPeriod(period) {
+            // Save current period data from DOM
+            collectReturnsFromDOM();
+            currentPerfPeriod = period;
+            document.querySelectorAll('.perf-period-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.perf-period-tab[onclick="switchPerfPeriod('${period}')"]`).classList.add('active');
+            renderReturnsEditor();
+        }
+
+        function collectReturnsFromDOM() {
+            const container = document.getElementById('perf-returns-editor');
+            const rows = container.querySelectorAll('.perf-list-item');
+            const entries = [];
+            rows.forEach(row => {
+                const label = row.querySelector('.return-label').value.trim();
+                const value = parseFloat(row.querySelector('.return-value').value) || 0;
+                if (label) entries.push({ label, value });
+            });
+            perfData.monthlyReturns[currentPerfPeriod] = entries;
+        }
+
+        function renderReturnsEditor() {
+            const container = document.getElementById('perf-returns-editor');
+            const entries = perfData.monthlyReturns[currentPerfPeriod] || [];
+            if (entries.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No entries yet. Click "+ Add Entry" to begin.</p>';
+                return;
+            }
+            container.innerHTML = entries.map((e, i) => `
+                <div class="perf-list-item">
+                    <div class="perf-list-fields">
+                        <input type="text" class="form-input return-label" value="${escapeHtml(e.label || '')}" placeholder="Label (e.g., Jan)" style="flex:1;min-width:100px;">
+                        <input type="number" step="0.1" class="form-input return-value" value="${e.value || 0}" placeholder="Return %" style="width:100px;">
+                    </div>
+                    <button class="perf-remove-btn" onclick="removeReturnEntry(${i})">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function addReturnEntry() {
+            collectReturnsFromDOM();
+            if (!perfData.monthlyReturns[currentPerfPeriod]) perfData.monthlyReturns[currentPerfPeriod] = [];
+            perfData.monthlyReturns[currentPerfPeriod].push({ label: '', value: 0 });
+            renderReturnsEditor();
+        }
+
+        function removeReturnEntry(index) {
+            collectReturnsFromDOM();
+            perfData.monthlyReturns[currentPerfPeriod].splice(index, 1);
+            renderReturnsEditor();
+        }
+
+        // ── Strategies Editor ──
+        function renderStrategiesEditor() {
+            const container = document.getElementById('perf-strategies-editor');
+            const strategies = perfData.strategies || [];
+            if (strategies.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No strategies yet. Click "+ Add Strategy" to begin.</p>';
+                return;
+            }
+            container.innerHTML = strategies.map((s, i) => `
+                <div class="perf-list-item">
+                    <input type="color" value="${s.color || '#f0c832'}" onchange="perfData.strategies[${i}].color=this.value" style="width:32px;height:32px;border:none;background:none;cursor:pointer;padding:0;border-radius:6px;">
+                    <div class="perf-list-fields">
+                        <input type="text" class="form-input strat-name" value="${escapeHtml(s.name || '')}" placeholder="Strategy name" style="flex:1;min-width:140px;" onchange="perfData.strategies[${i}].name=this.value">
+                        <input type="text" class="form-input strat-desc" value="${escapeHtml(s.desc || '')}" placeholder="Description" style="flex:2;min-width:180px;" onchange="perfData.strategies[${i}].desc=this.value">
+                        <button class="perf-status-badge ${s.status === 'active' ? 'active' : 'paused'}" onclick="toggleStrategyStatus(${i})">
+                            ${s.status === 'active' ? 'Active' : 'Paused'}
+                        </button>
+                    </div>
+                    <button class="perf-remove-btn" onclick="removeStrategy(${i})">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function addStrategy() {
+            perfData.strategies.push({ name: '', desc: '', status: 'active', color: '#f0c832' });
+            renderStrategiesEditor();
+        }
+
+        function removeStrategy(index) {
+            perfData.strategies.splice(index, 1);
+            renderStrategiesEditor();
+        }
+
+        function toggleStrategyStatus(index) {
+            perfData.strategies[index].status = perfData.strategies[index].status === 'active' ? 'paused' : 'active';
+            renderStrategiesEditor();
+        }
+
+        // ── Key Metrics Editor ──
+        function renderMetricsEditor() {
+            const container = document.getElementById('perf-metrics-editor');
+            const metrics = perfData.metrics || [];
+            if (metrics.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No metrics yet. Click "+ Add Metric" to begin.</p>';
+                return;
+            }
+            container.innerHTML = metrics.map((m, i) => `
+                <div class="perf-list-item">
+                    <div class="perf-list-fields">
+                        <input type="text" class="form-input" value="${escapeHtml(m.label || '')}" placeholder="Metric name" style="flex:1;min-width:140px;" onchange="perfData.metrics[${i}].label=this.value">
+                        <input type="text" class="form-input" value="${escapeHtml(m.value || '')}" placeholder="Value" style="width:120px;" onchange="perfData.metrics[${i}].value=this.value">
+                        <button class="perf-status-badge ${m.positive ? 'active' : 'paused'}" onclick="toggleMetricPositive(${i})" style="min-width:70px;">
+                            ${m.positive ? 'Positive' : 'Negative'}
+                        </button>
+                    </div>
+                    <button class="perf-remove-btn" onclick="removeMetric(${i})">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function addMetric() {
+            perfData.metrics.push({ label: '', value: '', positive: true });
+            renderMetricsEditor();
+        }
+
+        function removeMetric(index) {
+            perfData.metrics.splice(index, 1);
+            renderMetricsEditor();
+        }
+
+        function toggleMetricPositive(index) {
+            perfData.metrics[index].positive = !perfData.metrics[index].positive;
+            renderMetricsEditor();
+        }
+
+        // ── Save Performance Data ──
+        async function savePerformanceData() {
+            const btn = document.getElementById('save-performance-btn');
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+
+            try {
+                // Collect stat card values
+                perfData.totalReturn = document.getElementById('perf-total-return').value.trim();
+                perfData.returnBadge = document.getElementById('perf-return-badge').value.trim();
+                perfData.winRate = document.getElementById('perf-win-rate').value.trim();
+                perfData.winBadge = document.getElementById('perf-win-badge').value.trim();
+                perfData.totalTrades = document.getElementById('perf-total-trades').value.trim();
+                perfData.activeStrategies = document.getElementById('perf-active-strategies').value.trim();
+
+                // Collect current period's returns from DOM
+                collectReturnsFromDOM();
+
+                const { error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .upsert(
+                        { key: 'performance_data', value: perfData, updated_at: new Date().toISOString() },
+                        { onConflict: 'key' }
+                    );
+
+                if (error) throw error;
+                showToast('Performance data saved!', 'success');
+
+            } catch (error) {
+                console.error('Error saving performance data:', error);
+                showToast('Failed to save performance data.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
         }
     </script>
 </body>
