@@ -605,6 +605,281 @@ window.CLIENT_SIDEBAR_CSS = `
     }
 `;
 
+// Notification system CSS (injected once per page)
+window.NOTIFICATION_SYSTEM_CSS = `
+    /* Bell icon */
+    .notif-bell {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.08);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: #e5e7eb;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 300;
+        transition: background 0.2s, transform 0.15s;
+    }
+    .notif-bell:hover {
+        background: rgba(255,255,255,0.14);
+        transform: scale(1.05);
+    }
+    .notif-bell svg { width: 20px; height: 20px; }
+    .notif-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        min-width: 18px;
+        height: 18px;
+        border-radius: 9px;
+        background: #ef4444;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 4px;
+        line-height: 1;
+    }
+    .notif-badge.hidden { display: none; }
+
+    /* Dropdown */
+    .notif-dropdown {
+        position: fixed;
+        top: 64px;
+        right: 16px;
+        width: 360px;
+        max-height: 480px;
+        background: rgba(20,20,20,0.95);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        z-index: 301;
+        overflow: hidden;
+        display: none;
+        box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+    }
+    .notif-dropdown.open { display: block; }
+    .notif-dd-header {
+        padding: 14px 16px;
+        font-weight: 700;
+        font-size: 14px;
+        color: #f5f5f5;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        font-family: 'Gilroy-ExtraBold', sans-serif;
+    }
+    .notif-dd-list {
+        overflow-y: auto;
+        max-height: 420px;
+        padding: 6px 0;
+    }
+    .notif-dd-empty {
+        padding: 32px 16px;
+        text-align: center;
+        color: #8b919a;
+        font-size: 13px;
+    }
+    .notif-dd-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .notif-dd-item:hover { background: rgba(255,255,255,0.05); }
+    .notif-dd-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #f0c832;
+        flex-shrink: 0;
+        margin-top: 5px;
+    }
+    .notif-dd-body { flex: 1; min-width: 0; }
+    .notif-dd-title {
+        font-weight: 600;
+        font-size: 13px;
+        color: #f5f5f5;
+        margin-bottom: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .notif-dd-preview {
+        font-size: 12px;
+        color: #8b919a;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .notif-dd-time {
+        font-size: 11px;
+        color: #6b7280;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    /* Modal overlay */
+    .notif-modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        z-index: 400;
+        display: none;
+        align-items: center;
+        justify-content: center;
+    }
+    .notif-modal-overlay.open { display: flex; }
+    .notif-modal {
+        background: rgba(20,20,20,0.97);
+        backdrop-filter: blur(16px);
+        border: 1px solid rgba(240,200,50,0.25);
+        border-radius: 14px;
+        width: 480px;
+        max-width: 90vw;
+        max-height: 80vh;
+        overflow-y: auto;
+        padding: 28px;
+        position: relative;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    }
+    .notif-modal-close {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.08);
+        border: none;
+        color: #9ca3af;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        transition: background 0.15s, color 0.15s;
+    }
+    .notif-modal-close:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    .notif-modal-title {
+        font-family: 'Gilroy-ExtraBold', sans-serif;
+        font-size: 20px;
+        color: #f5f5f5;
+        margin-bottom: 6px;
+        padding-right: 36px;
+    }
+    .notif-modal-meta {
+        font-size: 12px;
+        color: #6b7280;
+        margin-bottom: 18px;
+    }
+    .notif-modal-message {
+        font-size: 14px;
+        color: #d1d5db;
+        line-height: 1.65;
+        white-space: pre-wrap;
+    }
+
+    /* Toast container */
+    .notif-toast-container {
+        position: fixed;
+        top: 68px;
+        right: 16px;
+        z-index: 350;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        pointer-events: none;
+        max-width: 340px;
+    }
+    .notif-toast {
+        background: rgba(20,20,20,0.95);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(240,200,50,0.3);
+        border-radius: 10px;
+        padding: 12px 16px;
+        pointer-events: auto;
+        cursor: pointer;
+        animation: notifSlideIn 0.35s ease-out;
+        transition: opacity 0.3s, transform 0.3s;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .notif-toast.removing {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    .notif-toast-title {
+        font-weight: 600;
+        font-size: 13px;
+        color: #f5f5f5;
+        margin-bottom: 3px;
+    }
+    .notif-toast-preview {
+        font-size: 12px;
+        color: #8b919a;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    @keyframes notifSlideIn {
+        from { opacity: 0; transform: translateX(100%); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Light theme overrides */
+    [data-theme="light"] .notif-bell {
+        background: rgba(0,0,0,0.06);
+        border-color: rgba(0,0,0,0.1);
+        color: #374151;
+    }
+    [data-theme="light"] .notif-bell:hover { background: rgba(0,0,0,0.1); }
+    [data-theme="light"] .notif-dropdown {
+        background: rgba(255,255,255,0.97);
+        border-color: rgba(0,0,0,0.1);
+        box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+    }
+    [data-theme="light"] .notif-dd-header { color: #111827; border-bottom-color: rgba(0,0,0,0.08); }
+    [data-theme="light"] .notif-dd-item:hover { background: rgba(0,0,0,0.04); }
+    [data-theme="light"] .notif-dd-title { color: #111827; }
+    [data-theme="light"] .notif-dd-preview { color: #6b7280; }
+    [data-theme="light"] .notif-dd-empty { color: #9ca3af; }
+    [data-theme="light"] .notif-modal {
+        background: rgba(255,255,255,0.98);
+        border-color: rgba(240,200,50,0.35);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    [data-theme="light"] .notif-modal-overlay { background: rgba(0,0,0,0.35); }
+    [data-theme="light"] .notif-modal-close { background: rgba(0,0,0,0.06); color: #6b7280; }
+    [data-theme="light"] .notif-modal-close:hover { background: rgba(0,0,0,0.1); color: #111; }
+    [data-theme="light"] .notif-modal-title { color: #111827; }
+    [data-theme="light"] .notif-modal-message { color: #374151; }
+    [data-theme="light"] .notif-toast {
+        background: rgba(255,255,255,0.97);
+        border-color: rgba(240,200,50,0.4);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    [data-theme="light"] .notif-toast-title { color: #111827; }
+    [data-theme="light"] .notif-toast-preview { color: #6b7280; }
+
+    /* Mobile responsive */
+    @media (max-width: 600px) {
+        .notif-bell { top: 12px; right: 12px; width: 36px; height: 36px; }
+        .notif-bell svg { width: 18px; height: 18px; }
+        .notif-dropdown { right: 8px; left: 8px; width: auto; top: 56px; }
+        .notif-modal { width: 95vw; padding: 20px; }
+        .notif-toast-container { right: 8px; left: 8px; max-width: none; top: 56px; }
+    }
+`;
+
 // Client sidebar HTML builder (function so logoPath resolves at call time)
 window.buildClientSidebarHTML = function(logoPath) {
     var isDark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
@@ -651,11 +926,67 @@ window.injectClientSidebar = function(activePage, logoPath) {
         style.textContent = window.CLIENT_SIDEBAR_CSS;
         document.head.appendChild(style);
     }
+    // Inject notification CSS
+    if (!document.getElementById('notif-system-css')) {
+        const nStyle = document.createElement('style');
+        nStyle.id = 'notif-system-css';
+        nStyle.textContent = window.NOTIFICATION_SYSTEM_CSS;
+        document.head.appendChild(nStyle);
+    }
     // Inject HTML
     const sidebarContainer = document.getElementById('sidebar-container');
     if (sidebarContainer) {
         sidebarContainer.innerHTML = window.buildClientSidebarHTML(logoPath);
         window.applyClientSidebar(activePage);
+    }
+    // Inject notification UI elements
+    if (!document.getElementById('notif-bell')) {
+        // Bell button
+        const bell = document.createElement('button');
+        bell.id = 'notif-bell';
+        bell.className = 'notif-bell';
+        bell.onclick = function() { window._toggleNotifDropdown(); };
+        bell.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg><span class="notif-badge hidden" id="notif-badge">0</span>';
+        document.body.appendChild(bell);
+
+        // Dropdown
+        const dd = document.createElement('div');
+        dd.id = 'notif-dropdown';
+        dd.className = 'notif-dropdown';
+        dd.innerHTML = '<div class="notif-dd-header">Notifications</div><div class="notif-dd-list" id="notif-dd-list"></div>';
+        document.body.appendChild(dd);
+
+        // Modal overlay
+        const modal = document.createElement('div');
+        modal.id = 'notif-modal-overlay';
+        modal.className = 'notif-modal-overlay';
+        modal.innerHTML = '<div class="notif-modal" id="notif-modal"><button class="notif-modal-close" id="notif-modal-close">&times;</button><div class="notif-modal-title" id="notif-modal-title"></div><div class="notif-modal-meta" id="notif-modal-meta"></div><div class="notif-modal-message" id="notif-modal-message"></div></div>';
+        document.body.appendChild(modal);
+
+        // Toast container
+        const tc = document.createElement('div');
+        tc.id = 'notif-toast-container';
+        tc.className = 'notif-toast-container';
+        document.body.appendChild(tc);
+
+        // Close dropdown on outside click
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('notif-dropdown');
+            const bellEl = document.getElementById('notif-bell');
+            if (dropdown && dropdown.classList.contains('open') && !dropdown.contains(e.target) && !bellEl.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
+
+        // Modal close button
+        document.getElementById('notif-modal-close').onclick = function() { window._closeNotifModal(true); };
+        // Close modal on overlay click
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) window._closeNotifModal(true);
+        });
+
+        // Init notification system (async, non-blocking)
+        window.initNotificationSystem();
     }
 };
 
@@ -1005,4 +1336,203 @@ window.formatFullDate = function(dateString) {
         month: 'long', day: 'numeric', year: 'numeric',
         hour: '2-digit', minute: '2-digit'
     });
+};
+
+// ============================================================
+// NOTIFICATION SYSTEM
+// ============================================================
+
+window._notifState = {
+    notifications: [],
+    userId: null,
+    userStatus: null,
+    subscription: null,
+    initialized: false
+};
+
+// Get unread (not dismissed, not expired) notifications
+window._getUnreadNotifications = function() {
+    const now = new Date();
+    return window._notifState.notifications.filter(function(n) {
+        if (n.expires_at && new Date(n.expires_at) < now) return false;
+        const readBy = n.is_read_by || [];
+        return !readBy.includes(window._notifState.userId);
+    });
+};
+
+// Update the red badge count
+window._updateNotifBadge = function() {
+    const badge = document.getElementById('notif-badge');
+    if (!badge) return;
+    const unread = window._getUnreadNotifications();
+    const count = unread.length;
+    badge.textContent = count > 99 ? '99+' : count;
+    badge.classList.toggle('hidden', count === 0);
+};
+
+// Render dropdown list with unread notifications
+window._renderNotifDropdown = function() {
+    const list = document.getElementById('notif-dd-list');
+    if (!list) return;
+    const unread = window._getUnreadNotifications();
+    if (unread.length === 0) {
+        list.innerHTML = '<div class="notif-dd-empty">No new notifications</div>';
+        return;
+    }
+    list.innerHTML = unread.map(function(n) {
+        const preview = (n.message || '').substring(0, 60) + ((n.message || '').length > 60 ? '...' : '');
+        const time = window.formatRelativeTime(n.created_at);
+        return '<div class="notif-dd-item" data-id="' + n.id + '"><div class="notif-dd-dot"></div><div class="notif-dd-body"><div class="notif-dd-title">' + _escNotif(n.title) + '</div><div class="notif-dd-preview">' + _escNotif(preview) + '</div></div><div class="notif-dd-time">' + time + '</div></div>';
+    }).join('');
+    // Click handlers
+    list.querySelectorAll('.notif-dd-item').forEach(function(item) {
+        item.onclick = function() {
+            const id = item.getAttribute('data-id');
+            const notif = window._notifState.notifications.find(function(n) { return n.id === id; });
+            if (notif) window._openNotifModal(notif);
+        };
+    });
+};
+
+// HTML escape helper
+function _escNotif(str) {
+    const div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+}
+
+// Toggle dropdown open/close
+window._toggleNotifDropdown = function() {
+    const dd = document.getElementById('notif-dropdown');
+    if (!dd) return;
+    const isOpen = dd.classList.contains('open');
+    if (!isOpen) window._renderNotifDropdown();
+    dd.classList.toggle('open');
+};
+
+// Open modal with full notification content
+window._openNotifModal = function(notification) {
+    // Close dropdown
+    const dd = document.getElementById('notif-dropdown');
+    if (dd) dd.classList.remove('open');
+
+    document.getElementById('notif-modal-title').textContent = notification.title || '';
+    document.getElementById('notif-modal-meta').textContent = window.formatFullDate(notification.created_at);
+    document.getElementById('notif-modal-message').textContent = notification.message || '';
+
+    const overlay = document.getElementById('notif-modal-overlay');
+    overlay.classList.add('open');
+    overlay._currentNotifId = notification.id;
+};
+
+// Close modal and optionally dismiss the notification
+window._closeNotifModal = function(shouldDismiss) {
+    const overlay = document.getElementById('notif-modal-overlay');
+    if (!overlay) return;
+    const notifId = overlay._currentNotifId;
+    overlay.classList.remove('open');
+    overlay._currentNotifId = null;
+
+    if (shouldDismiss && notifId && window._notifState.userId) {
+        // Optimistic local update
+        const notif = window._notifState.notifications.find(function(n) { return n.id === notifId; });
+        if (notif) {
+            if (!notif.is_read_by) notif.is_read_by = [];
+            if (!notif.is_read_by.includes(window._notifState.userId)) {
+                notif.is_read_by.push(window._notifState.userId);
+            }
+        }
+        window._updateNotifBadge();
+        // Persist to DB
+        window.dismissNotification(notifId, window._notifState.userId);
+    }
+};
+
+// Show a toast notification
+window._showNotifToast = function(notification) {
+    const container = document.getElementById('notif-toast-container');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = 'notif-toast';
+    const preview = (notification.message || '').substring(0, 80) + ((notification.message || '').length > 80 ? '...' : '');
+    toast.innerHTML = '<div class="notif-toast-title">' + _escNotif(notification.title) + '</div><div class="notif-toast-preview">' + _escNotif(preview) + '</div>';
+    toast.onclick = function() {
+        toast.classList.add('removing');
+        setTimeout(function() { toast.remove(); }, 300);
+        window._openNotifModal(notification);
+    };
+    container.appendChild(toast);
+    // Auto-remove after 5 seconds
+    setTimeout(function() {
+        if (toast.parentNode) {
+            toast.classList.add('removing');
+            setTimeout(function() { toast.remove(); }, 300);
+        }
+    }, 5000);
+};
+
+// Fetch all notifications from DB
+window._fetchNotifications = async function() {
+    const data = await window.getNotifications();
+    window._notifState.notifications = data || [];
+    window._updateNotifBadge();
+};
+
+// Subscribe to real-time notification inserts
+window._subscribeNotifications = function() {
+    if (window._notifState.subscription) return;
+    const channel = window.supabaseClient
+        .channel('client-notifications')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'push_notifications' }, function(payload) {
+            const newNotif = payload.new;
+            if (!newNotif) return;
+            // Client-side target check
+            const target = newNotif.target;
+            const uid = window._notifState.userId;
+            const status = window._notifState.userStatus;
+            if (target !== 'all' && target !== status && target !== uid) return;
+            // Check not expired
+            if (newNotif.expires_at && new Date(newNotif.expires_at) < new Date()) return;
+            // Add to local state
+            window._notifState.notifications.unshift(newNotif);
+            window._updateNotifBadge();
+            window._showNotifToast(newNotif);
+        })
+        .subscribe();
+    window._notifState.subscription = channel;
+};
+
+// Initialize the notification system
+window.initNotificationSystem = async function() {
+    if (window._notifState.initialized) return;
+
+    // Check if user is authenticated
+    const { data: { session } } = await window.supabaseClient.auth.getSession();
+    if (!session || !session.user) return;
+
+    // Skip for admin users
+    const { data: userData } = await window.supabaseClient
+        .from('users')
+        .select('is_admin, status')
+        .eq('id', session.user.id)
+        .single();
+
+    if (!userData || userData.is_admin) return;
+
+    window._notifState.userId = session.user.id;
+    window._notifState.userStatus = userData.status || '';
+    window._notifState.initialized = true;
+
+    // Fetch existing notifications
+    await window._fetchNotifications();
+
+    // Show toasts for unread on login (max 3, staggered)
+    const unread = window._getUnreadNotifications();
+    const toShow = unread.slice(0, 3);
+    toShow.forEach(function(n, i) {
+        setTimeout(function() { window._showNotifToast(n); }, i * 800);
+    });
+
+    // Subscribe to real-time
+    window._subscribeNotifications();
 };

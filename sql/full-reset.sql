@@ -588,6 +588,27 @@ WHERE handler_type IS NULL OR handler_type = 'ai';
 
 
 -- ============================================================================
+-- STEP 24: Enable realtime + UPDATE policy for push_notifications
+-- ============================================================================
+
+-- Allow real-time subscriptions on push_notifications
+ALTER PUBLICATION supabase_realtime ADD TABLE push_notifications;
+
+-- Allow regular users to update is_read_by (dismiss notifications)
+CREATE POLICY "Users can dismiss notifications" ON push_notifications
+    FOR UPDATE USING (
+        target = 'all'
+        OR target = (SELECT status FROM users WHERE id = auth.uid())
+        OR target = auth.uid()::text
+    )
+    WITH CHECK (
+        target = 'all'
+        OR target = (SELECT status FROM users WHERE id = auth.uid())
+        OR target = auth.uid()::text
+    );
+
+
+-- ============================================================================
 -- DONE! You should see "Success. No rows returned" - that's normal.
 -- ============================================================================
 -- All tables, policies, functions, and triggers are now set up.
