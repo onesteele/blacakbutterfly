@@ -117,13 +117,6 @@
         .logo {
             width: 60px; height: 60px;
             object-fit: contain;
-            filter: drop-shadow(0 0 20px var(--accent-glow));
-            animation: logoGlow 3s ease-in-out infinite;
-        }
-
-        @keyframes logoGlow {
-            0%, 100% { filter: drop-shadow(0 0 20px var(--accent-glow)); }
-            50% { filter: drop-shadow(0 0 30px var(--accent-glow)) drop-shadow(0 0 40px rgba(240, 200, 50, 0.2)); }
         }
 
         .brand-name {
@@ -530,7 +523,6 @@
         function toggleToForgotPassword(event) {
             event.preventDefault();
             document.getElementById('login-form').classList.add('hidden');
-            document.getElementById('signup-form').classList.add('hidden');
             document.getElementById('forgot-password-form').classList.remove('hidden');
             hideError();
             hideSuccess();

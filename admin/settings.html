@@ -1207,6 +1207,63 @@
         }
         .perf-status-badge.active { background: rgba(34,197,94,0.15); color: var(--success); }
         .perf-status-badge.paused { background: rgba(107,114,128,0.15); color: var(--text-muted); }
+
+        /* ============================================================
+           PERMISSIONS GRID
+           ============================================================ */
+        .perm-grid {
+            margin-top: 16px;
+        }
+        .perm-row-header {
+            display: grid;
+            grid-template-columns: 1fr 120px 120px;
+            gap: 12px;
+            padding: 10px 14px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 4px;
+        }
+        .perm-row {
+            display: grid;
+            grid-template-columns: 1fr 120px 120px;
+            gap: 12px;
+            align-items: center;
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .perm-row:last-child {
+            border-bottom: none;
+        }
+        .perm-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .perm-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .perm-role-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+        .perm-toggle-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; cursor: pointer; inset: 0; background: rgba(255,255,255,0.1); border-radius: 24px; transition: 0.3s; }
+        .toggle-slider:before { content: ''; position: absolute; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.3s; }
+        .toggle-switch input:checked + .toggle-slider { background: var(--accent, #f0c832); }
+        .toggle-switch input:checked + .toggle-slider:before { transform: translateX(20px); }
     </style>
 </head>
 <body>
@@ -1362,6 +1419,7 @@
                 <button class="settings-tab" onclick="switchTab('performance')" data-tab="performance">Performance</button>
                 <button class="settings-tab" onclick="switchTab('export')" data-tab="export">Export</button>
                 <button class="settings-tab" onclick="switchTab('onboarding')" data-tab="onboarding">Onboarding</button>
+                <button class="settings-tab" onclick="switchTab('permissions')" data-tab="permissions">Permissions</button>
             </div>
 
             <!-- Tab 1: Profile -->
@@ -1843,6 +1901,39 @@
 
             </div><!-- end tab-onboarding -->
 
+            <!-- Tab 7: Permissions -->
+            <div class="tab-content" id="tab-permissions">
+                <div class="settings-card">
+                    <div class="card-header">
+                        <div class="card-header-left">
+                            <div class="card-header-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="card-title">Role Permissions</div>
+                                <div class="card-subtitle">Configure what each role can do</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px; line-height:1.6;">
+                            Owner and Super Admin always have full access. Configure permissions for Admin and Sales Team roles below.
+                        </p>
+                        <div class="perm-grid" id="perm-grid"></div>
+                        <div style="margin-top:24px; display:flex; justify-content:flex-end;">
+                            <button class="btn-primary" id="btn-save-permissions" onclick="savePermissions()">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                                Save Permissions
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end tab-permissions -->
+
         </div>
     </div>
 
@@ -1921,7 +2012,8 @@
                 adminProfile = profile;
                 document.getElementById('admin-name').textContent = `${profile.first_name} ${profile.last_name}`;
 
-                // Apply role-based sidebar
+                // Load permissions and apply role-based sidebar
+                await window.loadRolePermissions();
                 window.applySidebarRole(profile, 'settings');
 
                 // Populate profile card
@@ -1936,7 +2028,8 @@
                     loadExportSettings(),
                     loadPerformanceData(),
                     loadChatDisplayName(),
-                    loadOnboardingSettings()
+                    loadOnboardingSettings(),
+                    loadPermissionsUI()
                 ]);
 
             } catch (error) {
@@ -2506,6 +2599,92 @@
             } finally {
                 btn.disabled = false;
                 btn.style.opacity = '1';
+            }
+        }
+
+        /* ============================================================
+           PERMISSIONS
+           ============================================================ */
+        const PERMISSION_DEFS = [
+            { key: 'create_users', label: 'Create Users', desc: 'Can create new customer accounts' },
+            { key: 'delete_users', label: 'Delete Users', desc: 'Can delete customer accounts' },
+            { key: 'change_status', label: 'Change Status', desc: 'Can change customer lifecycle status' },
+            { key: 'view_metrics', label: 'View Metrics', desc: 'Can see dashboard stats and metrics' },
+            { key: 'manage_content', label: 'Manage Content', desc: 'Can manage content posts' },
+            { key: 'manage_announcements', label: 'Manage Announcements', desc: 'Can manage announcements' },
+            { key: 'manage_workflows', label: 'Manage Workflows', desc: 'Can manage N8N workflows' },
+            { key: 'manage_notifications', label: 'Manage Notifications', desc: 'Can manage push notifications' },
+            { key: 'view_conversations', label: 'View Conversations', desc: 'Can access conversations page' },
+            { key: 'view_settings', label: 'View Settings', desc: 'Can access settings page (limited tabs)' }
+        ];
+
+        let permissionsData = null;
+
+        async function loadPermissionsUI() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .select('value')
+                    .eq('key', 'role_permissions')
+                    .single();
+                if (error && error.code !== 'PGRST116') throw error;
+                permissionsData = (data && data.value) ? data.value : {};
+            } catch (err) {
+                console.error('Error loading permissions:', err);
+                permissionsData = {};
+            }
+            renderPermissionsGrid();
+        }
+
+        function renderPermissionsGrid() {
+            const grid = document.getElementById('perm-grid');
+            const roles = ['admin', 'sales_team'];
+            const roleLabels = { admin: 'Admin', sales_team: 'Sales Team' };
+
+            let html = '<div class="perm-row-header">' +
+                '<div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">Permission</div>' +
+                roles.map(r => '<div class="perm-role-label">' + roleLabels[r] + '</div>').join('') +
+            '</div>';
+
+            for (const perm of PERMISSION_DEFS) {
+                html += '<div class="perm-row">' +
+                    '<div><div class="perm-label">' + perm.label + '</div><div class="perm-desc">' + perm.desc + '</div></div>' +
+                    roles.map(function(role) {
+                        const checked = permissionsData[role] && permissionsData[role][perm.key] === true ? ' checked' : '';
+                        return '<div class="perm-toggle-cell"><label class="toggle-switch"><input type="checkbox" data-role="' + role + '" data-perm="' + perm.key + '"' + checked + '><span class="toggle-slider"></span></label></div>';
+                    }).join('') +
+                '</div>';
+            }
+            grid.innerHTML = html;
+        }
+
+        async function savePermissions() {
+            const btn = document.getElementById('btn-save-permissions');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+            try {
+                const updated = { admin: {}, sales_team: {} };
+                document.querySelectorAll('#perm-grid input[type="checkbox"]').forEach(function(cb) {
+                    updated[cb.dataset.role][cb.dataset.perm] = cb.checked;
+                });
+
+                const { error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .upsert(
+                        { key: 'role_permissions', value: updated, updated_at: new Date().toISOString() },
+                        { onConflict: 'key' }
+                    );
+                if (error) throw error;
+
+                window._rolePermissions = updated;
+                permissionsData = updated;
+                showToast('Permissions saved successfully!', 'success');
+            } catch (err) {
+                console.error('Error saving permissions:', err);
+                showToast('Failed to save permissions.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save Permissions';
             }
         }
 

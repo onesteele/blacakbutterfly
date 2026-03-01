@@ -109,39 +109,82 @@ window.getUserRole = function(profile) {
     return profile?.role || 'user';
 };
 
-// Can access admin panel at all
+// Cached role permissions (loaded from admin_settings)
+window._rolePermissions = null;
+
+// Load role permissions from admin_settings and cache them
+window.loadRolePermissions = async function() {
+    if (window._rolePermissions) return window._rolePermissions;
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('admin_settings')
+            .select('value')
+            .eq('key', 'role_permissions')
+            .single();
+        if (error && error.code !== 'PGRST116') throw error;
+        window._rolePermissions = (data && data.value) ? data.value : null;
+    } catch (err) {
+        console.warn('Could not load role permissions, using defaults:', err);
+        window._rolePermissions = null;
+    }
+    return window._rolePermissions;
+};
+
+// Check a specific permission for a profile
+window.checkPermission = function(profile, permissionKey) {
+    var role = window.getUserRole(profile);
+    // owner and super_admin always have all permissions
+    if (role === 'owner' || role === 'super_admin') return true;
+    // Non-admin roles never have these permissions
+    if (role !== 'admin' && role !== 'sales_team') return false;
+    // Check cached permissions
+    if (window._rolePermissions && window._rolePermissions[role]) {
+        return window._rolePermissions[role][permissionKey] === true;
+    }
+    // Fallback defaults if permissions haven't loaded
+    var defaults = {
+        admin: { create_users: true, delete_users: false, change_status: true, view_metrics: true, manage_content: true, manage_announcements: true, manage_workflows: true, manage_notifications: true, view_conversations: true, view_settings: false },
+        sales_team: { create_users: true, delete_users: false, change_status: false, view_metrics: false, manage_content: false, manage_announcements: false, manage_workflows: false, manage_notifications: false, view_conversations: true, view_settings: false }
+    };
+    if (defaults[role]) return defaults[role][permissionKey] === true;
+    return false;
+};
+
+// Can access admin panel at all (unchanged — RLS gatekeeper)
 window.hasAdminAccess = function(profile) {
     return ['owner', 'super_admin', 'admin', 'sales_team'].includes(profile?.role);
 };
 
-// Can delete customers (owner + super_admin only)
+// Can delete customers
 window.canDeleteCustomers = function(profile) {
-    return ['owner', 'super_admin'].includes(profile?.role);
+    return window.checkPermission(profile, 'delete_users');
 };
 
-// Can manage content, announcements, workflows, notifications
+// Can manage content posts
 window.canManageContent = function(profile) {
-    return ['owner', 'super_admin', 'admin'].includes(profile?.role);
+    return window.checkPermission(profile, 'manage_content');
 };
 
-// Can access settings page and manage team
+// Can access settings page
 window.canManageSettings = function(profile) {
-    return ['owner', 'super_admin'].includes(profile?.role);
+    var role = window.getUserRole(profile);
+    if (role === 'owner' || role === 'super_admin') return true;
+    return window.checkPermission(profile, 'view_settings');
 };
 
-// Can manage team members (assign roles)
+// Can manage team members (assign roles) — always owner/super_admin only
 window.canManageTeam = function(profile) {
     return ['owner', 'super_admin'].includes(profile?.role);
 };
 
 // Can create new users from admin panel
 window.canCreateUsers = function(profile) {
-    return ['owner', 'super_admin', 'admin'].includes(profile?.role);
+    return window.checkPermission(profile, 'create_users');
 };
 
 // Can change customer status
 window.canChangeStatus = function(profile) {
-    return ['owner', 'super_admin', 'admin'].includes(profile?.role);
+    return window.checkPermission(profile, 'change_status');
 };
 
 // SVG icons for sidebar
@@ -156,49 +199,44 @@ window._sidebarIcons = {
     settings: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>'
 };
 
-// Apply role-based sidebar filtering - call after auth check
+// Apply role-based sidebar filtering - call after auth check and loadRolePermissions()
 window.applySidebarRole = function(profile, activePage) {
-    const role = window.getUserRole(profile);
-    const navEl = document.querySelector('.sidebar-nav');
+    var navEl = document.querySelector('.sidebar-nav');
     if (!navEl) return;
 
-    const allRoles = ['owner', 'super_admin', 'admin', 'sales_team'];
-    const contentRoles = ['owner', 'super_admin', 'admin'];
-    const settingsRoles = ['owner', 'super_admin'];
-
-    const items = [
-        { href: '/admin/', icon: 'dashboard', label: 'Dashboard', roles: allRoles, id: 'dashboard' },
-        { href: '/admin/customers.html', icon: 'customers', label: 'Customers', roles: allRoles, id: 'customers' },
-        { href: '/admin/conversations.html', icon: 'conversations', label: 'Conversations', roles: allRoles, id: 'conversations' },
-        { href: '/admin/content.html', icon: 'content', label: 'Content', roles: contentRoles, id: 'content' },
-        { href: '/admin/announcements.html', icon: 'announcements', label: 'Announcements', roles: contentRoles, id: 'announcements' },
-        { href: '/admin/workflows.html', icon: 'workflows', label: 'Workflows', roles: contentRoles, id: 'workflows' },
-        { href: '/admin/notifications.html', icon: 'notifications', label: 'Notifications', roles: contentRoles, id: 'notifications' },
-        { href: '/admin/settings.html', icon: 'settings', label: 'Settings', roles: settingsRoles, id: 'settings' },
+    var items = [
+        { href: '/admin/', icon: 'dashboard', label: 'Dashboard', id: 'dashboard', visible: true },
+        { href: '/admin/customers.html', icon: 'customers', label: 'Customers', id: 'customers', visible: true },
+        { href: '/admin/conversations.html', icon: 'conversations', label: 'Conversations', id: 'conversations', visible: window.checkPermission(profile, 'view_conversations') },
+        { href: '/admin/content.html', icon: 'content', label: 'Content', id: 'content', visible: window.checkPermission(profile, 'manage_content') },
+        { href: '/admin/announcements.html', icon: 'announcements', label: 'Announcements', id: 'announcements', visible: window.checkPermission(profile, 'manage_announcements') },
+        { href: '/admin/workflows.html', icon: 'workflows', label: 'Workflows', id: 'workflows', visible: window.checkPermission(profile, 'manage_workflows') },
+        { href: '/admin/notifications.html', icon: 'notifications', label: 'Notifications', id: 'notifications', visible: window.checkPermission(profile, 'manage_notifications') },
+        { href: '/admin/settings.html', icon: 'settings', label: 'Settings', id: 'settings', visible: window.canManageSettings(profile) },
     ];
 
-    let html = '';
-    for (const item of items) {
-        if (!item.roles.includes(role)) continue;
-        const activeClass = activePage === item.id ? ' active' : '';
-        html += `<a href="${item.href}" class="nav-item${activeClass}">
-            <span class="nav-icon">${window._sidebarIcons[item.icon]}</span>
-            <span class="nav-label">${item.label}</span>
-        </a>\n`;
+    var html = '';
+    for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        if (!item.visible) continue;
+        var activeClass = activePage === item.id ? ' active' : '';
+        html += '<a href="' + item.href + '" class="nav-item' + activeClass + '">' +
+            '<span class="nav-icon">' + window._sidebarIcons[item.icon] + '</span>' +
+            '<span class="nav-label">' + item.label + '</span>' +
+        '</a>\n';
     }
 
     navEl.innerHTML = html;
 
     // Prefetch admin pages for instant navigation
-    items.forEach(item => {
-        if (item.roles.includes(role) && activePage !== item.id) {
-            const link = document.createElement('link');
+    for (var j = 0; j < items.length; j++) {
+        if (items[j].visible && activePage !== items[j].id) {
+            var link = document.createElement('link');
             link.rel = 'prefetch';
-            link.href = item.href;
+            link.href = items[j].href;
             document.head.appendChild(link);
         }
-    });
-
+    }
 };
 
 // ============================================================

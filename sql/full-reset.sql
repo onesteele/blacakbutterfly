@@ -637,9 +637,27 @@ INSERT INTO admin_settings (id, key, value, updated_at)
 VALUES (gen_random_uuid(), 'booking_config', '{"booking_url": "https://scheduling.profit-insiders.com/book.html?slug=algorithm-alignment-call"}'::jsonb, NOW())
 ON CONFLICT (key) DO NOTHING;
 
+-- Seed default role permissions (configurable by owner/super_admin)
+INSERT INTO admin_settings (id, key, value, updated_at)
+VALUES (gen_random_uuid(), 'role_permissions', '{
+  "admin": {
+    "create_users": true, "delete_users": false, "change_status": true,
+    "view_metrics": true, "manage_content": true, "manage_announcements": true,
+    "manage_workflows": true, "manage_notifications": true,
+    "view_conversations": true, "view_settings": false
+  },
+  "sales_team": {
+    "create_users": true, "delete_users": false, "change_status": false,
+    "view_metrics": false, "manage_content": false, "manage_announcements": false,
+    "manage_workflows": false, "manage_notifications": false,
+    "view_conversations": true, "view_settings": false
+  }
+}'::jsonb, NOW())
+ON CONFLICT (key) DO NOTHING;
+
 -- Allow anyone to read onboarding config (needed before auth on onboarding page)
 CREATE POLICY "Anyone can read onboarding config" ON admin_settings
-    FOR SELECT USING (key IN ('payment_plans', 'contract_config', 'booking_config'));
+    FOR SELECT USING (key IN ('payment_plans', 'contract_config', 'booking_config', 'role_permissions'));
 
 -- RPC: Lookup pending verification user by email (callable by anon for onboarding entry)
 CREATE OR REPLACE FUNCTION public.lookup_pending_user(user_email TEXT)

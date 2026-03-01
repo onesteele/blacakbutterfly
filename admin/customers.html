@@ -1478,7 +1478,8 @@
 
             document.getElementById('admin-name').textContent = profile.full_name || profile.email;
 
-            // Apply role-based sidebar
+            // Load permissions and apply role-based sidebar
+            await window.loadRolePermissions();
             window.applySidebarRole(profile, 'customers');
 
             // Hide Create User button if not allowed

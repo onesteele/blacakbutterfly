@@ -1450,7 +1450,8 @@
                 adminProfile = profile;
                 document.getElementById('admin-name').textContent = `${profile.first_name} ${profile.last_name}`;
 
-                // Apply role-based sidebar
+                // Load permissions and apply role-based sidebar
+                await window.loadRolePermissions();
                 window.applySidebarRole(profile, 'notifications');
 
                 await Promise.all([

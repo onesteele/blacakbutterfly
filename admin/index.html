@@ -1162,12 +1162,12 @@
                 adminProfile = profile;
                 document.getElementById('admin-name').textContent = `${profile.first_name} ${profile.last_name}`;
 
-                // Apply role-based sidebar
+                // Load permissions and apply role-based sidebar
+                await window.loadRolePermissions();
                 window.applySidebarRole(profile, 'dashboard');
 
-                // Hide stats for sales team
-                const userRole = window.getUserRole(profile);
-                if (userRole === 'sales_team') {
+                // Hide stats if user doesn't have view_metrics permission
+                if (!window.checkPermission(profile, 'view_metrics')) {
                     document.querySelectorAll('.stat-card').forEach(el => el.style.display = 'none');
                 }
 

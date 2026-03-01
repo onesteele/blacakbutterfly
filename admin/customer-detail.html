@@ -2188,7 +2188,8 @@
             adminProfile = profile;
             document.getElementById('admin-name').textContent = profile.full_name || profile.email;
 
-            // Apply role-based sidebar
+            // Load permissions and apply role-based sidebar
+            await window.loadRolePermissions();
             window.applySidebarRole(profile, 'customers');
 
             // Hide delete button if not allowed
@@ -2264,7 +2265,11 @@
         function renderProfileHeader() {
             const c = customerData;
             const initials = (c.full_name || 'NA').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-            document.getElementById('profile-avatar').textContent = initials;
+            if (c.avatar_url) {
+                document.getElementById('profile-avatar').innerHTML = '<img src="' + c.avatar_url + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.textContent=\'' + initials + '\'">';
+            } else {
+                document.getElementById('profile-avatar').textContent = initials;
+            }
             document.getElementById('profile-name').textContent = c.full_name || 'N/A';
             document.getElementById('meta-email').textContent = c.email || 'N/A';
             document.getElementById('meta-phone').textContent = c.phone || 'N/A';
@@ -2275,7 +2280,7 @@
             const status = c.status || 'onboarding';
             const badge = document.getElementById('status-badge');
             badge.className = `status-badge ${status}`;
-            const statusLabels = { onboarding: 'Onboarding', member: 'Member', verified_member: 'Verified Member', active: 'Active', inactive: 'Inactive', churned: 'Churned', at_risk: 'At Risk', dispute: 'Dispute' };
+            const statusLabels = { pending_verification: 'Pending Verification', onboarding: 'Onboarding', member: 'Member', verified_member: 'Verified Member', active: 'Active', inactive: 'Inactive', churned: 'Churned', at_risk: 'At Risk', dispute: 'Dispute' };
             document.getElementById('status-label').textContent = statusLabels[status] || status;
 
             // Email button
