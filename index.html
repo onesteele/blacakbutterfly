@@ -687,7 +687,7 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
                     </div>
                     <div class="action-card-title">Browse Content</div>
-                    <div class="action-card-desc">Watch exclusive videos and explore the content library.</div>
+                    <div class="action-card-desc" id="cardDescContent">Watch exclusive videos and explore the content library.</div>
                     <div class="action-card-arrow">
                         Explore
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -698,7 +698,7 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     </div>
                     <div class="action-card-title">Get Support</div>
-                    <div class="action-card-desc">Chat with our team or get instant AI-powered answers.</div>
+                    <div class="action-card-desc" id="cardDescSupport">Chat with our team or get instant AI-powered answers.</div>
                     <div class="action-card-arrow">
                         Start chat
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
@@ -820,10 +820,11 @@
                 }
 
                 currentProfile = profile;
+                var previousLastLogin = profile.last_login || null;
                 window.updateLastLogin(currentUser.id);
 
                 renderDashboard();
-                loadDashboardData();
+                loadDashboardData(previousLastLogin);
                 startInactivityTimer();
 
             } catch (error) {
@@ -855,11 +856,62 @@
         }
 
         // ── Load all dashboard data ──
-        async function loadDashboardData() {
+        async function loadDashboardData(previousLastLogin) {
             await Promise.all([
                 loadAnnouncements(),
-                loadContent()
+                loadContent(),
+                updateContentCardDesc(previousLastLogin),
+                updateSupportCardDesc()
             ]);
+        }
+
+        // ── Dynamic card: new content since last visit ──
+        async function updateContentCardDesc(previousLastLogin) {
+            try {
+                if (!previousLastLogin) return;
+                var el = document.getElementById('cardDescContent');
+                if (!el) return;
+
+                var { count, error } = await window.supabaseClient
+                    .from('content_posts')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('is_published', true)
+                    .gt('created_at', previousLastLogin);
+
+                if (error) throw error;
+                if (count && count > 0) {
+                    el.textContent = count + ' new item' + (count === 1 ? '' : 's') + ' since your last visit';
+                }
+            } catch (e) {
+                console.error('Error updating content card:', e);
+            }
+        }
+
+        // ── Dynamic card: unread support replies ──
+        async function updateSupportCardDesc() {
+            try {
+                var el = document.getElementById('cardDescSupport');
+                if (!el) return;
+
+                var { data, error } = await window.supabaseClient
+                    .from('chat_conversations')
+                    .select('user_unread_count')
+                    .eq('user_id', currentUser.id)
+                    .gt('user_unread_count', 0);
+
+                if (error) throw error;
+                if (data && data.length > 0) {
+                    var totalUnread = data.reduce(function(sum, conv) {
+                        return sum + (conv.user_unread_count || 0);
+                    }, 0);
+                    if (totalUnread > 0) {
+                        el.textContent = 'You have ' + totalUnread + ' unread repl' + (totalUnread === 1 ? 'y' : 'ies');
+                        el.style.color = '#f0c832';
+                    }
+                }
+            } catch (e) {
+                console.error('Error updating support card:', e);
+            }
         }
 
         // ── Announcements ──

@@ -246,6 +246,26 @@ window.applyClientSidebar = function(activePage) {
             document.head.appendChild(link);
         }
     });
+
+    // Intercept sidebar nav clicks for smooth page transitions
+    navEl.querySelectorAll('.cs-nav-item').forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            window._navigateWithTransition(link.getAttribute('href'));
+        });
+    });
+};
+
+// Navigate with fade-out transition
+window._navigateWithTransition = function(url) {
+    if (!url || url.startsWith('#') || url.startsWith('http') || url.startsWith('mailto:') || url.startsWith('javascript:')) {
+        window.location.href = url;
+        return;
+    }
+    document.body.classList.add('page-fade-out');
+    setTimeout(function() {
+        window.location.href = url;
+    }, 200);
 };
 
 // ============================================================
@@ -261,6 +281,16 @@ window.toggleTheme = function() {};
 
 // Apply theme immediately on script load
 window.initTheme();
+
+// ============================================================
+// PAGE TRANSITIONS (smooth fade between pages)
+// ============================================================
+window.PAGE_TRANSITION_CSS = `
+    body { opacity: 1; transition: opacity 0.2s ease-out; }
+    body.page-fade-in { animation: pageFadeIn 0.3s ease-out forwards; }
+    body.page-fade-out { opacity: 0; pointer-events: none; }
+    @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
+`;
 
 // Client sidebar CSS (injected once per page)
 window.CLIENT_SIDEBAR_CSS = `
@@ -904,6 +934,35 @@ window.CHAT_WIDGET_CSS = `
     .cw-send:not(:disabled):hover { transform: scale(1.05); }
     .cw-send svg { width: 16px; height: 16px; color: #0a0a0a; }
 
+    /* Typing indicator */
+    .cw-typing-indicator {
+        align-self: flex-start;
+        display: none;
+        padding: 10px 14px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        border-bottom-left-radius: 4px;
+        max-width: 85%;
+    }
+    .cw-typing-indicator.visible {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+    .cw-typing-dot {
+        width: 7px; height: 7px;
+        border-radius: 50%;
+        background: #6b7280;
+        animation: cwTypingBounce 1.4s ease-in-out infinite;
+    }
+    .cw-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .cw-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes cwTypingBounce {
+        0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+        30% { transform: translateY(-6px); opacity: 1; }
+    }
+
     @media (max-width: 600px) {
         .cw-panel {
             right: 0; bottom: 0; left: 0;
@@ -1015,6 +1074,27 @@ window.injectClientSidebar = function(activePage, logoPath) {
         // Init notification system (async, non-blocking)
         window.initNotificationSystem();
     }
+
+    // Inject page transition CSS
+    if (!document.getElementById('page-transition-css')) {
+        const tStyle = document.createElement('style');
+        tStyle.id = 'page-transition-css';
+        tStyle.textContent = window.PAGE_TRANSITION_CSS;
+        document.head.appendChild(tStyle);
+    }
+    document.body.classList.add('page-fade-in');
+
+    // Intercept all internal links for smooth transitions
+    document.addEventListener('click', function(e) {
+        var link = e.target.closest('a[href]');
+        if (!link) return;
+        var href = link.getAttribute('href');
+        if (!href) return;
+        if (href.startsWith('http') || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('javascript:')) return;
+        if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+        e.preventDefault();
+        window._navigateWithTransition(href);
+    });
 
     // Init chat widget (async, non-blocking)
     window._initChatWidget();
@@ -1578,8 +1658,12 @@ window._chatWidgetState = {
     subscription: null,
     initialized: false,
     userId: null,
+    userEmail: null,
+    userDisplayName: null,
     displayName: 'Support Team',
-    greetingMessage: 'Hi! How can I help you today?'
+    greetingMessage: 'Hi! How can I help you today?',
+    webhookUrl: null,
+    _typingTimeout: null
 };
 
 // Initialize chat widget
@@ -1607,14 +1691,19 @@ window._initChatWidget = async function() {
     if (['member', 'verified_member', 'active'].indexOf(userStatus) === -1) return;
 
     window._chatWidgetState.userId = session.user.id;
+    window._chatWidgetState.userEmail = session.user.email || '';
+    window._chatWidgetState.userDisplayName =
+        ((userData.data.first_name || '') + ' ' + (userData.data.last_name || '')).trim()
+        || session.user.email || '';
     window._chatWidgetState.initialized = true;
 
-    // Load AI config
+    // Load AI config (display name, greeting, webhook URL)
     try {
         var aiConfig = await window.getAIChatConfig();
         if (aiConfig) {
             window._chatWidgetState.displayName = aiConfig.ai_display_name || 'Support Team';
             window._chatWidgetState.greetingMessage = aiConfig.greeting_message || 'Hi! How can I help you today?';
+            window._chatWidgetState.webhookUrl = aiConfig.webhook_url || null;
         }
     } catch (e) { /* use defaults */ }
 
@@ -1887,6 +1976,12 @@ window._sendWidgetMessage = async function() {
         window._renderWidgetMessage(result.data);
         window._scrollWidgetToBottom();
 
+        // Trigger N8N webhook (non-blocking, fire-and-forget)
+        window._callWidgetWebhook(text);
+
+        // Show typing indicator while waiting for AI response
+        window._showWidgetTyping();
+
     } catch (err) {
         console.error('Chat widget: error sending message:', err);
     } finally {
@@ -1894,6 +1989,26 @@ window._sendWidgetMessage = async function() {
         input.focus();
         sendBtn.disabled = !input.value.trim();
     }
+};
+
+// Non-blocking webhook call to N8N
+window._callWidgetWebhook = function(messageContent) {
+    var state = window._chatWidgetState;
+    if (!state.webhookUrl) return;
+
+    fetch(state.webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            conversationId: state.conversationId,
+            messageContent: messageContent,
+            userId: state.userId,
+            userEmail: state.userEmail || '',
+            userDisplayName: state.userDisplayName || ''
+        })
+    }).catch(function(err) {
+        console.error('Chat widget: webhook call failed:', err);
+    });
 };
 
 // Subscribe to real-time messages
@@ -1917,6 +2032,7 @@ window._subscribeChatWidget = function() {
             var existing = document.querySelector('[data-msg-id="' + payload.new.id + '"]');
             if (existing) return;
 
+            window._hideWidgetTyping();
             window._renderWidgetMessage(payload.new);
             window._scrollWidgetToBottom();
 
@@ -1934,6 +2050,37 @@ window._scrollWidgetToBottom = function() {
     var el = document.getElementById('cw-messages');
     if (el) {
         requestAnimationFrame(function() { el.scrollTop = el.scrollHeight; });
+    }
+};
+
+// Show typing indicator (bouncing dots)
+window._showWidgetTyping = function() {
+    var messagesEl = document.getElementById('cw-messages');
+    if (!messagesEl) return;
+
+    var existing = document.getElementById('cw-typing');
+    if (existing) existing.remove();
+
+    var el = document.createElement('div');
+    el.id = 'cw-typing';
+    el.className = 'cw-typing-indicator visible';
+    el.innerHTML = '<div class="cw-typing-dot"></div><div class="cw-typing-dot"></div><div class="cw-typing-dot"></div>';
+    messagesEl.appendChild(el);
+    window._scrollWidgetToBottom();
+
+    // Safety: auto-hide after 30 seconds if no response
+    window._chatWidgetState._typingTimeout = setTimeout(function() {
+        window._hideWidgetTyping();
+    }, 30000);
+};
+
+// Hide typing indicator
+window._hideWidgetTyping = function() {
+    var el = document.getElementById('cw-typing');
+    if (el) el.remove();
+    if (window._chatWidgetState._typingTimeout) {
+        clearTimeout(window._chatWidgetState._typingTimeout);
+        window._chatWidgetState._typingTimeout = null;
     }
 };
 
