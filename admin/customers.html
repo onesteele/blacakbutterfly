@@ -1899,7 +1899,11 @@
             const tempPassword = 'TmpPw!' + crypto.randomUUID().slice(0, 12);
 
             try {
-                // 1. Create auth user with pending_verification status
+                // 1. Save admin session before signUp (signUp replaces the active session)
+                const { data: { session: adminSession } } = await window.supabaseClient.auth.getSession();
+                if (!adminSession) throw new Error('Admin session lost. Please log in again.');
+
+                // 2. Create auth user with pending_verification status
                 const { data: authData, error: authError } = await window.supabaseClient.auth.signUp({
                     email: email,
                     password: tempPassword,
@@ -1913,19 +1917,38 @@
                     }
                 });
 
-                if (authError) throw authError;
-                if (!authData.user) throw new Error('User creation failed - no user returned');
+                if (authError) {
+                    // Restore admin session if signUp failed
+                    await window.supabaseClient.auth.setSession({
+                        access_token: adminSession.access_token,
+                        refresh_token: adminSession.refresh_token
+                    });
+                    throw authError;
+                }
+                if (!authData.user) {
+                    await window.supabaseClient.auth.setSession({
+                        access_token: adminSession.access_token,
+                        refresh_token: adminSession.refresh_token
+                    });
+                    throw new Error('User creation failed - no user returned');
+                }
 
                 const newUserId = authData.user.id;
 
-                // 2. Auto-confirm email (bypasses email verification)
+                // 3. Restore admin session immediately so subsequent calls have admin RLS
+                await window.supabaseClient.auth.setSession({
+                    access_token: adminSession.access_token,
+                    refresh_token: adminSession.refresh_token
+                });
+
+                // 4. Auto-confirm email (bypasses email verification)
                 try {
                     await window.supabaseClient.rpc('admin_confirm_user_email', { target_user_id: newUserId });
                 } catch (confirmErr) {
                     console.warn('admin_confirm_user_email not available:', confirmErr);
                 }
 
-                // 3. Update user profile with payment info and correct status
+                // 5. Update user profile with payment info and correct status
                 const { error: updateError } = await window.supabaseClient
                     .from('users')
                     .update({
@@ -1943,6 +1966,7 @@
 
                 if (updateError) {
                     console.error('Error updating user profile:', updateError);
+                    showToast('User created but profile update failed. Check the user record.', 'error');
                 }
 
                 closeCreateUserModal();
