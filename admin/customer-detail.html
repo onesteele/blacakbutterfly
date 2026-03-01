@@ -2453,16 +2453,26 @@
             // Verification photo
             if (c.verification_photo_url) {
                 try {
-                    const signedUrl = await window.getVerificationPhotoUrl(c.verification_photo_url);
-                    if (signedUrl) {
+                    // Get photo URL — could be a full URL or a storage path
+                    var photoUrl = c.verification_photo_url;
+                    if (!photoUrl.startsWith('http') && window.getVerificationPhotoUrl) {
+                        photoUrl = window.getVerificationPhotoUrl(c.verification_photo_url);
+                    }
+                    if (photoUrl) {
                         const verifiedDate = c.verification_completed_at ? window.formatFullDate(c.verification_completed_at) : 'Unknown date';
                         document.getElementById('legal-photo-container').innerHTML =
-                            '<img src="' + signedUrl + '" style="max-width:200px; border-radius:12px; border:2px solid var(--border);">' +
+                            '<img src="' + photoUrl + '" style="max-width:200px; border-radius:12px; border:2px solid var(--border);">' +
                             '<p style="color:var(--text-muted); margin-top:8px; font-size:13px;">Verified: ' + verifiedDate + '</p>';
                     }
                 } catch (err) {
                     console.error('Error loading verification photo:', err);
                 }
+            } else if (c.avatar_url) {
+                // Fallback: use avatar_url if verification_photo_url is not set
+                const verifiedDate = c.verification_completed_at ? window.formatFullDate(c.verification_completed_at) : 'Unknown date';
+                document.getElementById('legal-photo-container').innerHTML =
+                    '<img src="' + c.avatar_url + '" style="max-width:200px; border-radius:12px; border:2px solid var(--border);">' +
+                    '<p style="color:var(--text-muted); margin-top:8px; font-size:13px;">Verified: ' + verifiedDate + '</p>';
             }
 
             // Contract info

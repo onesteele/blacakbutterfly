@@ -59,15 +59,30 @@ window.getUserIP = async function() {
         const data = await response.json();
         const ip = data.ip || 'Unknown';
         window._geoData = { ip: ip, city: '', region: '', country: '' };
-        // Fetch geo data and wait for it
+        // Fetch geo data — try primary API, then fallback
         try {
-            const geoResponse = await fetch('https://freeipapi.com/api/json/' + ip);
-            const geo = await geoResponse.json();
-            window._geoData.city = geo.cityName || '';
-            window._geoData.region = geo.regionName || '';
-            window._geoData.country = geo.countryName || '';
-        } catch (geoErr) {
-            console.warn('Geo lookup failed, continuing with IP only');
+            const geoResponse = await fetch('https://ipapi.co/' + ip + '/json/');
+            if (geoResponse.ok) {
+                const geo = await geoResponse.json();
+                window._geoData.city = geo.city || '';
+                window._geoData.region = geo.region || '';
+                window._geoData.country = geo.country_name || '';
+            } else {
+                throw new Error('Primary geo API failed');
+            }
+        } catch (geoErr1) {
+            console.warn('Primary geo lookup failed, trying fallback...');
+            try {
+                const geoResponse2 = await fetch('https://free.freeipapi.com/api/json/' + ip);
+                if (geoResponse2.ok) {
+                    const geo2 = await geoResponse2.json();
+                    window._geoData.city = geo2.cityName || '';
+                    window._geoData.region = geo2.regionName || '';
+                    window._geoData.country = geo2.countryName || '';
+                }
+            } catch (geoErr2) {
+                console.warn('Fallback geo lookup also failed, continuing with IP only');
+            }
         }
         return ip;
     } catch (error) {
@@ -1315,6 +1330,7 @@ window.getContractConfig = async function() {
 };
 
 // Upload verification photo to Supabase Storage
+// Returns an object: { path, publicUrl }
 window.uploadVerificationPhoto = async function(userId, fileBlob) {
     try {
         var filePath = userId + '/verification.jpg';
@@ -1322,23 +1338,29 @@ window.uploadVerificationPhoto = async function(userId, fileBlob) {
             .from('verification-photos')
             .upload(filePath, fileBlob, { contentType: 'image/jpeg', upsert: true });
         if (result.error) throw result.error;
-        return filePath;
+        // Get public URL (bucket is public)
+        var urlResult = window.supabaseClient.storage
+            .from('verification-photos')
+            .getPublicUrl(filePath);
+        var publicUrl = (urlResult.data && urlResult.data.publicUrl) || null;
+        return { path: filePath, publicUrl: publicUrl };
     } catch (err) {
         console.error('Error uploading verification photo:', err);
         return null;
     }
 };
 
-// Get signed URL for verification photo
-window.getVerificationPhotoUrl = async function(photoPath) {
+// Get public URL for verification photo (bucket is public, no signing needed)
+window.getVerificationPhotoUrl = function(photoPath) {
     try {
-        var result = await window.supabaseClient.storage
+        // If it's already a full URL, return as-is
+        if (photoPath && photoPath.startsWith('http')) return photoPath;
+        var urlResult = window.supabaseClient.storage
             .from('verification-photos')
-            .createSignedUrl(photoPath, 3600);
-        if (result.error) throw result.error;
-        return (result.data && result.data.signedUrl) || null;
+            .getPublicUrl(photoPath);
+        return (urlResult.data && urlResult.data.publicUrl) || null;
     } catch (err) {
-        console.error('Error getting signed URL:', err);
+        console.error('Error getting photo URL:', err);
         return null;
     }
 };

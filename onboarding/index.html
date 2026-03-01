@@ -1498,6 +1498,7 @@
         let currentProfile = null;
         let pendingUserData = null;
         let verificationPhotoUrl = null;
+        let verificationPhotoPath = null;
         let cameraStream = null;
         let capturedBlob = null;
         let adminSettings = null;
@@ -2032,20 +2033,22 @@
                 if (window.uploadVerificationPhoto) {
                     var photoResult = await window.uploadVerificationPhoto(currentUser.id, capturedBlob);
                     if (photoResult) {
-                        verificationPhotoUrl = photoResult;
+                        verificationPhotoUrl = photoResult.publicUrl || photoResult.path || null;
+                        verificationPhotoPath = photoResult.path || null;
                     }
                 } else {
                     // Fallback: upload directly to Supabase storage
-                    var fileName = 'verification/' + currentUser.id + '/photo_' + Date.now() + '.jpg';
+                    var fileName = currentUser.id + '/verification.jpg';
                     var uploadResult = await window.supabaseClient.storage
                         .from('verification-photos')
-                        .upload(fileName, capturedBlob, { contentType: 'image/jpeg' });
+                        .upload(fileName, capturedBlob, { contentType: 'image/jpeg', upsert: true });
 
                     if (uploadResult.data) {
                         var urlResult = window.supabaseClient.storage
                             .from('verification-photos')
                             .getPublicUrl(fileName);
                         verificationPhotoUrl = urlResult.data.publicUrl;
+                        verificationPhotoPath = fileName;
                     }
                 }
 
@@ -2141,28 +2144,16 @@
             btn.textContent = 'Submitting...';
 
             try {
-                // Build signed URL for the verification photo to use as avatar
-                var avatarUrl = null;
-                if (verificationPhotoUrl) {
-                    try {
-                        var signedResult = await window.supabaseClient.storage
-                            .from('verification-photos')
-                            .createSignedUrl(verificationPhotoUrl, 60 * 60 * 24 * 365);
-                        if (signedResult.data && signedResult.data.signedUrl) {
-                            avatarUrl = signedResult.data.signedUrl;
-                        }
-                    } catch (urlErr) {
-                        console.warn('Could not get signed URL for avatar:', urlErr);
-                    }
-                }
+                // Use the public URL from the upload as avatar
+                var avatarUrl = verificationPhotoUrl || null;
 
                 var verificationData = {
                     contract_signed_at: new Date().toISOString(),
                     contract_signature: signature,
                     guarantee_opted_in: guaranteeChecked,
-                    verification_photo_url: verificationPhotoUrl || null,
+                    verification_photo_url: verificationPhotoPath || verificationPhotoUrl || null,
                     verification_completed_at: new Date().toISOString(),
-                    avatar_url: avatarUrl || null,
+                    avatar_url: avatarUrl,
                     status: 'onboarding'
                 };
 

@@ -775,15 +775,27 @@ $$;
 
 GRANT EXECUTE ON FUNCTION public.admin_delete_user(UUID) TO authenticated;
 
--- Storage bucket for verification photos (run in Supabase dashboard if SQL fails)
--- INSERT INTO storage.buckets (id, name, public) VALUES ('verification-photos', 'verification-photos', false);
--- Storage policies:
--- CREATE POLICY "Users upload own photo" ON storage.objects FOR INSERT
---     WITH CHECK (bucket_id = 'verification-photos' AND (storage.foldername(name))[1] = auth.uid()::text);
--- CREATE POLICY "Users view own photo" ON storage.objects FOR SELECT
---     USING (bucket_id = 'verification-photos' AND (storage.foldername(name))[1] = auth.uid()::text);
--- CREATE POLICY "Admins view all photos" ON storage.objects FOR SELECT
---     USING (bucket_id = 'verification-photos' AND public.is_user_admin(auth.uid()) = TRUE);
+-- Storage bucket for verification photos
+-- NOTE: Run this in Supabase SQL Editor. If the bucket already exists, these will safely skip.
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES ('verification-photos', 'verification-photos', true, 10485760, ARRAY['image/jpeg', 'image/png', 'image/webp'])
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+-- Drop existing storage policies if they exist (safe cleanup)
+DROP POLICY IF EXISTS "Users upload own photo" ON storage.objects;
+DROP POLICY IF EXISTS "Users view own photo" ON storage.objects;
+DROP POLICY IF EXISTS "Admins view all photos" ON storage.objects;
+DROP POLICY IF EXISTS "Anyone can view verification photos" ON storage.objects;
+
+-- Allow authenticated users to upload their own photo
+CREATE POLICY "Users upload own photo" ON storage.objects FOR INSERT
+    TO authenticated
+    WITH CHECK (bucket_id = 'verification-photos' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+-- Allow anyone to view photos (bucket is public for profile pictures)
+CREATE POLICY "Anyone can view verification photos" ON storage.objects FOR SELECT
+    TO public
+    USING (bucket_id = 'verification-photos');
 
 
 -- ============================================================================
