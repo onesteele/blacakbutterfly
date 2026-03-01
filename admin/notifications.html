@@ -1772,11 +1772,9 @@
                 const payload = {
                     title: title,
                     message: message,
-                    target_audience: target,
-                    target_user_id: target === 'specific' ? selectedUserId : null,
+                    target: target === 'specific' ? selectedUserId : target,
                     expires_at: expiry || null,
-                    read_count: 0,
-                    created_by: adminProfile.id
+                    author_id: adminProfile.id
                 };
 
                 const { data, error } = await window.supabaseClient
