@@ -1946,6 +1946,7 @@
                     <button class="tab-btn" onclick="switchTab('activity')">Activity Log</button>
                     <button class="tab-btn" onclick="switchTab('onboarding')">Onboarding</button>
                     <button class="tab-btn" onclick="switchTab('communication')">Communication</button>
+                    <button class="tab-btn" onclick="switchTab('legal')">Legal Info</button>
                 </div>
 
                 <!-- ============================================================
@@ -2035,6 +2036,65 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- ============================================================
+                     TAB 5: LEGAL INFO
+                     ============================================================ -->
+                <div class="tab-content" id="tab-legal">
+                    <div class="glass-card" style="margin-bottom:24px;">
+                        <div class="card-header">
+                            <span class="card-title">Payment Information</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="profile-grid" id="payment-info-grid">
+                                <div class="profile-field">
+                                    <div class="field-label">Payment Plan</div>
+                                    <div class="field-value" id="legal-payment-plan">--</div>
+                                </div>
+                                <div class="profile-field">
+                                    <div class="field-label">Total Amount</div>
+                                    <div class="field-value" id="legal-payment-total">--</div>
+                                </div>
+                                <div class="profile-field">
+                                    <div class="field-label">Amount Down</div>
+                                    <div class="field-value" id="legal-payment-down">--</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-card" style="margin-bottom:24px;">
+                        <div class="card-header">
+                            <span class="card-title">Verification Photo</span>
+                        </div>
+                        <div class="card-body">
+                            <div id="legal-photo-container">
+                                <p style="color:var(--text-muted);">No verification photo on file.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-card">
+                        <div class="card-header">
+                            <span class="card-title">Contract Agreement</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="profile-grid" id="contract-info-grid">
+                                <div class="profile-field">
+                                    <div class="field-label">Contract Signed</div>
+                                    <div class="field-value" id="legal-contract-date">Not signed</div>
+                                </div>
+                                <div class="profile-field">
+                                    <div class="field-label">Signature</div>
+                                    <div class="field-value" id="legal-signature">--</div>
+                                </div>
+                                <div class="profile-field">
+                                    <div class="field-label">Performance Guarantee</div>
+                                    <div class="field-value" id="legal-guarantee">--</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -2188,6 +2248,7 @@
 
                 renderProfileHeader();
                 renderOverviewTab();
+                renderLegalTab();
                 loadActivityLog();
                 loadOnboardingProgress();
                 loadConversation();
@@ -2375,6 +2436,39 @@
         // ============================================================
         // OVERVIEW TAB
         // ============================================================
+        async function renderLegalTab() {
+            const c = customerData;
+
+            // Payment info
+            const planLabel = c.payment_plan ? c.payment_plan.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'N/A';
+            document.getElementById('legal-payment-plan').textContent = planLabel;
+            document.getElementById('legal-payment-total').textContent = c.payment_total ? '$' + parseFloat(c.payment_total).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'N/A';
+            document.getElementById('legal-payment-down').textContent = c.payment_down ? '$' + parseFloat(c.payment_down).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'N/A';
+
+            // Verification photo
+            if (c.verification_photo_url) {
+                try {
+                    const signedUrl = await window.getVerificationPhotoUrl(c.verification_photo_url);
+                    if (signedUrl) {
+                        const verifiedDate = c.verification_completed_at ? window.formatFullDate(c.verification_completed_at) : 'Unknown date';
+                        document.getElementById('legal-photo-container').innerHTML =
+                            '<img src="' + signedUrl + '" style="max-width:200px; border-radius:12px; border:2px solid var(--border);">' +
+                            '<p style="color:var(--text-muted); margin-top:8px; font-size:13px;">Verified: ' + verifiedDate + '</p>';
+                    }
+                } catch (err) {
+                    console.error('Error loading verification photo:', err);
+                }
+            }
+
+            // Contract info
+            document.getElementById('legal-contract-date').textContent = c.contract_signed_at ? window.formatFullDate(c.contract_signed_at) : 'Not signed';
+            document.getElementById('legal-signature').textContent = c.contract_signature || 'N/A';
+            document.getElementById('legal-guarantee').textContent = c.guarantee_opted_in ? 'Opted In' : 'Not opted in';
+            if (c.guarantee_opted_in) {
+                document.getElementById('legal-guarantee').style.color = '#22c55e';
+            }
+        }
+
         function renderOverviewTab() {
             const c = customerData;
             // Build location string

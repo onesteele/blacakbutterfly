@@ -43,6 +43,10 @@
             overflow-x: hidden;
         }
 
+        /* ============================================ */
+        /* BACKGROUND ANIMATIONS                        */
+        /* ============================================ */
+
         .bg-animation {
             position: fixed;
             top: 0; left: 0;
@@ -123,208 +127,657 @@
             100% { opacity: 0; transform: translateY(-100px) scale(1); }
         }
 
-        .user-bar {
-            position: relative;
-            z-index: 10;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px 24px 0;
+        /* ============================================ */
+        /* LOADING SCREEN                               */
+        /* ============================================ */
+
+        .loading-screen {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--bg-dark);
             display: flex;
-            justify-content: flex-end;
+            flex-direction: column;
             align-items: center;
-            gap: 16px;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
 
-        .welcome-user {
-            font-size: 14px;
+        .loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loading-spinner {
+            width: 48px; height: 48px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loading-text {
+            margin-top: 16px;
             color: var(--text-secondary);
-        }
-
-        .user-name {
-            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .signout-link {
             font-size: 14px;
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: all 0.2s ease;
-            cursor: pointer;
+            font-weight: 500;
         }
 
-        .signout-link:hover {
-            color: var(--accent);
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
-        .container {
+        /* ============================================ */
+        /* VERIFICATION FLOW                            */
+        /* ============================================ */
+
+        .v-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 24px;
             position: relative;
             z-index: 10;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 24px 80px;
         }
 
-        .brand-header {
+        .v-screen.active {
+            display: flex;
+            animation: vScreenFadeIn 0.5s ease-out;
+        }
+
+        @keyframes vScreenFadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .v-card {
+            width: 100%;
+            max-width: 520px;
+            background: rgba(20, 20, 20, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .v-card:hover {
+            border-color: rgba(240, 200, 50, 0.3);
+            box-shadow: 0 0 40px rgba(240, 200, 50, 0.08);
+        }
+
+        .v-card-logo {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 16px;
-            margin-bottom: 48px;
-            animation: fadeInDown 0.8s ease-out;
+            gap: 12px;
+            margin-bottom: 32px;
         }
 
-        .logo {
-            width: 60px; height: 60px;
+        .v-card-logo img {
+            width: 48px; height: 48px;
             object-fit: contain;
-            filter: drop-shadow(0 0 20px var(--accent-glow));
-            animation: logoGlow 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 16px var(--accent-glow));
         }
 
-        @keyframes logoGlow {
-            0%, 100% { filter: drop-shadow(0 0 20px var(--accent-glow)); }
-            50% { filter: drop-shadow(0 0 30px var(--accent-glow)) drop-shadow(0 0 40px rgba(240, 200, 50, 0.2)); }
+        .v-card-logo span {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .brand-name {
+        .v-card h2 {
             font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
             font-size: 24px;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .header {
+            margin-bottom: 8px;
             text-align: center;
-            margin-bottom: 60px;
-            animation: fadeInUp 0.8s ease-out;
         }
 
-        .header-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--accent-dim);
-            border: 1px solid rgba(240, 200, 50, 0.3);
-            padding: 8px 16px;
-            border-radius: 100px;
+        .v-card .v-subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .v-form-group {
+            margin-bottom: 20px;
+        }
+
+        .v-form-group label {
+            display: block;
             font-size: 13px;
             font-weight: 600;
-            color: var(--accent);
-            margin-bottom: 24px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .header-badge svg { width: 16px; height: 16px; }
-
-        h1 {
-            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
-            font-size: clamp(42px, 10vw, 72px);
-            font-weight: 800;
-            margin-bottom: 16px;
-            letter-spacing: -1px;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .header-subtitle {
-            font-size: 18px;
-            background: linear-gradient(135deg, var(--text-secondary) 0%, var(--text-muted) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Welcome Message */
-        .welcome-message {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
+        .v-form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 28px;
-            margin-bottom: 40px;
-            animation: fadeInUp 0.8s ease-out 0.05s both;
-            box-shadow: 0 0 30px rgba(240, 200, 50, 0.03);
-        }
-
-        .welcome-message h2 {
-            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            color: var(--accent);
-        }
-
-        .welcome-message p {
-            color: var(--text-secondary);
-            margin-bottom: 12px;
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
             font-size: 15px;
+            transition: all 0.2s ease;
+            outline: none;
         }
 
-        .welcome-message .signature {
+        .v-form-group input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-dim);
+        }
+
+        .v-form-group input[readonly] {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .v-form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .v-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: var(--bg-dark);
+            font-family: 'Manrope', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .v-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .v-btn:hover:not(:disabled)::before { left: 100%; }
+
+        .v-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+
+        .v-btn:disabled {
+            background: var(--border);
             color: var(--text-muted);
-            font-style: italic;
+            cursor: not-allowed;
+        }
+
+        .v-btn:disabled::before { display: none; }
+
+        .v-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: var(--error);
+            font-size: 14px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .v-error.show { display: block; }
+
+        .v-success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: var(--success);
+            font-size: 14px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .v-success.show { display: block; }
+
+        /* Loading transition screen */
+        .v-loading-content {
+            text-align: center;
+        }
+
+        .v-loading-spinner {
+            width: 56px; height: 56px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 24px;
+        }
+
+        .v-loading-content h2 {
+            margin-bottom: 12px;
+        }
+
+        .v-loading-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
             margin-top: 16px;
         }
 
-        .progress-section {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px 28px;
-            margin-bottom: 40px;
-            animation: fadeInUp 0.8s ease-out 0.1s both;
-            box-shadow: 0 0 30px rgba(240, 200, 50, 0.05);
+        .v-loading-dots span {
+            width: 8px; height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: loadDot 1.4s ease-in-out infinite;
         }
 
-        .progress-header {
+        .v-loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .v-loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes loadDot {
+            0%, 80%, 100% { transform: scale(0.4); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Camera UI */
+        .camera-container {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            margin-bottom: 16px;
+            gap: 24px;
         }
 
-        .progress-label {
+        .camera-circle {
+            width: 280px; height: 280px;
+            border-radius: 50%;
+            border: 3px solid var(--accent);
+            overflow: hidden;
+            position: relative;
+            background: var(--bg-card);
+            box-shadow: 0 0 30px var(--accent-dim);
+        }
+
+        .camera-circle video,
+        .camera-circle img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-circle canvas {
+            display: none;
+        }
+
+        .camera-placeholder {
+            width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            gap: 8px;
+        }
+
+        .camera-placeholder svg {
+            width: 48px; height: 48px;
+            color: var(--text-muted);
+        }
+
+        .camera-shutter {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            border: 4px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .camera-shutter:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 24px var(--accent-glow);
+        }
+
+        .camera-shutter svg {
+            width: 28px; height: 28px;
+            color: var(--bg-dark);
+        }
+
+        .camera-actions {
+            display: none;
+            gap: 12px;
+        }
+
+        .camera-actions.show {
+            display: flex;
+        }
+
+        .camera-actions button {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
             font-weight: 600;
-            background: linear-gradient(135deg, rgba(240, 200, 50, 0.6) 0%, var(--text-secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s ease;
         }
 
-        .progress-count {
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 14px;
+        .camera-retake {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-primary);
+            border: 1px solid var(--border) !important;
         }
 
-        .progress-bar-container {
+        .camera-retake:hover {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .camera-accept {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: var(--bg-dark);
+        }
+
+        .camera-accept:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px var(--accent-glow);
+        }
+
+        .camera-fallback {
+            font-size: 13px;
+            color: var(--text-muted);
+            cursor: pointer;
+            text-decoration: underline;
+            transition: color 0.2s ease;
+            display: none;
+            margin-top: 4px;
+        }
+
+        .camera-fallback:hover { color: var(--accent); }
+        .camera-fallback.show { display: block; }
+
+        /* Contract screen */
+        .contract-checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+
+        .contract-checkbox-item input {
+            display: none;
+        }
+
+        .contract-check-box {
+            width: 22px; height: 22px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .contract-check-box svg {
+            width: 14px; height: 14px;
+            color: transparent;
+            transition: all 0.2s ease;
+        }
+
+        .contract-checkbox-item input:checked + .contract-check-box {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        .contract-checkbox-item input:checked + .contract-check-box svg {
+            color: var(--bg-dark);
+        }
+
+        .contract-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .contract-label a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .contract-label a:hover { text-decoration: underline; }
+
+        .signature-field {
+            margin-top: 20px;
+        }
+
+        .signature-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .signature-field input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Dancing Script', 'Manrope', cursive, sans-serif;
+            font-size: 20px;
+            font-style: italic;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .signature-field input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-dim);
+        }
+
+        /* Contract Modal */
+        .contract-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contract-modal-overlay.show {
+            display: flex;
+        }
+
+        .contract-modal {
+            width: 90vw;
+            max-width: 800px;
+            height: 85vh;
+            background: rgba(20, 20, 20, 0.97);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(240, 200, 50, 0.25);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .contract-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .contract-modal-header h3 {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .contract-modal-close {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .contract-modal-close:hover {
+            background: rgba(255,255,255,0.15);
+            color: var(--text-primary);
+        }
+
+        .contract-modal-body {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .contract-modal-body iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Confirmation screen */
+        .v-confirm-content {
+            text-align: center;
+        }
+
+        .v-confirm-spinner {
+            width: 56px; height: 56px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 24px;
+        }
+
+        .v-confirm-success {
+            display: none;
+        }
+
+        .v-confirm-success.show {
+            display: block;
+            animation: vScreenFadeIn 0.5s ease-out;
+        }
+
+        .v-confirm-checkmark {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--success) 0%, #16a34a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            animation: checkPop 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes checkPop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        .v-confirm-checkmark svg {
+            width: 40px; height: 40px;
+            color: white;
+        }
+
+        .v-confirm-success h2 {
+            color: var(--success);
+            margin-bottom: 8px;
+        }
+
+        .v-confirm-success .v-subtitle {
+            margin-bottom: 0;
+        }
+
+        /* ============================================ */
+        /* COURSE FLOW                                  */
+        /* ============================================ */
+
+        .course-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+        }
+
+        .course-header-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .course-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .course-progress-bar-wrap {
+            flex: 1;
+            max-width: 400px;
+        }
+
+        .course-progress-bar-container {
             height: 8px;
             background: var(--border);
             border-radius: 100px;
             overflow: hidden;
-            margin-bottom: 16px;
         }
 
-        .progress-bar {
+        .course-progress-bar {
             height: 100%;
             background: linear-gradient(90deg, var(--accent), var(--accent-light));
             border-radius: 100px;
@@ -333,188 +786,108 @@
             box-shadow: 0 0 20px var(--accent-glow);
         }
 
-        .progress-stats {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-        }
-
-        .progress-stats span {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(135deg, rgba(240, 200, 50, 0.5) 0%, var(--text-muted) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .progress-stats svg { width: 14px; height: 14px; }
-
-        .timeline {
-            position: relative;
-            animation: fadeInUp 0.8s ease-out 0.2s both;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 28px;
-            top: 40px;
-            bottom: 40px;
-            width: 2px;
-            background: linear-gradient(to bottom, var(--accent-dim), var(--border), var(--accent-dim));
-        }
-
-        .timeline-item {
-            position: relative;
-            padding-left: 72px;
-            margin-bottom: 24px;
-        }
-
-        .timeline-item:last-child { margin-bottom: 0; }
-
-        .timeline-marker {
-            position: absolute;
-            left: 16px;
-            top: 24px;
-            width: 26px; height: 26px;
-            border-radius: 50%;
-            background: var(--bg-dark);
-            border: 2px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1;
-            transition: all 0.3s ease;
-        }
-
-        .timeline-marker svg {
-            width: 12px; height: 12px;
-            color: var(--text-muted);
-        }
-
-        .timeline-item.active .timeline-marker {
-            border-color: var(--accent);
-            background: var(--accent);
-            box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-dim);
-            animation: markerPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes markerPulse {
-            0%, 100% { box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-dim); }
-            50% { box-shadow: 0 0 30px var(--accent-glow), 0 0 60px var(--accent-dim); }
-        }
-
-        .timeline-item.active .timeline-marker svg { color: var(--bg-dark); }
-        .timeline-item.completed .timeline-marker { border-color: var(--success); background: var(--success); }
-        .timeline-item.completed .timeline-marker svg { color: white; }
-
-        .video-card {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .timeline-item.active .video-card {
-            border-color: rgba(240, 200, 50, 0.5);
-            box-shadow: 0 0 40px var(--accent-dim);
-        }
-
-        .timeline-item.locked .video-card { opacity: 0.6; }
-
-        .video-header {
-            padding: 20px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-        }
-
-        .video-number {
-            font-size: 12px;
+        .course-lesson-count {
+            font-size: 14px;
             font-weight: 600;
-            background: linear-gradient(135deg, rgba(240, 200, 50, 0.5) 0%, var(--text-muted) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .video-title {
-            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .timeline-item.locked .video-title { color: var(--text-muted); }
-
-        .video-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            padding: 6px 12px;
-            border-radius: 100px;
+            color: var(--text-secondary);
             white-space: nowrap;
         }
 
-        .video-status.locked { background: var(--border); color: var(--text-muted); }
-        .video-status.active {
-            background: var(--accent-dim);
+        .course-lesson-count span {
             color: var(--accent);
-            animation: statusPulse 2s ease-in-out infinite;
         }
 
-        @keyframes statusPulse {
-            0%, 100% { box-shadow: 0 0 0 0 var(--accent-dim); }
-            50% { box-shadow: 0 0 0 4px var(--accent-dim); }
+        .course-signout {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            white-space: nowrap;
+            background: none;
+            border: none;
+            font-family: 'Manrope', sans-serif;
         }
 
-        .video-status.completed { background: rgba(34, 197, 94, 0.15); color: var(--success); }
-        .video-status svg { width: 14px; height: 14px; }
+        .course-signout:hover { color: var(--accent); }
 
-        .video-content {
+        .lesson-container {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
+
+        .lesson-screen {
             display: none;
-            border-top: 1px solid var(--border);
         }
 
-        .timeline-item.active .video-content { display: block; }
+        .lesson-screen.active {
+            display: block;
+            animation: vScreenFadeIn 0.5s ease-out;
+        }
 
-        .video-player-wrapper {
+        .lesson-icon {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: var(--accent-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            box-shadow: 0 0 30px var(--accent-dim);
+        }
+
+        .lesson-icon svg {
+            width: 40px; height: 40px;
+            color: var(--accent);
+        }
+
+        .lesson-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        .lesson-description {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 32px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .lesson-video {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 32px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+        }
+
+        .lesson-video-wrapper {
             position: relative;
             padding-bottom: 56.25%;
             background: #000;
         }
 
-        .video-player {
+        .lesson-video-wrapper iframe {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
         }
 
-        .video-description {
-            padding: 20px 24px;
-            background: linear-gradient(135deg, var(--text-secondary) 0%, var(--text-muted) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            font-size: 15px;
-            border-top: 1px solid var(--border);
-        }
-
-        /* Video completed badge - top right corner */
-        .video-overlay {
+        .video-complete-badge {
             position: absolute;
             top: 12px; right: 12px;
-            width: auto;
-            height: auto;
             background: var(--success);
             display: none;
             align-items: center;
@@ -529,52 +902,65 @@
             z-index: 10;
         }
 
-        .video-overlay.show { display: flex; }
+        .video-complete-badge.show {
+            display: flex;
+        }
 
-        .video-overlay svg { width: 16px; height: 16px; }
+        .video-complete-badge svg {
+            width: 16px; height: 16px;
+        }
 
-        /* Questionnaire */
-        .questionnaire {
+        .quiz-section {
+            background: rgba(20, 20, 20, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
             padding: 24px;
-            border-top: 1px solid var(--border);
+            margin-bottom: 24px;
             display: none;
         }
 
-        .questionnaire.show { display: block; }
+        .quiz-section.show {
+            display: block;
+            animation: vScreenFadeIn 0.4s ease-out;
+        }
 
-        .questionnaire-title {
+        .quiz-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
             font-size: 16px;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
             margin-bottom: 16px;
             display: flex;
             align-items: center;
             gap: 8px;
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .questionnaire-title svg { width: 20px; height: 20px; }
+        .quiz-title svg {
+            width: 20px; height: 20px;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
 
-        .checkbox-group {
+        .quiz-checkbox-group {
             display: flex;
             flex-direction: column;
             gap: 12px;
         }
 
-        .checkbox-item {
+        .quiz-checkbox-item {
             display: flex;
             align-items: flex-start;
             gap: 12px;
             cursor: pointer;
         }
 
-        .checkbox-item input {
-            display: none;
-        }
+        .quiz-checkbox-item input { display: none; }
 
-        .checkbox-custom {
+        .quiz-check-box {
             width: 22px; height: 22px;
             border: 2px solid var(--border);
             border-radius: 6px;
@@ -586,31 +972,37 @@
             margin-top: 2px;
         }
 
-        .checkbox-custom svg {
+        .quiz-check-box svg {
             width: 14px; height: 14px;
             color: transparent;
             transition: all 0.2s ease;
         }
 
-        .checkbox-item input:checked + .checkbox-custom {
-            background: var(--success);
-            border-color: var(--success);
+        .quiz-checkbox-item input:checked + .quiz-check-box {
+            background: var(--accent);
+            border-color: var(--accent);
         }
 
-        .checkbox-item input:checked + .checkbox-custom svg {
-            color: white;
+        .quiz-checkbox-item input:checked + .quiz-check-box svg {
+            color: var(--bg-dark);
         }
 
-        .checkbox-label {
+        .quiz-checkbox-label {
             font-size: 14px;
             color: var(--text-secondary);
             line-height: 1.5;
         }
 
+        .quiz-checkbox-label a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .quiz-checkbox-label a:hover { text-decoration: underline; }
+
         .complete-btn {
             display: block;
-            width: calc(100% - 48px);
-            margin: 0 24px 24px;
+            width: 100%;
             padding: 16px;
             background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
             color: var(--bg-dark);
@@ -635,6 +1027,7 @@
         }
 
         .complete-btn:hover:not(:disabled)::before { left: 100%; }
+
         .complete-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 24px var(--accent-glow);
@@ -646,13 +1039,16 @@
             cursor: not-allowed;
         }
 
+        .complete-btn:disabled::before { display: none; }
+
         .btn-hint {
             font-size: 12px;
             color: var(--text-muted);
             text-align: center;
-            margin: -16px 24px 24px;
+            margin-top: 8px;
         }
 
+        /* Booking card */
         .booking-card {
             background: rgba(20, 20, 20, 0.8);
             backdrop-filter: blur(10px);
@@ -699,7 +1095,6 @@
             box-shadow: 0 0 60px var(--accent-dim);
         }
 
-        .booking-card.locked { opacity: 0.5; }
         .booking-card > * { position: relative; z-index: 1; }
 
         .booking-icon {
@@ -777,83 +1172,7 @@
 
         .booking-btn svg { width: 20px; height: 20px; }
 
-        /* Requirements Section */
-        .requirements-section {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 28px;
-            margin-top: 40px;
-            animation: fadeInUp 0.8s ease-out 0.35s both;
-        }
-
-        .requirements-section h3 {
-            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
-            font-size: 18px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .requirements-section h3 svg { width: 22px; height: 22px; }
-
-        .requirement-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            margin-bottom: 16px;
-            padding: 16px;
-            background: rgba(255,255,255,0.02);
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-        }
-
-        .requirement-item:hover {
-            border-color: rgba(240, 200, 50, 0.3);
-            box-shadow: 0 0 20px rgba(240, 200, 50, 0.05);
-        }
-
-        .requirement-item:last-child { margin-bottom: 0; }
-
-        .requirement-icon {
-            width: 36px; height: 36px;
-            background: var(--accent-dim);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .requirement-icon svg {
-            width: 18px; height: 18px;
-            color: var(--accent);
-        }
-
-        .requirement-content h4 {
-            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .requirement-content p {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .requirement-content a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-
-        .requirement-content a:hover { text-decoration: underline; }
-
+        /* Confetti */
         .confetti-container {
             position: fixed;
             top: 0; left: 0;
@@ -869,21 +1188,12 @@
             opacity: 0;
         }
 
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         @keyframes confettiFall {
             0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
             100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
 
+        /* Toast */
         .toast {
             position: fixed;
             bottom: 32px;
@@ -910,21 +1220,49 @@
 
         .toast svg { width: 20px; height: 20px; }
 
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================ */
+        /* RESPONSIVE                                   */
+        /* ============================================ */
+
         @media (max-width: 640px) {
-            .container { padding: 24px 16px 60px; }
-            .brand-header { gap: 12px; margin-bottom: 32px; }
-            .logo { width: 48px; height: 48px; }
-            .brand-name { font-size: 20px; }
-            .timeline::before { left: 20px; }
-            .timeline-item { padding-left: 56px; }
-            .timeline-marker { left: 8px; width: 24px; height: 24px; }
-            .video-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .v-card {
+                padding: 28px 20px;
+            }
+
+            .v-form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .camera-circle {
+                width: 220px; height: 220px;
+            }
+
+            .lesson-container { padding: 24px 16px 60px; }
+
+            .lesson-title { font-size: 22px; }
+
+            .course-header-inner {
+                flex-wrap: wrap;
+            }
+
             .booking-card { padding: 32px 20px; }
             .booking-btn { width: 100%; justify-content: center; }
         }
     </style>
 </head>
 <body>
+    <!-- Background Effects -->
     <div class="bg-animation">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
@@ -933,492 +1271,237 @@
     <div class="dot-pattern"></div>
     <div class="particles" id="particles"></div>
 
-    <div class="user-bar">
-        <span class="welcome-user">Welcome, <span class="user-name" id="user-name">User</span></span>
-        <a class="signout-link" href="javascript:void(0)" onclick="window.signOut()">Sign Out</a>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading...</div>
     </div>
 
-    <div class="container">
-        <div class="brand-header">
-            <img src="../logo.png" alt="Profit Insider" class="logo">
-            <span class="brand-name">Profit Insider</span>
-        </div>
+    <!-- ============================================ -->
+    <!-- VERIFICATION FLOW (6 screens)               -->
+    <!-- ============================================ -->
+    <div id="verification-flow" style="display:none;">
 
-        <header class="header">
-            <div class="header-badge">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                Getting Started
-            </div>
-            <h1>Welcome In</h1>
-            <p class="header-subtitle">Complete these setup videos to get your algorithm running. Watch each lesson and confirm the steps before proceeding.</p>
-        </header>
-
-        <!-- Welcome Message -->
-        <div class="welcome-message">
-            <h2>👋 Welcome Aboard!</h2>
-            <p>You've just taken a major step toward automating and optimizing your trading edge.</p>
-            <p>I'm <strong>Steele</strong>, and I'll personally help you get set up and walk you through every step of the onboarding process. I will ensure your algo is running correctly, your parameters are aligned with your goals, and that you fully understand how to interpret its data and performance metrics.</p>
-            <p><strong>Stay consistent.</strong> The algo thrives on stability and data accumulation — the longer it runs, the more powerful its insights become.</p>
-            <p><strong>Leverage our team.</strong> I handle setup and tech, but RP is personally here if you have strategic questions or want deeper insight into what the algo is seeing in the markets.</p>
-            <p>You now have access to one of the most powerful tools available to individual traders — use it intentionally and it'll completely change the way you approach markets.</p>
-            <p class="signature">— RP & Steele</p>
-        </div>
-
-        <div class="progress-section">
-            <div class="progress-header">
-                <span class="progress-label">Your Progress</span>
-                <span class="progress-count"><span id="completed-count">0</span> of <span id="total-count">7</span> lessons</span>
-            </div>
-            <div class="progress-bar-container">
-                <div class="progress-bar" id="progress-bar"></div>
-            </div>
-            <div class="progress-stats">
-                <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span id="percent-complete">0%</span> Complete
-                </span>
-                <span>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                    <span id="locked-count">6</span> Lessons Locked
-                </span>
+        <!-- Screen 1: Email Entry -->
+        <div class="v-screen" id="v-screen-email">
+            <div class="v-card">
+                <div class="v-card-logo">
+                    <img src="../logo.png" alt="Profit Insider">
+                    <span>Profit Insider</span>
+                </div>
+                <h2>Welcome to Profit Insider</h2>
+                <p class="v-subtitle">Enter your email to get started</p>
+                <div class="v-error" id="email-error"></div>
+                <div class="v-form-group">
+                    <label for="v-email-input">Email Address</label>
+                    <input type="email" id="v-email-input" placeholder="you@example.com" autocomplete="email">
+                </div>
+                <button class="v-btn" id="v-email-btn" onclick="handleEmailLookup()">Continue</button>
             </div>
         </div>
 
-        <div class="timeline" id="timeline">
-            <!-- Step 1: TradersPost Account Setup -->
-            <div class="timeline-item active" data-step="1">
-                <div class="timeline-marker">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    </svg>
+        <!-- Screen 2: Confirm Details + Set Password -->
+        <div class="v-screen" id="v-screen-details">
+            <div class="v-card">
+                <div class="v-card-logo">
+                    <img src="../logo.png" alt="Profit Insider">
+                    <span>Profit Insider</span>
                 </div>
-                <div class="video-card">
-                    <div class="video-header">
-                        <div class="video-info">
-                            <div>
-                                <div class="video-number">Step 1</div>
-                                <div class="video-title">Create Your TradersPost Account</div>
-                            </div>
-                        </div>
-                        <div class="video-status active">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                            </svg>
-                            Watch Now
-                        </div>
+                <h2>Confirm Your Information</h2>
+                <p class="v-subtitle">Verify your details and set a password</p>
+                <div class="v-error" id="details-error"></div>
+                <div class="v-form-row">
+                    <div class="v-form-group">
+                        <label for="v-first-name">First Name</label>
+                        <input type="text" id="v-first-name" placeholder="First name">
                     </div>
-                    <div class="video-content">
-                        <div class="video-player-wrapper" style="padding-bottom: 52.59%;">
-                            <iframe class="video-player" id="video-1" src="https://www.loom.com/embed/90586f245c364fa79f5c9ca64661ec69" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                            <div class="video-overlay" id="overlay-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                <span>Video Completed!</span>
-                            </div>
-                        </div>
-                        <p class="video-description">Learn how to create your TradersPost account. Select the $49 plan and get your account ready for algorithm integration.</p>
-                        <div class="questionnaire" id="questionnaire-1">
-                            <div class="questionnaire-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                Confirm Your Setup
-                            </div>
-                            <div class="checkbox-group">
-                                <label class="checkbox-item">
-                                    <input type="checkbox" data-step="1" data-check="1">
-                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
-                                    <span class="checkbox-label">I have created my TradersPost account at <a href="https://traderspost.io/" target="_blank">traderspost.io</a></span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" data-step="1" data-check="2">
-                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
-                                    <span class="checkbox-label">I have selected the $49/month plan</span>
-                                </label>
-                            </div>
-                        </div>
-                        <button class="complete-btn" id="btn-1" onclick="completeStep(1)" disabled>Complete All Checkboxes to Continue →</button>
-                        <p class="btn-hint" id="hint-1">Watch the video and confirm all items above</p>
+                    <div class="v-form-group">
+                        <label for="v-last-name">Last Name</label>
+                        <input type="text" id="v-last-name" placeholder="Last name">
                     </div>
                 </div>
+                <div class="v-form-group">
+                    <label for="v-email-display">Email</label>
+                    <input type="email" id="v-email-display" readonly>
+                </div>
+                <div class="v-form-group">
+                    <label for="v-phone">Phone</label>
+                    <input type="tel" id="v-phone" placeholder="(555) 123-4567">
+                </div>
+                <div class="v-form-row">
+                    <div class="v-form-group">
+                        <label for="v-password">Password (min 6 chars)</label>
+                        <input type="password" id="v-password" placeholder="Create password" minlength="6">
+                    </div>
+                    <div class="v-form-group">
+                        <label for="v-password-confirm">Confirm Password</label>
+                        <input type="password" id="v-password-confirm" placeholder="Confirm password" minlength="6">
+                    </div>
+                </div>
+                <button class="v-btn" id="v-details-btn" onclick="handleDetailsConfirm()">I confirm this is correct</button>
             </div>
+        </div>
 
-            <!-- Step 2: Broker Connection -->
-            <div class="timeline-item locked" data-step="2">
-                <div class="timeline-marker">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                </div>
-                <div class="video-card">
-                    <div class="video-header">
-                        <div class="video-info">
-                            <div>
-                                <div class="video-number">Step 2</div>
-                                <div class="video-title">Connect Your Broker Account</div>
-                            </div>
-                        </div>
-                        <div class="video-status locked">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                            Locked
-                        </div>
-                    </div>
-                    <div class="video-content">
-                        <div class="video-player-wrapper" style="padding-bottom: 57.70%;">
-                            <iframe class="video-player" id="video-2" src="https://www.loom.com/embed/a6cfc77d985b47bcaae827bbf55e2a02" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                            <div class="video-overlay" id="overlay-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                <span>Video Completed!</span>
-                            </div>
-                        </div>
-                        <p class="video-description">Connect your broker or funded account (Tradovate, Apex, etc.) to TradersPost for automated trading.</p>
-                        <div class="questionnaire" id="questionnaire-2">
-                            <div class="questionnaire-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                Confirm Your Setup
-                            </div>
-                            <div class="checkbox-group">
-                                <label class="checkbox-item">
-                                    <input type="checkbox" data-step="2" data-check="1">
-                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
-                                    <span class="checkbox-label">I have my broker/funded account credentials ready (Tradovate, Apex, etc.)</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" data-step="2" data-check="2">
-                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
-                                    <span class="checkbox-label">I have connected my broker to TradersPost</span>
-                                </label>
-                            </div>
-                        </div>
-                        <button class="complete-btn" id="btn-2" onclick="completeStep(2)" disabled>Complete All Checkboxes to Continue →</button>
-                        <p class="btn-hint" id="hint-2">Watch the video and confirm all items above</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 3: Algorithm Configuration -->
-            <div class="timeline-item locked" data-step="3">
-                <div class="timeline-marker">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                </div>
-                <div class="video-card">
-                    <div class="video-header">
-                        <div class="video-info">
-                            <div>
-                                <div class="video-number">Step 3</div>
-                                <div class="video-title">Configure Algorithm Parameters</div>
-                            </div>
-                        </div>
-                        <div class="video-status locked">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                            Locked
-                        </div>
-                    </div>
-                    <div class="video-content">
-                        <div class="video-player-wrapper" style="padding-bottom: 47.72%;">
-                            <iframe class="video-player" id="video-3" src="https://www.loom.com/embed/c0b516c949ed4e78ba6ca9eee2abd5b2" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                            <div class="video-overlay" id="overlay-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                <span>Video Completed!</span>
-                            </div>
-                        </div>
-                        <p class="video-description">Set up your algorithm parameters including max daily loss and max drawdown for each account.</p>
-                        <div class="questionnaire" id="questionnaire-3">
-                            <div class="questionnaire-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                Confirm Your Setup
-                            </div>
-                            <div class="checkbox-group">
-                                <label class="checkbox-item">
-                                    <input type="checkbox" data-step="3" data-check="1">
-                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
-                                    <span class="checkbox-label">I know my max daily loss for each account</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" data-step="3" data-check="2">
-                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
-                                    <span class="checkbox-label">I know my max drawdown for each account</span>
-                                </label>
-                            </div>
-                        </div>
-                        <button class="complete-btn" id="btn-3" onclick="completeStep(3)" disabled>Complete All Checkboxes to Continue →</button>
-                        <p class="btn-hint" id="hint-3">Watch the video and confirm all items above</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 4: Risk Management -->
-            <div class="timeline-item locked" data-step="4">
-                <div class="timeline-marker">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                </div>
-                <div class="video-card">
-                    <div class="video-header">
-                        <div class="video-info">
-                            <div>
-                                <div class="video-number">Step 4</div>
-                                <div class="video-title">Understanding Risk Management</div>
-                            </div>
-                        </div>
-                        <div class="video-status locked">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                            Locked
-                        </div>
-                    </div>
-                    <div class="video-content">
-                        <div class="video-player-wrapper" style="padding-bottom: 53.82%;">
-                            <iframe class="video-player" id="video-4" src="https://www.loom.com/embed/006abf83f3a64947af1b7cbd504ca521" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                            <div class="video-overlay" id="overlay-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                <span>Video Completed!</span>
-                            </div>
-                        </div>
-                        <p class="video-description">Learn how the algorithm manages risk and protects your capital.</p>
-                        <div class="questionnaire" id="questionnaire-4">
-                            <div class="questionnaire-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                Confirm Your Understanding
-                            </div>
-                            <div class="checkbox-group">
-                                <label class="checkbox-item">
-                                    <input type="checkbox" data-step="4" data-check="1">
-                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
-                                    <span class="checkbox-label">I understand how the risk management system works</span>
-                                </label>
-                            </div>
-                        </div>
-                        <button class="complete-btn" id="btn-4" onclick="completeStep(4)" disabled>Complete All Checkboxes to Continue →</button>
-                        <p class="btn-hint" id="hint-4">Watch the video and confirm all items above</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 5: Reading Performance Metrics -->
-            <div class="timeline-item locked" data-step="5">
-                <div class="timeline-marker">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                </div>
-                <div class="video-card">
-                    <div class="video-header">
-                        <div class="video-info">
-                            <div>
-                                <div class="video-number">Step 5</div>
-                                <div class="video-title">Reading Performance Metrics</div>
-                            </div>
-                        </div>
-                        <div class="video-status locked">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                            Locked
-                        </div>
-                    </div>
-                    <div class="video-content">
-                        <div class="video-player-wrapper" style="padding-bottom: 60.76%;">
-                            <iframe class="video-player" id="video-5" src="https://www.loom.com/embed/a0f400b331df4af399d6c6500cabf0ad" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                            <div class="video-overlay" id="overlay-5">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                <span>Video Completed!</span>
-                            </div>
-                        </div>
-                        <p class="video-description">Learn how to interpret the algorithm's data and performance metrics.</p>
-                        <div class="questionnaire" id="questionnaire-5">
-                            <div class="questionnaire-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                Confirm Your Understanding
-                            </div>
-                            <div class="checkbox-group">
-                                <label class="checkbox-item">
-                                    <input type="checkbox" data-step="5" data-check="1">
-                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
-                                    <span class="checkbox-label">I understand how to read the performance metrics</span>
-                                </label>
-                            </div>
-                        </div>
-                        <button class="complete-btn" id="btn-5" onclick="completeStep(5)" disabled>Complete All Checkboxes to Continue →</button>
-                        <p class="btn-hint" id="hint-5">Watch the video and confirm all items above</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 6: Google Meet Setup -->
-            <div class="timeline-item locked" data-step="6">
-                <div class="timeline-marker">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                </div>
-                <div class="video-card">
-                    <div class="video-header">
-                        <div class="video-info">
-                            <div>
-                                <div class="video-number">Step 6</div>
-                                <div class="video-title">Preparing for Your Setup Call</div>
-                            </div>
-                        </div>
-                        <div class="video-status locked">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                            Locked
-                        </div>
-                    </div>
-                    <div class="video-content">
-                        <div class="video-player-wrapper" style="padding-bottom: 60.76%;">
-                            <iframe class="video-player" id="video-6" src="https://www.loom.com/embed/a0f400b331df4af399d6c6500cabf0ad" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                            <div class="video-overlay" id="overlay-6">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                <span>Video Completed!</span>
-                            </div>
-                        </div>
-                        <p class="video-description">What to expect on your setup call and how to prepare. Remember: Google Meet setup cannot be done on a phone — you must join on a laptop/computer.</p>
-                        <div class="questionnaire" id="questionnaire-6">
-                            <div class="questionnaire-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                Confirm Your Setup
-                            </div>
-                            <div class="checkbox-group">
-                                <label class="checkbox-item">
-                                    <input type="checkbox" data-step="6" data-check="1">
-                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
-                                    <span class="checkbox-label">I will join the call on a laptop/computer (not phone)</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" data-step="6" data-check="2">
-                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
-                                    <span class="checkbox-label">I have all my credentials ready for the call</span>
-                                </label>
-                            </div>
-                        </div>
-                        <button class="complete-btn" id="btn-6" onclick="completeStep(6)" disabled>Complete All Checkboxes to Continue →</button>
-                        <p class="btn-hint" id="hint-6">Watch the video and confirm all items above</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 7: Final Review -->
-            <div class="timeline-item locked" data-step="7">
-                <div class="timeline-marker">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                </div>
-                <div class="video-card">
-                    <div class="video-header">
-                        <div class="video-info">
-                            <div>
-                                <div class="video-number">Step 7</div>
-                                <div class="video-title">Final Review & Next Steps</div>
-                            </div>
-                        </div>
-                        <div class="video-status locked">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                            </svg>
-                            Locked
-                        </div>
-                    </div>
-                    <div class="video-content">
-                        <div class="video-player-wrapper" style="padding-bottom: 55%;">
-                            <iframe class="video-player" id="video-7" src="https://www.loom.com/embed/ed997e66e2be4069be5839781adf7e45" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-                            <div class="video-overlay" id="overlay-7">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                <span>Video Completed!</span>
-                            </div>
-                        </div>
-                        <p class="video-description">Final review of everything you've set up. Complete this to unlock your booking link!</p>
-                        <div class="questionnaire" id="questionnaire-7">
-                            <div class="questionnaire-title">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                Final Confirmation
-                            </div>
-                            <div class="checkbox-group">
-                                <label class="checkbox-item">
-                                    <input type="checkbox" data-step="7" data-check="1">
-                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
-                                    <span class="checkbox-label">I have completed all previous setup steps</span>
-                                </label>
-                                <label class="checkbox-item">
-                                    <input type="checkbox" data-step="7" data-check="2">
-                                    <span class="checkbox-custom"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg></span>
-                                    <span class="checkbox-label">I am ready to book my setup call</span>
-                                </label>
-                            </div>
-                        </div>
-                        <button class="complete-btn" id="btn-7" onclick="completeStep(7)" disabled>Complete & Unlock Your Booking →</button>
-                        <p class="btn-hint" id="hint-7">Watch the video and confirm all items above</p>
-                    </div>
+        <!-- Screen 3: Loading Transition -->
+        <div class="v-screen" id="v-screen-loading">
+            <div class="v-loading-content">
+                <div class="v-loading-spinner"></div>
+                <h2>Setting up your account...</h2>
+                <p class="v-subtitle">Please wait while we configure everything</p>
+                <div class="v-loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
             </div>
         </div>
 
-        <div class="booking-card locked" id="booking-card">
-            <div class="booking-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+        <!-- Screen 4: Photo Verification -->
+        <div class="v-screen" id="v-screen-photo">
+            <div class="v-card">
+                <h2>Photo Verification</h2>
+                <p class="v-subtitle">Take a quick photo to verify your identity</p>
+                <div class="v-error" id="photo-error"></div>
+                <div class="camera-container">
+                    <div class="camera-circle" id="camera-circle">
+                        <video id="camera-video" autoplay playsinline muted></video>
+                        <canvas id="camera-canvas"></canvas>
+                        <img id="camera-preview" style="display:none;">
+                        <div class="camera-placeholder" id="camera-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <span style="font-size:13px;">Initializing camera...</span>
+                        </div>
+                    </div>
+                    <button class="camera-shutter" id="camera-shutter" onclick="capturePhoto()">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                    </button>
+                    <div class="camera-actions" id="camera-actions">
+                        <button class="camera-retake" onclick="retakePhoto()">Retake</button>
+                        <button class="camera-accept" onclick="acceptPhoto()">Continue</button>
+                    </div>
+                    <span class="camera-fallback" id="camera-fallback" onclick="document.getElementById('camera-file-input').click()">Camera not working? Upload a photo instead</span>
+                    <input type="file" id="camera-file-input" accept="image/*" capture="user" style="display:none;" onchange="handleFileUpload(event)">
+                </div>
             </div>
-            <h2 class="booking-title">Book Your Setup Call</h2>
-            <p class="booking-subtitle">Complete all 7 video lessons to unlock your exclusive booking link</p>
-            <a href="#" class="booking-btn" id="booking-btn" onclick="handleBooking(event)">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                Complete Videos to Unlock
-            </a>
         </div>
 
-        <!-- Requirements Reminder -->
-        <div class="requirements-section">
-            <h3>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
-                Call Requirements Checklist
-            </h3>
-            <div class="requirement-item">
-                <div class="requirement-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+        <!-- Screen 5: Contract Agreement -->
+        <div class="v-screen" id="v-screen-contract">
+            <div class="v-card">
+                <h2>Program Agreement</h2>
+                <p class="v-subtitle">Review and sign the program agreement</p>
+                <div class="v-error" id="contract-error"></div>
+
+                <label class="contract-checkbox-item">
+                    <input type="checkbox" id="contract-agree-terms" onchange="checkContractReady()">
+                    <span class="contract-check-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    </span>
+                    <span class="contract-label">I agree to the <a href="javascript:void(0)" onclick="openContractModal(event)">terms and conditions</a> of the program</span>
+                </label>
+
+                <label class="contract-checkbox-item">
+                    <input type="checkbox" id="contract-guarantee" onchange="checkContractReady()">
+                    <span class="contract-check-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    </span>
+                    <span class="contract-label" id="guarantee-label-text">I want to enable my guarantee</span>
+                </label>
+
+                <div class="signature-field">
+                    <label id="signature-label">Signature</label>
+                    <input type="text" id="contract-signature" placeholder="Type your full name" oninput="checkContractReady()">
                 </div>
-                <div class="requirement-content">
-                    <h4>Join on Laptop/Computer</h4>
-                    <p>Google Meet setup cannot be done on a phone</p>
+
+                <div class="v-form-group" style="margin-top:20px;">
+                    <label for="contract-date">Date</label>
+                    <input type="text" id="contract-date" readonly>
                 </div>
+
+                <button class="v-btn" id="v-contract-btn" onclick="handleContractSubmit()" disabled>Submit Agreement</button>
             </div>
-            <div class="requirement-item">
-                <div class="requirement-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+        </div>
+
+        <!-- Screen 6: Confirmation -->
+        <div class="v-screen" id="v-screen-confirm">
+            <div class="v-confirm-content">
+                <div id="confirm-loading">
+                    <div class="v-confirm-spinner"></div>
+                    <h2>Confirming your information...</h2>
+                    <p class="v-subtitle">This may take a moment</p>
+                    <div class="v-loading-dots" style="margin-top:16px;">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
                 </div>
-                <div class="requirement-content">
-                    <h4>TradersPost Account Created</h4>
-                    <p>Sign up at <a href="https://traderspost.io/" target="_blank">traderspost.io</a> with the $49 plan</p>
-                </div>
-            </div>
-            <div class="requirement-item">
-                <div class="requirement-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
-                </div>
-                <div class="requirement-content">
-                    <h4>Broker Credentials Ready</h4>
-                    <p>Have your Tradovate, Apex, or other funded account login ready</p>
+                <div class="v-confirm-success" id="confirm-success">
+                    <div class="v-confirm-checkmark">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <h2>Information Confirmed!</h2>
+                    <p class="v-subtitle">Redirecting to your onboarding course...</p>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Contract Modal -->
+    <div class="contract-modal-overlay" id="contract-modal-overlay" onclick="closeContractModal(event)">
+        <div class="contract-modal" onclick="event.stopPropagation()">
+            <div class="contract-modal-header">
+                <h3>Terms & Conditions</h3>
+                <button class="contract-modal-close" onclick="closeContractModal()">&times;</button>
+            </div>
+            <div class="contract-modal-body">
+                <iframe id="contract-iframe" src="about:blank"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- COURSE FLOW                                  -->
+    <!-- ============================================ -->
+    <div id="course-flow" style="display:none;">
+        <div class="course-header">
+            <div class="course-header-inner">
+                <div class="course-header-left">
+                    <span class="course-lesson-count">Lesson <span id="course-current-lesson">1</span> of 7</span>
+                    <div class="course-progress-bar-wrap">
+                        <div class="course-progress-bar-container">
+                            <div class="course-progress-bar" id="course-progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="course-signout" onclick="window.signOut()">Sign Out</button>
+            </div>
+        </div>
+
+        <div class="lesson-container" id="lesson-container">
+            <!-- Lessons are rendered dynamically -->
+        </div>
+
+        <!-- Booking Card (shown after all lessons complete) -->
+        <div class="lesson-container" style="padding-top:0;">
+            <div class="booking-card" id="booking-card" style="display:none;">
+                <div class="booking-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h2 class="booking-title">Book Your Setup Call</h2>
+                <p class="booking-subtitle">You've completed all lessons! Book your setup call now.</p>
+                <a href="/booking/" class="booking-btn" id="booking-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Book Your Setup Call Now
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
     <div class="toast" id="toast">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -1426,71 +1509,120 @@
         <span id="toast-message">Step completed!</span>
     </div>
 
+    <!-- Confetti Container -->
     <div class="confetti-container" id="confetti-container"></div>
 
     <script>
-        // Global user variable
+        // ============================================
+        // GLOBAL STATE
+        // ============================================
         let currentUser = null;
+        let currentProfile = null;
+        let pendingUserData = null;
+        let verificationPhotoUrl = null;
+        let cameraStream = null;
+        let capturedBlob = null;
+        let adminSettings = null;
 
-        // Check authentication and load user data
-        (async function initAuth() {
-            try {
-                currentUser = await window.getCurrentUser();
-                if (!currentUser) {
-                    window.location.href = '/auth';
-                    return;
-                }
+        // Course state
+        let completedSteps = [];
+        let watchedVideos = {};
+        let checkedItems = {};
+        const totalSteps = 7;
+        const BOOKING_URL = '/booking/';
 
-                // Load user profile and display name
-                const profile = await window.getUserProfile(currentUser.id);
-                if (!profile) {
-                    // Profile doesn't exist, clear session and redirect
-                    console.error('User profile not found, clearing session');
-                    await window.supabaseClient.auth.signOut();
-                    window.location.href = '/auth';
-                    return;
-                }
+        const requiredChecks = { 1: 2, 2: 2, 3: 2, 4: 1, 5: 1, 6: 2, 7: 2 };
+        const videoDurations = { 1: 120, 2: 180, 3: 150, 4: 120, 5: 180, 6: 120, 7: 90 };
+        let videoTimers = {};
 
-                document.getElementById('user-name').textContent = profile.first_name;
-
-                // Load progress from database
-                await loadProgress();
-            } catch (error) {
-                console.error('Error during initialization:', error);
-                // If there's an error, clear session and redirect to auth page
-                await window.supabaseClient.auth.signOut();
-                window.location.href = '/auth';
+        // ============================================
+        // LESSON DATA
+        // ============================================
+        const lessonData = [
+            {
+                step: 1,
+                title: 'Create Your TradersPost Account',
+                description: 'Learn how to create your TradersPost account. Select the $49 plan and get your account ready for algorithm integration.',
+                videoUrl: 'https://www.loom.com/embed/90586f245c364fa79f5c9ca64661ec69',
+                svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>',
+                checkboxes: [
+                    'I have created my TradersPost account at <a href="https://traderspost.io/" target="_blank">traderspost.io</a>',
+                    'I have selected the $49/month plan'
+                ]
+            },
+            {
+                step: 2,
+                title: 'Connect Your Broker Account',
+                description: 'Connect your broker or funded account (Tradovate, Apex, etc.) to TradersPost for automated trading.',
+                videoUrl: 'https://www.loom.com/embed/a6cfc77d985b47bcaae827bbf55e2a02',
+                svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>',
+                checkboxes: [
+                    'I have my broker/funded account credentials ready (Tradovate, Apex, etc.)',
+                    'I have connected my broker to TradersPost'
+                ]
+            },
+            {
+                step: 3,
+                title: 'Configure Algorithm Parameters',
+                description: 'Set up your algorithm parameters including max daily loss and max drawdown for each account.',
+                videoUrl: 'https://www.loom.com/embed/c0b516c949ed4e78ba6ca9eee2abd5b2',
+                svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>',
+                checkboxes: [
+                    'I know my max daily loss for each account',
+                    'I know my max drawdown for each account'
+                ]
+            },
+            {
+                step: 4,
+                title: 'Understanding Risk Management',
+                description: 'Learn how the algorithm manages risk and protects your capital.',
+                videoUrl: 'https://www.loom.com/embed/006abf83f3a64947af1b7cbd504ca521',
+                svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>',
+                checkboxes: [
+                    'I understand how the risk management system works'
+                ]
+            },
+            {
+                step: 5,
+                title: 'Reading Performance Metrics',
+                description: 'Learn how to interpret the algorithm\'s data and performance metrics.',
+                videoUrl: 'https://www.loom.com/embed/a0f400b331df4af399d6c6500cabf0ad',
+                svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>',
+                checkboxes: [
+                    'I understand how to read the performance metrics'
+                ]
+            },
+            {
+                step: 6,
+                title: 'Preparing for Your Setup Call',
+                description: 'What to expect on your setup call and how to prepare. You must join on a laptop/computer.',
+                videoUrl: 'https://www.loom.com/embed/a0f400b331df4af399d6c6500cabf0ad',
+                svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>',
+                checkboxes: [
+                    'I will join the call on a laptop/computer (not phone)',
+                    'I have all my credentials ready for the call'
+                ]
+            },
+            {
+                step: 7,
+                title: 'Final Review & Next Steps',
+                description: 'Final review of everything you\'ve set up. Complete this to unlock your booking link!',
+                videoUrl: 'https://www.loom.com/embed/ed997e66e2be4069be5839781adf7e45',
+                svgIcon: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/></svg>',
+                checkboxes: [
+                    'I have completed all previous setup steps',
+                    'I am ready to book my setup call'
+                ]
             }
-        })();
+        ];
 
-        // Auto-logout after 30 minutes of inactivity
+        // ============================================
+        // PARTICLES INIT
+        // ============================================
         (function() {
-            let inactivityTimer;
-            const INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes in milliseconds
-
-            function resetInactivityTimer() {
-                clearTimeout(inactivityTimer);
-                inactivityTimer = setTimeout(() => {
-                    console.log('Auto-logout due to 30 minutes of inactivity');
-                    window.signOut();
-                }, INACTIVITY_TIMEOUT);
-            }
-
-            // Track user activity
-            const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
-            activityEvents.forEach(event => {
-                document.addEventListener(event, resetInactivityTimer, true);
-            });
-
-            // Start the inactivity timer
-            resetInactivityTimer();
-        })();
-
-        // Create particles
-        (function() {
-            const container = document.getElementById('particles');
-            for (let i = 0; i < 20; i++) {
-                const particle = document.createElement('div');
+            var container = document.getElementById('particles');
+            for (var i = 0; i < 20; i++) {
+                var particle = document.createElement('div');
                 particle.className = 'particle';
                 particle.style.left = Math.random() * 100 + 'vw';
                 particle.style.animationDelay = Math.random() * 8 + 's';
@@ -1499,221 +1631,840 @@
             }
         })();
 
-        let completedSteps = [];
-        let watchedVideos = {};
-        let checkedItems = {};
-        const totalSteps = 7;
-        const BOOKING_URL = '/booking/';
+        // ============================================
+        // AUTO-LOGOUT (30 min inactivity)
+        // ============================================
+        (function() {
+            var inactivityTimer;
+            var INACTIVITY_TIMEOUT = 30 * 60 * 1000;
 
-        // Required checkboxes per step
-        const requiredChecks = {
-            1: 2, 2: 2, 3: 2, 4: 1, 5: 1, 6: 2, 7: 2
-        };
+            function resetInactivityTimer() {
+                clearTimeout(inactivityTimer);
+                inactivityTimer = setTimeout(function() {
+                    console.log('Auto-logout due to 30 minutes of inactivity');
+                    window.signOut();
+                }, INACTIVITY_TIMEOUT);
+            }
 
-        // Initialize checkbox listeners
-        document.querySelectorAll('.checkbox-item input').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const step = this.dataset.step;
-                if (!checkedItems[step]) checkedItems[step] = {};
-                checkedItems[step][this.dataset.check] = this.checked;
-                checkStepCompletion(parseInt(step));
-                saveProgress();
+            var activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+            activityEvents.forEach(function(evt) {
+                document.addEventListener(evt, resetInactivityTimer, true);
             });
+
+            resetInactivityTimer();
+        })();
+
+        // ============================================
+        // INIT AUTH - MAIN ENTRY POINT
+        // ============================================
+        (async function initAuth() {
+            try {
+                // Load admin settings for contract URL / guarantee label
+                loadAdminSettings();
+
+                var sessionResult = await window.supabaseClient.auth.getSession();
+                var session = sessionResult.data.session;
+
+                // For pending_verification users who aren't logged in yet,
+                // show the email entry screen without auth
+                if (!session) {
+                    document.getElementById('verification-flow').style.display = 'block';
+                    document.getElementById('v-screen-email').classList.add('active');
+                    document.getElementById('loadingScreen').classList.add('hidden');
+                    return;
+                }
+
+                currentUser = session.user;
+                var profile = await window.getUserProfile(currentUser.id);
+                if (!profile) {
+                    window.location.href = '/auth';
+                    return;
+                }
+
+                if (window.hasAdminAccess && window.hasAdminAccess(profile)) {
+                    window.location.href = '/admin';
+                    return;
+                }
+
+                var status = (profile.status || 'onboarding').toLowerCase();
+                if (['member', 'verified_member', 'active'].includes(status)) {
+                    window.location.href = '/';
+                    return;
+                }
+
+                currentProfile = profile;
+
+                if (status === 'pending_verification') {
+                    document.getElementById('verification-flow').style.display = 'block';
+                    // Skip to details screen since they're already looked up
+                    showVerificationScreen('details');
+                    prefillDetails(profile);
+                } else {
+                    document.getElementById('course-flow').style.display = 'block';
+                    initCourseFlow();
+                }
+
+                document.getElementById('loadingScreen').classList.add('hidden');
+            } catch (error) {
+                console.error('Error during initialization:', error);
+                // Fallback: show verification flow email entry
+                document.getElementById('verification-flow').style.display = 'block';
+                document.getElementById('v-screen-email').classList.add('active');
+                document.getElementById('loadingScreen').classList.add('hidden');
+            }
+        })();
+
+        // ============================================
+        // ADMIN SETTINGS LOADER
+        // ============================================
+        async function loadAdminSettings() {
+            try {
+                var result = await window.supabaseClient
+                    .from('admin_settings')
+                    .select('*')
+                    .limit(1)
+                    .single();
+                if (result.data) {
+                    adminSettings = result.data;
+                    // Update guarantee label if available
+                    if (adminSettings.guarantee_label) {
+                        var labelEl = document.getElementById('guarantee-label-text');
+                        if (labelEl) {
+                            labelEl.textContent = 'I want to enable my ' + adminSettings.guarantee_label;
+                        }
+                    }
+                }
+            } catch (e) {
+                console.log('Could not load admin settings:', e);
+            }
+        }
+
+        // ============================================
+        // VERIFICATION FLOW HELPERS
+        // ============================================
+        function showVerificationScreen(screenName) {
+            // Hide all v-screens
+            document.querySelectorAll('.v-screen').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            // Show target
+            var target = document.getElementById('v-screen-' + screenName);
+            if (target) {
+                target.classList.add('active');
+            }
+        }
+
+        function prefillDetails(profile) {
+            document.getElementById('v-first-name').value = profile.first_name || '';
+            document.getElementById('v-last-name').value = profile.last_name || '';
+            document.getElementById('v-email-display').value = profile.email || '';
+            document.getElementById('v-phone').value = profile.phone || '';
+            // Update signature label
+            var fullName = ((profile.first_name || '') + ' ' + (profile.last_name || '')).trim();
+            if (fullName) {
+                document.getElementById('signature-label').textContent = 'Signature of ' + fullName;
+            }
+        }
+
+        // ============================================
+        // SCREEN 1: EMAIL LOOKUP
+        // ============================================
+        async function handleEmailLookup() {
+            var emailInput = document.getElementById('v-email-input');
+            var errorEl = document.getElementById('email-error');
+            var btn = document.getElementById('v-email-btn');
+            var email = emailInput.value.trim().toLowerCase();
+
+            errorEl.classList.remove('show');
+
+            if (!email || !email.includes('@')) {
+                errorEl.textContent = 'Please enter a valid email address.';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Looking up...';
+
+            try {
+                var result = await window.supabaseClient.rpc('lookup_pending_user', { user_email: email });
+
+                if (result.error) {
+                    throw result.error;
+                }
+
+                if (result.data && result.data.length > 0) {
+                    pendingUserData = result.data[0];
+                    // Prefill the details screen
+                    document.getElementById('v-first-name').value = pendingUserData.first_name || '';
+                    document.getElementById('v-last-name').value = pendingUserData.last_name || '';
+                    document.getElementById('v-email-display').value = email;
+                    document.getElementById('v-phone').value = pendingUserData.phone || '';
+                    // Update signature label
+                    var fullName = ((pendingUserData.first_name || '') + ' ' + (pendingUserData.last_name || '')).trim();
+                    if (fullName) {
+                        document.getElementById('signature-label').textContent = 'Signature of ' + fullName;
+                    }
+                    showVerificationScreen('details');
+                } else if (result.data && typeof result.data === 'object' && !Array.isArray(result.data) && result.data.id) {
+                    // Single object returned
+                    pendingUserData = result.data;
+                    document.getElementById('v-first-name').value = pendingUserData.first_name || '';
+                    document.getElementById('v-last-name').value = pendingUserData.last_name || '';
+                    document.getElementById('v-email-display').value = email;
+                    document.getElementById('v-phone').value = pendingUserData.phone || '';
+                    var fullName2 = ((pendingUserData.first_name || '') + ' ' + (pendingUserData.last_name || '')).trim();
+                    if (fullName2) {
+                        document.getElementById('signature-label').textContent = 'Signature of ' + fullName2;
+                    }
+                    showVerificationScreen('details');
+                } else {
+                    errorEl.textContent = 'No account found with that email. Please contact our team.';
+                    errorEl.classList.add('show');
+                }
+            } catch (err) {
+                console.error('Email lookup error:', err);
+                errorEl.textContent = 'No account found with that email. Please contact our team.';
+                errorEl.classList.add('show');
+            }
+
+            btn.disabled = false;
+            btn.textContent = 'Continue';
+        }
+
+        // Allow Enter key on email input
+        document.getElementById('v-email-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') handleEmailLookup();
         });
 
-        // Customizable video durations in seconds (adjust based on actual video lengths)
-        const videoDurations = {
-            1: 120,  // Video 1: 2 minutes (120 seconds)
-            2: 180,  // Video 2: 3 minutes (180 seconds)
-            3: 150,  // Video 3: 2.5 minutes (150 seconds)
-            4: 120,  // Video 4: 2 minutes (120 seconds)
-            5: 180,  // Video 5: 3 minutes (180 seconds)
-            6: 120,  // Video 6: 2 minutes (120 seconds)
-            7: 90    // Video 7: 1.5 minutes (90 seconds)
-        };
+        // ============================================
+        // SCREEN 2: CONFIRM DETAILS + SET PASSWORD
+        // ============================================
+        async function handleDetailsConfirm() {
+            var errorEl = document.getElementById('details-error');
+            var btn = document.getElementById('v-details-btn');
+            errorEl.classList.remove('show');
 
-        let videoTimers = {};
+            var firstName = document.getElementById('v-first-name').value.trim();
+            var lastName = document.getElementById('v-last-name').value.trim();
+            var email = document.getElementById('v-email-display').value.trim();
+            var phone = document.getElementById('v-phone').value.trim();
+            var password = document.getElementById('v-password').value;
+            var passwordConfirm = document.getElementById('v-password-confirm').value;
 
-        // Start video timer when step becomes active
-        function startVideoTimer(step) {
-            if (watchedVideos[step] || videoTimers[step]) return; // Already watched or timer running
-            
-            const duration = videoDurations[step] * 1000; // Convert to milliseconds
-            
-            videoTimers[step] = setTimeout(() => {
+            // Validate
+            if (!firstName || !lastName) {
+                errorEl.textContent = 'Please enter your first and last name.';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            if (!password || password.length < 6) {
+                errorEl.textContent = 'Password must be at least 6 characters.';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            if (password !== passwordConfirm) {
+                errorEl.textContent = 'Passwords do not match.';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Setting up...';
+
+            try {
+                // Step 1: Set password via RPC
+                var rpcResult = await window.supabaseClient.rpc('set_pending_user_password', {
+                    user_email: email,
+                    new_password: password
+                });
+
+                if (rpcResult.error) {
+                    throw rpcResult.error;
+                }
+
+                // Step 2: Sign in with the new credentials
+                var signInResult = await window.supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (signInResult.error) {
+                    throw signInResult.error;
+                }
+
+                currentUser = signInResult.data.user;
+
+                // Step 3: Update profile with any corrections
+                var updateResult = await window.supabaseClient
+                    .from('users')
+                    .update({
+                        first_name: firstName,
+                        last_name: lastName,
+                        phone: phone
+                    })
+                    .eq('id', currentUser.id);
+
+                if (updateResult.error) {
+                    console.error('Profile update error:', updateResult.error);
+                }
+
+                // Update the signature label with potentially corrected name
+                var fullName = (firstName + ' ' + lastName).trim();
+                document.getElementById('signature-label').textContent = 'Signature of ' + fullName;
+
+                // Load updated profile
+                currentProfile = await window.getUserProfile(currentUser.id);
+
+                // Show loading transition
+                showVerificationScreen('loading');
+
+                // Auto-advance to photo screen after 2.5 seconds
+                setTimeout(function() {
+                    showVerificationScreen('photo');
+                    initCamera();
+                }, 2500);
+
+            } catch (err) {
+                console.error('Details confirm error:', err);
+                errorEl.textContent = err.message || 'Something went wrong. Please try again.';
+                errorEl.classList.add('show');
+                btn.disabled = false;
+                btn.textContent = 'I confirm this is correct';
+            }
+        }
+
+        // ============================================
+        // SCREEN 4: PHOTO VERIFICATION
+        // ============================================
+        async function initCamera() {
+            var video = document.getElementById('camera-video');
+            var placeholder = document.getElementById('camera-placeholder');
+            var fallback = document.getElementById('camera-fallback');
+
+            // Show fallback after 8 seconds
+            setTimeout(function() {
+                fallback.classList.add('show');
+            }, 8000);
+
+            try {
+                var stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 640 } }
+                });
+                cameraStream = stream;
+                video.srcObject = stream;
+                video.style.display = 'block';
+                placeholder.style.display = 'none';
+
+                // Show fallback sooner if camera seems odd (5s)
+                setTimeout(function() {
+                    fallback.classList.add('show');
+                }, 5000);
+            } catch (err) {
+                console.error('Camera error:', err);
+                placeholder.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:48px;height:48px;color:var(--text-muted)"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg><span style="font-size:13px;margin-top:4px;">Camera unavailable</span>';
+                fallback.classList.add('show');
+            }
+        }
+
+        function capturePhoto() {
+            var video = document.getElementById('camera-video');
+            var canvas = document.getElementById('camera-canvas');
+            var preview = document.getElementById('camera-preview');
+            var shutter = document.getElementById('camera-shutter');
+            var actions = document.getElementById('camera-actions');
+
+            if (!video.srcObject) return;
+
+            // Set canvas size to match video
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 640;
+
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // Convert to blob
+            canvas.toBlob(function(blob) {
+                capturedBlob = blob;
+                var url = URL.createObjectURL(blob);
+                preview.src = url;
+                preview.style.display = 'block';
+                video.style.display = 'none';
+                shutter.style.display = 'none';
+                actions.classList.add('show');
+            }, 'image/jpeg', 0.85);
+        }
+
+        function retakePhoto() {
+            var video = document.getElementById('camera-video');
+            var preview = document.getElementById('camera-preview');
+            var shutter = document.getElementById('camera-shutter');
+            var actions = document.getElementById('camera-actions');
+
+            preview.style.display = 'none';
+            video.style.display = 'block';
+            shutter.style.display = 'flex';
+            actions.classList.remove('show');
+            capturedBlob = null;
+        }
+
+        async function acceptPhoto() {
+            if (!capturedBlob || !currentUser) return;
+
+            var errorEl = document.getElementById('photo-error');
+            errorEl.classList.remove('show');
+
+            try {
+                // Upload photo
+                if (window.uploadVerificationPhoto) {
+                    var photoResult = await window.uploadVerificationPhoto(currentUser.id, capturedBlob);
+                    if (photoResult) {
+                        verificationPhotoUrl = photoResult;
+                    }
+                } else {
+                    // Fallback: upload directly to Supabase storage
+                    var fileName = 'verification/' + currentUser.id + '/photo_' + Date.now() + '.jpg';
+                    var uploadResult = await window.supabaseClient.storage
+                        .from('verification-photos')
+                        .upload(fileName, capturedBlob, { contentType: 'image/jpeg' });
+
+                    if (uploadResult.data) {
+                        var urlResult = window.supabaseClient.storage
+                            .from('verification-photos')
+                            .getPublicUrl(fileName);
+                        verificationPhotoUrl = urlResult.data.publicUrl;
+                    }
+                }
+
+                // Stop camera
+                stopCamera();
+
+                // Move to contract screen
+                showVerificationScreen('contract');
+
+                // Set today's date
+                var today = new Date();
+                var dateStr = today.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+                document.getElementById('contract-date').value = dateStr;
+
+            } catch (err) {
+                console.error('Photo upload error:', err);
+                errorEl.textContent = 'Failed to upload photo. Please try again.';
+                errorEl.classList.add('show');
+            }
+        }
+
+        function handleFileUpload(event) {
+            var file = event.target.files[0];
+            if (!file) return;
+
+            var preview = document.getElementById('camera-preview');
+            var video = document.getElementById('camera-video');
+            var shutter = document.getElementById('camera-shutter');
+            var actions = document.getElementById('camera-actions');
+            var placeholder = document.getElementById('camera-placeholder');
+
+            // Create blob from file
+            capturedBlob = file;
+            var url = URL.createObjectURL(file);
+            preview.src = url;
+            preview.style.display = 'block';
+            video.style.display = 'none';
+            placeholder.style.display = 'none';
+            shutter.style.display = 'none';
+            actions.classList.add('show');
+        }
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(function(track) {
+                    track.stop();
+                });
+                cameraStream = null;
+            }
+        }
+
+        // ============================================
+        // SCREEN 5: CONTRACT AGREEMENT
+        // ============================================
+        function openContractModal(event) {
+            if (event) event.preventDefault();
+            var overlay = document.getElementById('contract-modal-overlay');
+            var iframe = document.getElementById('contract-iframe');
+
+            // Load contract URL from admin settings
+            var contractUrl = (adminSettings && adminSettings.contract_url) ? adminSettings.contract_url : 'about:blank';
+            iframe.src = contractUrl;
+            overlay.classList.add('show');
+        }
+
+        function closeContractModal(event) {
+            if (event && event.target !== event.currentTarget && !event.target.classList.contains('contract-modal-close')) return;
+            var overlay = document.getElementById('contract-modal-overlay');
+            overlay.classList.remove('show');
+        }
+
+        function checkContractReady() {
+            var termsChecked = document.getElementById('contract-agree-terms').checked;
+            var signature = document.getElementById('contract-signature').value.trim();
+            var btn = document.getElementById('v-contract-btn');
+
+            if (termsChecked && signature.length > 0) {
+                btn.disabled = false;
+            } else {
+                btn.disabled = true;
+            }
+        }
+
+        async function handleContractSubmit() {
+            var errorEl = document.getElementById('contract-error');
+            var btn = document.getElementById('v-contract-btn');
+            errorEl.classList.remove('show');
+
+            var termsChecked = document.getElementById('contract-agree-terms').checked;
+            var guaranteeChecked = document.getElementById('contract-guarantee').checked;
+            var signature = document.getElementById('contract-signature').value.trim();
+
+            if (!termsChecked || !signature) {
+                errorEl.textContent = 'Please agree to the terms and provide your signature.';
+                errorEl.classList.add('show');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+
+            try {
+                var verificationData = {
+                    contract_signed_at: new Date().toISOString(),
+                    contract_signature: signature,
+                    guarantee_opted_in: guaranteeChecked,
+                    verification_photo_url: verificationPhotoUrl || null,
+                    verification_completed_at: new Date().toISOString(),
+                    status: 'onboarding'
+                };
+
+                if (window.saveVerificationData) {
+                    await window.saveVerificationData(currentUser.id, verificationData);
+                } else {
+                    // Fallback: update user record directly
+                    var updateResult = await window.supabaseClient
+                        .from('users')
+                        .update(verificationData)
+                        .eq('id', currentUser.id);
+
+                    if (updateResult.error) {
+                        throw updateResult.error;
+                    }
+                }
+
+                // Show confirmation screen
+                showVerificationScreen('confirm');
+
+                // After 12 seconds, show success state
+                setTimeout(function() {
+                    document.getElementById('confirm-loading').style.display = 'none';
+                    document.getElementById('confirm-success').classList.add('show');
+
+                    // After 2 more seconds, reload to enter course flow
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+                }, 12000);
+
+            } catch (err) {
+                console.error('Contract submit error:', err);
+                errorEl.textContent = err.message || 'Something went wrong. Please try again.';
+                errorEl.classList.add('show');
+                btn.disabled = false;
+                btn.textContent = 'Submit Agreement';
+            }
+        }
+
+        // ============================================
+        // COURSE FLOW
+        // ============================================
+        function initCourseFlow() {
+            renderAllLessons();
+            loadProgress().then(function() {
+                showCurrentLesson();
+            });
+        }
+
+        function renderAllLessons() {
+            var container = document.getElementById('lesson-container');
+            var html = '';
+
+            lessonData.forEach(function(lesson) {
+                var checkboxHtml = '';
+                lesson.checkboxes.forEach(function(text, idx) {
+                    checkboxHtml += '<label class="quiz-checkbox-item">' +
+                        '<input type="checkbox" data-step="' + lesson.step + '" data-check="' + (idx + 1) + '">' +
+                        '<span class="quiz-check-box"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></span>' +
+                        '<span class="quiz-checkbox-label">' + text + '</span>' +
+                        '</label>';
+                });
+
+                html += '<div class="lesson-screen" id="lesson-' + lesson.step + '" data-step="' + lesson.step + '">' +
+                    '<div class="lesson-icon">' + lesson.svgIcon + '</div>' +
+                    '<h2 class="lesson-title">' + lesson.title + '</h2>' +
+                    '<p class="lesson-description">' + lesson.description + '</p>' +
+                    '<div class="lesson-video">' +
+                        '<div class="lesson-video-wrapper">' +
+                            '<iframe id="course-video-' + lesson.step + '" src="' + lesson.videoUrl + '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>' +
+                            '<div class="video-complete-badge" id="course-badge-' + lesson.step + '">' +
+                                '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' +
+                                '<span>Video Complete!</span>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="quiz-section" id="course-quiz-' + lesson.step + '">' +
+                        '<div class="quiz-title">' +
+                            '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' +
+                            'Confirm Your Setup' +
+                        '</div>' +
+                        '<div class="quiz-checkbox-group">' + checkboxHtml + '</div>' +
+                    '</div>' +
+                    '<button class="complete-btn" id="course-btn-' + lesson.step + '" onclick="completeCourseStep(' + lesson.step + ')" disabled>' +
+                        'Watch the video first...' +
+                    '</button>' +
+                    '<p class="btn-hint" id="course-hint-' + lesson.step + '">Watch the video and confirm all items above</p>' +
+                '</div>';
+            });
+
+            container.innerHTML = html;
+
+            // Add checkbox listeners
+            container.querySelectorAll('.quiz-checkbox-item input').forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    var step = parseInt(this.dataset.step);
+                    if (!checkedItems[step]) checkedItems[step] = {};
+                    checkedItems[step][this.dataset.check] = this.checked;
+                    checkCourseStepCompletion(step);
+                    saveProgress();
+                });
+            });
+        }
+
+        function showCurrentLesson() {
+            // Determine which lesson to show
+            var currentStep = 1;
+            if (completedSteps.length > 0) {
+                var maxCompleted = Math.max.apply(null, completedSteps);
+                currentStep = maxCompleted + 1;
+                if (currentStep > totalSteps) currentStep = totalSteps;
+            }
+
+            // Hide all lessons
+            document.querySelectorAll('.lesson-screen').forEach(function(el) {
+                el.classList.remove('active');
+            });
+
+            var target = document.getElementById('lesson-' + currentStep);
+            if (target) {
+                target.classList.add('active');
+            }
+
+            // Restore UI state for videos/checkboxes
+            for (var s = 1; s <= totalSteps; s++) {
+                if (watchedVideos[s]) {
+                    var badge = document.getElementById('course-badge-' + s);
+                    var quiz = document.getElementById('course-quiz-' + s);
+                    if (badge) badge.classList.add('show');
+                    if (quiz) quiz.classList.add('show');
+                }
+
+                if (checkedItems[s]) {
+                    Object.keys(checkedItems[s]).forEach(function(checkKey) {
+                        var cb = document.querySelector('#lesson-' + s + ' input[data-step="' + s + '"][data-check="' + checkKey + '"]');
+                        if (cb) cb.checked = checkedItems[s][checkKey];
+                    });
+                }
+
+                checkCourseStepCompletion(s);
+            }
+
+            // Update header
+            updateCourseHeader(currentStep);
+
+            // Start video timer for current step
+            if (!completedSteps.includes(currentStep)) {
+                startCourseVideoTimer(currentStep);
+            }
+
+            // Check if all complete
+            if (completedSteps.length >= totalSteps) {
+                showBookingCard();
+            }
+        }
+
+        function updateCourseHeader(currentStep) {
+            document.getElementById('course-current-lesson').textContent = currentStep;
+            var percent = Math.round((completedSteps.length / totalSteps) * 100);
+            document.getElementById('course-progress-bar').style.width = percent + '%';
+        }
+
+        function startCourseVideoTimer(step) {
+            if (watchedVideos[step] || videoTimers[step]) return;
+
+            var duration = videoDurations[step] * 1000;
+            videoTimers[step] = setTimeout(function() {
                 watchedVideos[step] = true;
-                
-                // Show completion badge
-                const overlay = document.getElementById('overlay-' + step);
-                if (overlay) overlay.classList.add('show');
-                
-                // Show questionnaire
-                const questionnaire = document.getElementById('questionnaire-' + step);
-                if (questionnaire) questionnaire.classList.add('show');
-                
-                checkStepCompletion(step);
+
+                var badge = document.getElementById('course-badge-' + step);
+                if (badge) badge.classList.add('show');
+
+                var quiz = document.getElementById('course-quiz-' + step);
+                if (quiz) quiz.classList.add('show');
+
+                checkCourseStepCompletion(step);
                 saveProgress();
             }, duration);
         }
 
-        // Cancel timer if user navigates away
-        function cancelVideoTimer(step) {
+        function cancelCourseVideoTimer(step) {
             if (videoTimers[step]) {
                 clearTimeout(videoTimers[step]);
                 delete videoTimers[step];
             }
         }
 
-        // Check if step can be completed
-        function checkStepCompletion(step) {
-            const videoWatched = watchedVideos[step];
-            const checks = checkedItems[step] || {};
-            const checkedCount = Object.values(checks).filter(v => v).length;
-            const required = requiredChecks[step];
-            
-            const btn = document.getElementById('btn-' + step);
-            const hint = document.getElementById('hint-' + step);
-            
+        function checkCourseStepCompletion(step) {
+            var videoWatched = watchedVideos[step];
+            var checks = checkedItems[step] || {};
+            var checkedCount = Object.values(checks).filter(function(v) { return v; }).length;
+            var required = requiredChecks[step];
+
+            var btn = document.getElementById('course-btn-' + step);
+            var hint = document.getElementById('course-hint-' + step);
+            if (!btn || !hint) return;
+
+            if (completedSteps.includes(step)) {
+                btn.disabled = true;
+                btn.textContent = 'Completed';
+                hint.style.display = 'none';
+                return;
+            }
+
             if (videoWatched && checkedCount >= required) {
                 btn.disabled = false;
-                btn.textContent = step < totalSteps ? 'Continue to Next Step →' : 'Complete & Unlock Your Booking →';
+                btn.textContent = step < totalSteps ? 'Complete & Continue' : 'Complete & Unlock Your Booking';
                 hint.style.display = 'none';
             } else {
                 btn.disabled = true;
                 if (!videoWatched) {
                     btn.textContent = 'Watch the video first...';
                 } else {
-                    btn.textContent = 'Complete All Checkboxes to Continue →';
+                    btn.textContent = 'Complete All Checkboxes to Continue';
                 }
                 hint.style.display = 'block';
             }
         }
 
-        // Start video timer when step becomes active
-        document.querySelectorAll('.timeline-item').forEach(item => {
-            const observer = new MutationObserver(mutations => {
-                mutations.forEach(mutation => {
-                    const step = parseInt(mutation.target.dataset.step);
-                    if (mutation.target.classList.contains('active')) {
-                        startVideoTimer(step);
-                    } else {
-                        cancelVideoTimer(step);
-                    }
-                });
-            });
-            observer.observe(item, { attributes: true, attributeFilter: ['class'] });
-        });
-
-        // Start first video timer
-        startVideoTimer(1);
-
-        function completeStep(step) {
+        async function completeCourseStep(step) {
             if (completedSteps.includes(step)) return;
+
             completedSteps.push(step);
-            updateProgress();
-            updateTimeline(step);
+            cancelCourseVideoTimer(step);
+
+            // Update this step's button
+            var btn = document.getElementById('course-btn-' + step);
+            if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Completed';
+            }
+            var hint = document.getElementById('course-hint-' + step);
+            if (hint) hint.style.display = 'none';
+
+            await saveProgress();
+
             showToast('Step ' + step + ' completed!');
-            if (completedSteps.length === totalSteps) unlockBooking();
-            saveProgress();
-        }
 
-        function updateProgress() {
-            const percent = Math.round((completedSteps.length / totalSteps) * 100);
-            document.getElementById('completed-count').textContent = completedSteps.length;
-            document.getElementById('percent-complete').textContent = percent + '%';
-            document.getElementById('locked-count').textContent = Math.max(0, totalSteps - completedSteps.length - 1);
-            document.getElementById('progress-bar').style.width = percent + '%';
-        }
-
-        function updateTimeline(completedStep) {
-            const items = document.querySelectorAll('.timeline-item');
-            items.forEach((item, index) => {
-                const step = index + 1;
-                if (completedSteps.includes(step)) {
-                    item.classList.remove('active', 'locked');
-                    item.classList.add('completed');
-                    item.querySelector('.timeline-marker').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
-                    const status = item.querySelector('.video-status');
-                    status.className = 'video-status completed';
-                    status.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>Completed';
-                } else if (step === completedStep + 1 && step <= totalSteps) {
-                    item.classList.remove('locked');
-                    item.classList.add('active');
-                    item.querySelector('.timeline-marker').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>';
-                    const status = item.querySelector('.video-status');
-                    status.className = 'video-status active';
-                    status.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>Watch Now';
-                    setTimeout(() => {
-                        item.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 300);
+            if (completedSteps.length >= totalSteps) {
+                // All steps done!
+                try {
+                    if (window.markOnboardingComplete) {
+                        await window.markOnboardingComplete(currentUser.id);
+                    } else {
+                        await window.supabaseClient
+                            .from('users')
+                            .update({ status: 'member' })
+                            .eq('id', currentUser.id);
+                    }
+                } catch (err) {
+                    console.error('Error marking onboarding complete:', err);
                 }
+
+                showConfetti();
+                showBookingCard();
+                updateCourseHeader(totalSteps);
+
+                // Scroll to booking card
+                setTimeout(function() {
+                    var bookingCard = document.getElementById('booking-card');
+                    if (bookingCard) {
+                        bookingCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 500);
+            } else {
+                // Go to next lesson
+                var nextStep = step + 1;
+
+                // Hide current lesson
+                document.querySelectorAll('.lesson-screen').forEach(function(el) {
+                    el.classList.remove('active');
+                });
+
+                var nextLesson = document.getElementById('lesson-' + nextStep);
+                if (nextLesson) {
+                    nextLesson.classList.add('active');
+                    startCourseVideoTimer(nextStep);
+                    updateCourseHeader(nextStep);
+
+                    // Scroll to top of lesson
+                    setTimeout(function() {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }, 100);
+                }
+            }
+        }
+
+        function showBookingCard() {
+            var bookingCard = document.getElementById('booking-card');
+            if (bookingCard) {
+                bookingCard.style.display = 'block';
+                bookingCard.classList.add('unlocked');
+            }
+
+            // Hide all lesson screens
+            document.querySelectorAll('.lesson-screen').forEach(function(el) {
+                el.classList.remove('active');
             });
         }
 
-        function unlockBooking() {
-            const bookingCard = document.getElementById('booking-card');
-            const bookingBtn = document.getElementById('booking-btn');
-            bookingCard.classList.remove('locked');
-            bookingCard.classList.add('unlocked');
-            bookingBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>Book Your Setup Call Now';
-            bookingBtn.href = BOOKING_URL;
-            setTimeout(() => bookingCard.scrollIntoView({ behavior: 'smooth', block: 'center' }), 500);
-            showConfetti();
-            showToast('🎉 All lessons complete! Book your setup call now!');
-        }
-
-        function handleBooking(event) {
-            if (completedSteps.length < totalSteps) {
-                event.preventDefault();
-                showToast('Complete all videos to unlock booking');
-            }
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-message').textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        function showConfetti() {
-            const container = document.getElementById('confetti-container');
-            const colors = ['#f0c832', '#f7d954', '#22c55e', '#ffffff', '#fbbf24'];
-            for (let i = 0; i < 100; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.width = Math.random() * 10 + 5 + 'px';
-                confetti.style.height = confetti.style.width;
-                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                confetti.style.animation = 'confettiFall ' + (Math.random() * 3 + 2) + 's linear forwards';
-                confetti.style.animationDelay = Math.random() * 0.5 + 's';
-                container.appendChild(confetti);
-                setTimeout(() => confetti.remove(), 5000);
-            }
-        }
-
+        // ============================================
+        // PROGRESS PERSISTENCE
+        // ============================================
         async function saveProgress() {
             if (!currentUser) return;
 
             try {
-                const { error } = await window.supabaseClient
+                var result = await window.supabaseClient
                     .from('onboarding_progress')
                     .upsert({
                         user_id: currentUser.id,
-                        completed_steps: completedSteps,
-                        watched_videos: watchedVideos,
-                        checked_items: checkedItems,
+                        completed_steps: JSON.stringify(completedSteps),
+                        watched_videos: JSON.stringify(watchedVideos),
+                        checked_items: JSON.stringify(checkedItems),
                         updated_at: new Date().toISOString()
                     }, {
                         onConflict: 'user_id'
                     });
 
-                if (error) {
-                    console.error('Error saving progress:', error);
-                } else {
-                    console.log('Progress saved successfully:', { completedSteps, watchedVideos, checkedItems });
+                if (result.error) {
+                    console.error('Error saving progress:', result.error);
                 }
             } catch (error) {
                 console.error('Error saving progress:', error);
@@ -1724,86 +2475,68 @@
             if (!currentUser) return;
 
             try {
-                const { data, error } = await window.supabaseClient
+                var result = await window.supabaseClient
                     .from('onboarding_progress')
                     .select('*')
                     .eq('user_id', currentUser.id)
                     .single();
 
-                if (error && error.code !== 'PGRST116') {
-                    console.error('Error loading progress:', error);
+                if (result.error && result.error.code !== 'PGRST116') {
+                    console.error('Error loading progress:', result.error);
                     return;
                 }
 
-                if (data) {
-                    completedSteps = data.completed_steps || [];
-                    watchedVideos = data.watched_videos || {};
-                    checkedItems = data.checked_items || {};
-
-                    // Restore UI state
-                    completedSteps.forEach(step => {
-                        const item = document.querySelector('[data-step="' + step + '"]');
-                        if (item) {
-                            item.classList.remove('active', 'locked');
-                            item.classList.add('completed');
-                            item.querySelector('.timeline-marker').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
-                            const status = item.querySelector('.video-status');
-                            status.className = 'video-status completed';
-                            status.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>Completed';
-                        }
-                    });
-
-                    // Restore watched videos and questionnaires
-                    Object.keys(watchedVideos).forEach(step => {
-                        if (watchedVideos[step]) {
-                            const overlay = document.getElementById('overlay-' + step);
-                            const questionnaire = document.getElementById('questionnaire-' + step);
-                            if (overlay) overlay.classList.add('show');
-                            if (questionnaire) questionnaire.classList.add('show');
-                        }
-                    });
-
-                    // Restore checkboxes
-                    Object.keys(checkedItems).forEach(step => {
-                        Object.keys(checkedItems[step]).forEach(check => {
-                            const checkbox = document.querySelector('input[data-step="' + step + '"][data-check="' + check + '"]');
-                            if (checkbox) checkbox.checked = checkedItems[step][check];
-                        });
-                    });
-
-                    updateProgress();
-
-                    // Activate next step
-                    const nextStep = completedSteps.length > 0 ? Math.max(...completedSteps) + 1 : 1;
-                    if (nextStep <= totalSteps && !completedSteps.includes(nextStep)) {
-                        const nextItem = document.querySelector('[data-step="' + nextStep + '"]');
-                        if (nextItem) {
-                            nextItem.classList.remove('locked');
-                            nextItem.classList.add('active');
-                            nextItem.querySelector('.timeline-marker').innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>';
-                            const status = nextItem.querySelector('.video-status');
-                            status.className = 'video-status active';
-                            status.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>Watch Now';
-                            checkStepCompletion(nextStep);
-                        }
+                if (result.data) {
+                    try {
+                        completedSteps = JSON.parse(result.data.completed_steps || '[]');
+                    } catch (e) {
+                        completedSteps = result.data.completed_steps || [];
                     }
-
-                    // Check all steps for button state
-                    for (let i = 1; i <= totalSteps; i++) {
-                        checkStepCompletion(i);
+                    try {
+                        watchedVideos = JSON.parse(result.data.watched_videos || '{}');
+                    } catch (e) {
+                        watchedVideos = result.data.watched_videos || {};
                     }
-
-                    if (completedSteps.length === totalSteps) {
-                        const bookingCard = document.getElementById('booking-card');
-                        const bookingBtn = document.getElementById('booking-btn');
-                        bookingCard.classList.remove('locked');
-                        bookingCard.classList.add('unlocked');
-                        bookingBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>Book Your Setup Call Now';
-                        bookingBtn.href = '/booking/';
+                    try {
+                        checkedItems = JSON.parse(result.data.checked_items || '{}');
+                    } catch (e) {
+                        checkedItems = result.data.checked_items || {};
                     }
                 }
             } catch (error) {
                 console.error('Error loading progress:', error);
+            }
+        }
+
+        // ============================================
+        // UI HELPERS
+        // ============================================
+        function showToast(message) {
+            var toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = message;
+            toast.classList.add('show');
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function showConfetti() {
+            var container = document.getElementById('confetti-container');
+            var colors = ['#f0c832', '#f7d954', '#22c55e', '#ffffff', '#fbbf24'];
+            for (var i = 0; i < 100; i++) {
+                var confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = confetti.style.width;
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.animation = 'confettiFall ' + (Math.random() * 3 + 2) + 's linear forwards';
+                confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                container.appendChild(confetti);
+                (function(el) {
+                    setTimeout(function() { el.remove(); }, 5000);
+                })(confetti);
             }
         }
     </script>

@@ -403,50 +403,7 @@
                 </div>
 
                 <div class="toggle-auth" style="margin-top: 12px;">
-                    Don't have an account? <a href="#" onclick="toggleToSignup(event)">Create one</a>
-                </div>
-            </form>
-
-            <!-- Signup Form -->
-            <form id="signup-form" class="hidden">
-                <div class="auth-header">
-                    <h1 class="auth-title">Create Account</h1>
-                    <p class="auth-subtitle">Fill in your details to get started</p>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label" for="signup-first-name">First Name</label>
-                        <input type="text" id="signup-first-name" class="form-input" placeholder="John" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="signup-last-name">Last Name</label>
-                        <input type="text" id="signup-last-name" class="form-input" placeholder="Doe" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="signup-email">Email Address</label>
-                    <input type="email" id="signup-email" class="form-input" placeholder="your@email.com" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="signup-phone">Phone Number</label>
-                    <input type="tel" id="signup-phone" class="form-input" placeholder="+1 (555) 123-4567" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="signup-password">Password</label>
-                    <input type="password" id="signup-password" class="form-input" placeholder="••••••••" required minlength="6">
-                </div>
-
-                <button type="submit" class="submit-btn" id="signup-btn">
-                    Create Account
-                </button>
-
-                <div class="toggle-auth">
-                    Already have an account? <a href="#" onclick="toggleToLogin(event)">Sign in</a>
+                    Need an account? Contact our sales team to get started.
                 </div>
             </form>
 
@@ -562,18 +519,8 @@
             successEl.classList.remove('show');
         }
 
-        function toggleToSignup(event) {
-            event.preventDefault();
-            document.getElementById('login-form').classList.add('hidden');
-            document.getElementById('signup-form').classList.remove('hidden');
-            document.getElementById('forgot-password-form').classList.add('hidden');
-            hideError();
-            hideSuccess();
-        }
-
         function toggleToLogin(event) {
             event.preventDefault();
-            document.getElementById('signup-form').classList.add('hidden');
             document.getElementById('login-form').classList.remove('hidden');
             document.getElementById('forgot-password-form').classList.add('hidden');
             hideError();
@@ -667,54 +614,6 @@
                 showError(error.message || 'Invalid email or password.');
                 btn.disabled = false;
                 btn.innerHTML = 'Sign In';
-            }
-        });
-
-        // Handle signup form submission
-        document.getElementById('signup-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            hideError();
-            hideSuccess();
-
-            const firstName = document.getElementById('signup-first-name').value;
-            const lastName = document.getElementById('signup-last-name').value;
-            const email = document.getElementById('signup-email').value;
-            const phone = document.getElementById('signup-phone').value;
-            const password = document.getElementById('signup-password').value;
-            const btn = document.getElementById('signup-btn');
-
-            btn.disabled = true;
-            btn.innerHTML = '<span class="loading-spinner"></span>Creating Account...';
-
-            try {
-                const ipAddress = await window.getUserIP();
-
-                // Create account with email verification required
-                const { data, error: signUpError } = await window.supabaseClient.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: {
-                        emailRedirectTo: 'https://algosetup.profit-insiders.com/onboarding',
-                        data: {
-                            first_name: firstName,
-                            last_name: lastName,
-                            phone: phone,
-                            ip_address: ipAddress
-                        }
-                    }
-                });
-
-                if (signUpError) throw signUpError;
-
-                showSuccess('Check your email! Click the verification link to activate your account, then sign in with your password.');
-                btn.disabled = false;
-                btn.innerHTML = 'Create Account';
-
-            } catch (error) {
-                console.error('Signup error:', error);
-                showError(error.message || 'Failed to create account. Please try again.');
-                btn.disabled = false;
-                btn.innerHTML = 'Create Account';
             }
         });
 

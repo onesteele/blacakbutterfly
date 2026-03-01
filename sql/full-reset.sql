@@ -609,6 +609,138 @@ CREATE POLICY "Users can dismiss notifications" ON push_notifications
 
 
 -- ============================================================================
+-- STEP 25: Onboarding overhaul - payment, verification, contract fields
+-- ============================================================================
+
+-- New columns on users table
+ALTER TABLE users ADD COLUMN IF NOT EXISTS payment_plan TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS payment_total DECIMAL(10,2);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS payment_down DECIMAL(10,2);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_photo_url TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS verification_completed_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS contract_signed_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS contract_signature TEXT;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS guarantee_opted_in BOOLEAN DEFAULT FALSE;
+
+-- Seed payment plan options (configurable by super admin)
+INSERT INTO admin_settings (id, key, value, updated_at)
+VALUES (gen_random_uuid(), 'payment_plans', '{"options": [{"id": "pay_in_full", "label": "Pay in Full"}, {"id": "klarna", "label": "Klarna"}, {"id": "split_it", "label": "Split It"}, {"id": "in_house_financing", "label": "In-House Financing"}]}'::jsonb, NOW())
+ON CONFLICT (key) DO NOTHING;
+
+-- Seed contract config (configurable by super admin)
+INSERT INTO admin_settings (id, key, value, updated_at)
+VALUES (gen_random_uuid(), 'contract_config', '{"contract_url": "", "guarantee_label": "90-Day Performance Guarantee"}'::jsonb, NOW())
+ON CONFLICT (key) DO NOTHING;
+
+-- Allow authenticated users to read onboarding config
+CREATE POLICY "Authenticated users can read onboarding config" ON admin_settings
+    FOR SELECT USING (key IN ('payment_plans', 'contract_config') AND auth.uid() IS NOT NULL);
+
+-- RPC: Lookup pending verification user by email (callable by anon for onboarding entry)
+CREATE OR REPLACE FUNCTION public.lookup_pending_user(user_email TEXT)
+RETURNS TABLE(id UUID, first_name TEXT, last_name TEXT, email TEXT, phone TEXT)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT u.id, u.first_name, u.last_name, u.email, u.phone
+    FROM users u
+    WHERE u.email = LOWER(TRIM(user_email))
+    AND u.status = 'pending_verification'
+    LIMIT 1;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.lookup_pending_user(TEXT) TO anon;
+GRANT EXECUTE ON FUNCTION public.lookup_pending_user(TEXT) TO authenticated;
+
+-- RPC: Set password for pending verification user (callable by anon during onboarding)
+CREATE OR REPLACE FUNCTION public.set_pending_user_password(user_email TEXT, new_password TEXT)
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, auth, extensions
+AS $$
+DECLARE
+    target_id UUID;
+BEGIN
+    -- Only works for pending_verification users
+    SELECT u.id INTO target_id
+    FROM public.users u
+    WHERE u.email = LOWER(TRIM(user_email))
+    AND u.status = 'pending_verification';
+
+    IF target_id IS NULL THEN
+        RAISE EXCEPTION 'User not found or not pending verification';
+    END IF;
+
+    -- Update the auth user's password
+    UPDATE auth.users
+    SET encrypted_password = crypt(new_password, gen_salt('bf')),
+        updated_at = NOW()
+    WHERE id = target_id;
+
+    RETURN TRUE;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.set_pending_user_password(TEXT, TEXT) TO anon;
+GRANT EXECUTE ON FUNCTION public.set_pending_user_password(TEXT, TEXT) TO authenticated;
+
+-- Update handle_new_user trigger to support initial_status from metadata
+CREATE OR REPLACE FUNCTION handle_new_user()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = public
+AS $$
+BEGIN
+    INSERT INTO public.users (id, email, first_name, last_name, full_name, phone, ip_address, created_at, last_login, is_admin, onboarding_completed, status, role)
+    VALUES (
+        NEW.id,
+        NEW.email,
+        COALESCE(NEW.raw_user_meta_data->>'first_name', ''),
+        COALESCE(NEW.raw_user_meta_data->>'last_name', ''),
+        COALESCE(
+            NULLIF(TRIM(COALESCE(NEW.raw_user_meta_data->>'first_name', '') || ' ' || COALESCE(NEW.raw_user_meta_data->>'last_name', '')), ''),
+            NEW.email
+        ),
+        COALESCE(NEW.raw_user_meta_data->>'phone', ''),
+        COALESCE(NEW.raw_user_meta_data->>'ip_address', ''),
+        NOW(),
+        NOW(),
+        FALSE,
+        FALSE,
+        COALESCE(NEW.raw_user_meta_data->>'initial_status', 'onboarding'),
+        'user'
+    );
+
+    INSERT INTO public.onboarding_progress (user_id, completed_steps, watched_videos, checked_items)
+    VALUES (NEW.id, '[]'::jsonb, '{}'::jsonb, '{}'::jsonb);
+
+    RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+    AFTER INSERT ON auth.users
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_new_user();
+
+-- Storage bucket for verification photos (run in Supabase dashboard if SQL fails)
+-- INSERT INTO storage.buckets (id, name, public) VALUES ('verification-photos', 'verification-photos', false);
+-- Storage policies:
+-- CREATE POLICY "Users upload own photo" ON storage.objects FOR INSERT
+--     WITH CHECK (bucket_id = 'verification-photos' AND (storage.foldername(name))[1] = auth.uid()::text);
+-- CREATE POLICY "Users view own photo" ON storage.objects FOR SELECT
+--     USING (bucket_id = 'verification-photos' AND (storage.foldername(name))[1] = auth.uid()::text);
+-- CREATE POLICY "Admins view all photos" ON storage.objects FOR SELECT
+--     USING (bucket_id = 'verification-photos' AND public.is_user_admin(auth.uid()) = TRUE);
+
+
+-- ============================================================================
 -- DONE! You should see "Success. No rows returned" - that's normal.
 -- ============================================================================
 -- All tables, policies, functions, and triggers are now set up.

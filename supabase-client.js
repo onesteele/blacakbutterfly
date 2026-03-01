@@ -1232,6 +1232,86 @@ window.getContentPosts = async function(publishedOnly = true, category = null) {
     return data;
 };
 
+// ============================================================
+// ONBOARDING / VERIFICATION HELPERS
+// ============================================================
+
+// Fetch payment plan options from admin_settings
+window.getPaymentPlans = async function() {
+    try {
+        var result = await window.supabaseClient
+            .from('admin_settings')
+            .select('value')
+            .eq('key', 'payment_plans')
+            .single();
+        if (result.error) throw result.error;
+        return (result.data && result.data.value && result.data.value.options) || [];
+    } catch (err) {
+        console.error('Error fetching payment plans:', err);
+        return [];
+    }
+};
+
+// Fetch contract config from admin_settings
+window.getContractConfig = async function() {
+    try {
+        var result = await window.supabaseClient
+            .from('admin_settings')
+            .select('value')
+            .eq('key', 'contract_config')
+            .single();
+        if (result.error) throw result.error;
+        return (result.data && result.data.value) || {};
+    } catch (err) {
+        console.error('Error fetching contract config:', err);
+        return {};
+    }
+};
+
+// Upload verification photo to Supabase Storage
+window.uploadVerificationPhoto = async function(userId, fileBlob) {
+    try {
+        var filePath = userId + '/verification.jpg';
+        var result = await window.supabaseClient.storage
+            .from('verification-photos')
+            .upload(filePath, fileBlob, { contentType: 'image/jpeg', upsert: true });
+        if (result.error) throw result.error;
+        return filePath;
+    } catch (err) {
+        console.error('Error uploading verification photo:', err);
+        return null;
+    }
+};
+
+// Get signed URL for verification photo
+window.getVerificationPhotoUrl = async function(photoPath) {
+    try {
+        var result = await window.supabaseClient.storage
+            .from('verification-photos')
+            .createSignedUrl(photoPath, 3600);
+        if (result.error) throw result.error;
+        return (result.data && result.data.signedUrl) || null;
+    } catch (err) {
+        console.error('Error getting signed URL:', err);
+        return null;
+    }
+};
+
+// Save verification/contract data to users table
+window.saveVerificationData = async function(userId, verificationData) {
+    try {
+        var result = await window.supabaseClient
+            .from('users')
+            .update(verificationData)
+            .eq('id', userId);
+        if (result.error) throw result.error;
+        return true;
+    } catch (err) {
+        console.error('Error saving verification data:', err);
+        return false;
+    }
+};
+
 // Fetch notifications for current user
 window.getNotifications = async function() {
     const { data, error } = await window.supabaseClient

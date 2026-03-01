@@ -288,6 +288,26 @@
             background: var(--text-muted);
         }
 
+        .conv-card-dot.escalated {
+            background: #f59e0b;
+            box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
+        }
+
+        .conv-card-status-badge {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+        }
+
+        .conv-card-status-badge.escalated {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
         .conv-card-time {
             font-size: 11px;
             color: var(--text-muted);
@@ -979,6 +999,10 @@
                 ? formatRelativeTime(conv.last_message_at || conv.created_at)
                 : formatDate(conv.resolved_at || conv.updated_at || conv.created_at);
 
+            const isEscalated = conv.is_escalated === true;
+            const dotClass = isEscalated ? 'escalated' : (isActive ? 'active' : 'resolved');
+            const statusBadge = isEscalated ? '<span class="conv-card-status-badge escalated">Escalated</span>' : '';
+
             return `
                 <div class="conv-card" onclick="openChatView('${conv.id}')">
                     <div class="conv-card-avatar">
@@ -989,8 +1013,8 @@
                     <div class="conv-card-body">
                         <div class="conv-card-top">
                             <span class="conv-card-name">
-                                <span class="conv-card-dot ${isActive ? 'active' : 'resolved'}"></span>
-                                ${escapeHtml(teamDisplayName)}
+                                <span class="conv-card-dot ${dotClass}"></span>
+                                ${escapeHtml(teamDisplayName)}${statusBadge}
                             </span>
                             <span class="conv-card-time">${timeStr}</span>
                         </div>

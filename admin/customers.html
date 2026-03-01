@@ -1332,28 +1332,30 @@
                     <input type="email" id="cu-email" required placeholder="user@example.com">
                 </div>
                 <div class="form-group">
-                    <label>Password *</label>
-                    <input type="password" id="cu-password" required minlength="6" placeholder="Min 6 characters">
+                    <label>Phone</label>
+                    <input type="tel" id="cu-phone" placeholder="+1 (555) 123-4567">
+                </div>
+                <div class="form-group">
+                    <label>Payment Plan *</label>
+                    <select id="cu-payment-plan" required>
+                        <option value="">Select payment plan...</option>
+                    </select>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Phone</label>
-                        <input type="tel" id="cu-phone" placeholder="+1 (555) 123-4567">
+                        <label>Total Amount *</label>
+                        <input type="number" id="cu-payment-total" required step="0.01" min="0" placeholder="7500.00">
                     </div>
                     <div class="form-group">
-                        <label>Status</label>
-                        <select id="cu-status">
-                            <option value="onboarding">Onboarding</option>
-                            <option value="member">Member</option>
-                            <option value="verified_member">Verified Member</option>
-                        </select>
+                        <label>Amount Down *</label>
+                        <input type="number" id="cu-payment-down" required step="0.01" min="0" placeholder="1000.00">
                     </div>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" onclick="closeCreateUserModal()">Cancel</button>
                     <button type="submit" class="btn-create" id="btn-create-user">Create User</button>
                 </div>
-                <p class="modal-note">User will be created without email verification and can log in immediately.</p>
+                <p class="modal-note">User starts as "Pending Verification". Share the onboarding link with them to begin the process.</p>
             </form>
         </div>
     </div>
@@ -1369,6 +1371,7 @@
             <div class="form-group">
                 <label>New Status</label>
                 <select id="cs-status">
+                    <option value="pending_verification">Pending Verification</option>
                     <option value="onboarding">Onboarding</option>
                     <option value="member">Member</option>
                     <option value="verified_member">Verified Member</option>
@@ -1808,8 +1811,20 @@
         // ============================================================
         // CREATE USER MODAL
         // ============================================================
-        function openCreateUserModal() {
+        async function openCreateUserModal() {
             document.getElementById('create-user-modal').style.display = 'flex';
+
+            // Load payment plan options into dropdown
+            const select = document.getElementById('cu-payment-plan');
+            const plans = await window.getPaymentPlans();
+            select.innerHTML = '<option value="">Select payment plan...</option>';
+            plans.forEach(function(plan) {
+                const opt = document.createElement('option');
+                opt.value = plan.id;
+                opt.textContent = plan.label;
+                select.appendChild(opt);
+            });
+
             document.getElementById('cu-first-name').focus();
         }
 
@@ -1825,84 +1840,65 @@
             btn.textContent = 'Creating...';
 
             const email = document.getElementById('cu-email').value.trim();
-            const password = document.getElementById('cu-password').value;
             const firstName = document.getElementById('cu-first-name').value.trim();
             const lastName = document.getElementById('cu-last-name').value.trim();
             const phone = document.getElementById('cu-phone').value.trim();
-            const status = document.getElementById('cu-status').value;
+            const paymentPlan = document.getElementById('cu-payment-plan').value;
+            const paymentTotal = parseFloat(document.getElementById('cu-payment-total').value) || 0;
+            const paymentDown = parseFloat(document.getElementById('cu-payment-down').value) || 0;
+
+            // Generate temporary password (user will set their own during verification)
+            const tempPassword = 'TmpPw!' + crypto.randomUUID().slice(0, 12);
 
             try {
-                // 1. Create auth user via Supabase signUp
+                // 1. Create auth user with pending_verification status
                 const { data: authData, error: authError } = await window.supabaseClient.auth.signUp({
                     email: email,
-                    password: password,
+                    password: tempPassword,
                     options: {
                         data: {
                             first_name: firstName,
                             last_name: lastName,
-                            phone: phone
+                            phone: phone,
+                            initial_status: 'pending_verification'
                         }
                     }
                 });
 
                 if (authError) throw authError;
-
-                if (!authData.user) {
-                    throw new Error('User creation failed - no user returned');
-                }
+                if (!authData.user) throw new Error('User creation failed - no user returned');
 
                 const newUserId = authData.user.id;
 
-                // 2. Auto-confirm email via database function (bypasses email verification)
+                // 2. Auto-confirm email (bypasses email verification)
                 try {
-                    const { error: confirmError } = await window.supabaseClient
-                        .rpc('admin_confirm_user_email', { target_user_id: newUserId });
-
-                    if (confirmError) {
-                        console.warn('Could not auto-confirm email (run sql/admin-helpers.sql):', confirmError.message);
-                    }
+                    await window.supabaseClient.rpc('admin_confirm_user_email', { target_user_id: newUserId });
                 } catch (confirmErr) {
                     console.warn('admin_confirm_user_email not available:', confirmErr);
                 }
 
-                // 3. Update the user profile in the users table with correct status
-                //    The handle_new_user trigger will have created the row, so update it
-                const isOnboardingComplete = (status === 'member' || status === 'verified_member');
-
-                // Try with all columns first, fall back to basic columns
-                let updateError;
-                ({ error: updateError } = await window.supabaseClient
+                // 3. Update user profile with payment info and correct status
+                const { error: updateError } = await window.supabaseClient
                     .from('users')
                     .update({
                         first_name: firstName,
                         last_name: lastName,
                         full_name: firstName + ' ' + lastName,
                         phone: phone,
-                        status: status,
-                        onboarding_completed: isOnboardingComplete,
-                        onboarding_completed_at: isOnboardingComplete ? new Date().toISOString() : null
+                        status: 'pending_verification',
+                        payment_plan: paymentPlan,
+                        payment_total: paymentTotal,
+                        payment_down: paymentDown,
+                        onboarding_completed: false
                     })
-                    .eq('id', newUserId));
+                    .eq('id', newUserId);
 
                 if (updateError) {
-                    // Fallback: try without migration-v3 columns
-                    ({ error: updateError } = await window.supabaseClient
-                        .from('users')
-                        .update({
-                            first_name: firstName,
-                            last_name: lastName,
-                            full_name: firstName + ' ' + lastName,
-                            phone: phone
-                        })
-                        .eq('id', newUserId));
-
-                    if (updateError) {
-                        console.error('Error updating user profile:', updateError);
-                    }
+                    console.error('Error updating user profile:', updateError);
                 }
 
                 closeCreateUserModal();
-                showToast(`User "${firstName} ${lastName}" created successfully.`, 'success');
+                showToast(`User "${firstName} ${lastName}" created. Share the onboarding link with them.`, 'success');
                 await loadCustomers();
 
             } catch (error) {

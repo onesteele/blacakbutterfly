@@ -1361,6 +1361,7 @@
                 <button class="settings-tab" onclick="switchTab('team')" data-tab="team">Team</button>
                 <button class="settings-tab" onclick="switchTab('performance')" data-tab="performance">Performance</button>
                 <button class="settings-tab" onclick="switchTab('export')" data-tab="export">Export</button>
+                <button class="settings-tab" onclick="switchTab('onboarding')" data-tab="onboarding">Onboarding</button>
             </div>
 
             <!-- Tab 1: Profile -->
@@ -1738,6 +1739,78 @@
 
             </div><!-- end tab-export -->
 
+            <!-- Tab 6: Onboarding -->
+            <div class="tab-content" id="tab-onboarding">
+
+            <div class="settings-card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <div class="card-header-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="card-title">Payment Plans</div>
+                            <div class="card-subtitle">Configure available payment options for new clients</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="payment-plans-list" style="margin-bottom: 20px;"></div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Plan ID</label>
+                            <input type="text" class="form-input" id="new-plan-id" placeholder="e.g., pay_in_full">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Display Label</label>
+                            <input type="text" class="form-input" id="new-plan-label" placeholder="e.g., Pay in Full">
+                        </div>
+                        <div class="form-group" style="display:flex; align-items:flex-end;">
+                            <button class="btn-primary" onclick="addPaymentPlan()" style="white-space:nowrap;">Add Plan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <div class="card-header">
+                    <div class="card-header-left">
+                        <div class="card-header-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <div class="card-title">Contract Configuration</div>
+                            <div class="card-subtitle">Set up the contract URL and guarantee options for onboarding</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label class="form-label">Contract URL <span class="optional-tag">iframe source</span></label>
+                        <input type="text" class="form-input" id="contract-url" placeholder="https://your-contract-url.com">
+                        <small style="color: var(--text-muted); font-size: 12px; margin-top: 4px; display: block;">This URL will be loaded in an iframe when clients click "View Terms & Conditions"</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Guarantee Label</label>
+                        <input type="text" class="form-input" id="guarantee-label" placeholder="90-Day Performance Guarantee">
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn-primary" id="save-onboarding-btn" onclick="saveOnboardingSettings()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                            Save Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            </div><!-- end tab-onboarding -->
+
         </div>
     </div>
 
@@ -1830,7 +1903,8 @@
                     loadAdminUsers(),
                     loadExportSettings(),
                     loadPerformanceData(),
-                    loadChatDisplayName()
+                    loadChatDisplayName(),
+                    loadOnboardingSettings()
                 ]);
 
             } catch (error) {
@@ -1961,6 +2035,123 @@
 
             } catch (error) {
                 console.error('Error saving integration settings:', error);
+                showToast('Failed to save settings. Please try again.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
+        }
+
+        /* ============================================================
+           ONBOARDING SETTINGS (Payment Plans + Contract Config)
+           ============================================================ */
+        let currentPaymentPlans = [];
+
+        async function loadOnboardingSettings() {
+            try {
+                // Load payment plans
+                const plans = await window.getPaymentPlans();
+                currentPaymentPlans = plans || [];
+                renderPaymentPlansList();
+
+                // Load contract config
+                const config = await window.getContractConfig();
+                document.getElementById('contract-url').value = config.contract_url || '';
+                document.getElementById('guarantee-label').value = config.guarantee_label || '90-Day Performance Guarantee';
+            } catch (err) {
+                console.error('Error loading onboarding settings:', err);
+            }
+        }
+
+        function renderPaymentPlansList() {
+            const container = document.getElementById('payment-plans-list');
+            if (!currentPaymentPlans.length) {
+                container.innerHTML = '<p style="color: var(--text-muted); font-size: 14px;">No payment plans configured yet.</p>';
+                return;
+            }
+            container.innerHTML = currentPaymentPlans.map((plan, i) => `
+                <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 14px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:10px; margin-bottom:8px;">
+                    <div>
+                        <span style="font-weight:600; color:var(--text-primary);">${escapeHtml(plan.label)}</span>
+                        <span style="color:var(--text-muted); font-size:12px; margin-left:8px;">${escapeHtml(plan.id)}</span>
+                    </div>
+                    <button onclick="removePaymentPlan(${i})" style="background:none; border:none; color:#ef4444; cursor:pointer; padding:4px 8px; font-size:13px; border-radius:6px; transition:background 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='none'">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        async function addPaymentPlan() {
+            const idInput = document.getElementById('new-plan-id');
+            const labelInput = document.getElementById('new-plan-label');
+            const id = idInput.value.trim().toLowerCase().replace(/\s+/g, '_');
+            const label = labelInput.value.trim();
+
+            if (!id || !label) {
+                showToast('Please enter both a plan ID and display label.', 'error');
+                return;
+            }
+            if (currentPaymentPlans.some(p => p.id === id)) {
+                showToast('A plan with that ID already exists.', 'error');
+                return;
+            }
+
+            currentPaymentPlans.push({ id, label });
+            await savePaymentPlans();
+            renderPaymentPlansList();
+            idInput.value = '';
+            labelInput.value = '';
+            showToast('Payment plan added.', 'success');
+        }
+
+        async function removePaymentPlan(index) {
+            currentPaymentPlans.splice(index, 1);
+            await savePaymentPlans();
+            renderPaymentPlansList();
+            showToast('Payment plan removed.', 'success');
+        }
+
+        async function savePaymentPlans() {
+            try {
+                const { error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .upsert({
+                        key: 'payment_plans',
+                        value: { options: currentPaymentPlans },
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'key' });
+                if (error) throw error;
+            } catch (err) {
+                console.error('Error saving payment plans:', err);
+                showToast('Failed to save payment plans.', 'error');
+            }
+        }
+
+        async function saveOnboardingSettings() {
+            const btn = document.getElementById('save-onboarding-btn');
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+
+            try {
+                // Save contract config
+                const { error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .upsert({
+                        key: 'contract_config',
+                        value: {
+                            contract_url: document.getElementById('contract-url').value.trim(),
+                            guarantee_label: document.getElementById('guarantee-label').value.trim() || '90-Day Performance Guarantee'
+                        },
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'key' });
+
+                if (error) throw error;
+
+                // Also save current payment plans
+                await savePaymentPlans();
+
+                showToast('Onboarding settings saved successfully!', 'success');
+            } catch (err) {
+                console.error('Error saving onboarding settings:', err);
                 showToast('Failed to save settings. Please try again.', 'error');
             } finally {
                 btn.disabled = false;
