@@ -1172,6 +1172,77 @@
 
         .booking-btn svg { width: 20px; height: 20px; }
 
+        .portal-continue {
+            display: none;
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .portal-continue.show { display: block; }
+
+        .portal-continue-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            background: transparent;
+            color: var(--accent);
+            font-family: 'Manrope', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            border: 2px solid var(--accent);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .portal-continue-btn:hover {
+            background: var(--accent);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+
+        .portal-continue-btn svg { width: 18px; height: 18px; }
+
+        .bookmark-notice {
+            display: none;
+            margin-top: 20px;
+            padding: 16px 20px;
+            background: rgba(240, 200, 50, 0.08);
+            border: 1px solid rgba(240, 200, 50, 0.2);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .bookmark-notice.show { display: block; }
+
+        .bookmark-notice p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .bookmark-notice strong {
+            color: var(--accent);
+        }
+
+        .bookmark-notice .bookmark-url {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 8px 16px;
+            background: #1a1a1a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 13px;
+            color: var(--text-primary);
+            user-select: all;
+            cursor: text;
+        }
+
         /* Confetti */
         .confetti-container {
             position: fixed;
@@ -1385,11 +1456,11 @@
             </div>
         </div>
 
-        <!-- Screen 5: Contract Agreement -->
+        <!-- Screen 5: Guarantee & Refund Protection -->
         <div class="v-screen" id="v-screen-contract">
             <div class="v-card">
-                <h2>Program Agreement</h2>
-                <p class="v-subtitle">Review and sign the program agreement</p>
+                <h2>Refund Protection Agreement</h2>
+                <p class="v-subtitle">Enable your 90-Day Performance Guarantee and refund protection</p>
                 <div class="v-error" id="contract-error"></div>
 
                 <label class="contract-checkbox-item">
@@ -1397,7 +1468,7 @@
                     <span class="contract-check-box">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                     </span>
-                    <span class="contract-label">I agree to the <a href="javascript:void(0)" onclick="openContractModal(event)">terms and conditions</a> of the program</span>
+                    <span class="contract-label">I agree to the <a href="javascript:void(0)" onclick="openContractModal(event)">program agreement</a> and refund protection terms</span>
                 </label>
 
                 <label class="contract-checkbox-item">
@@ -1405,7 +1476,7 @@
                     <span class="contract-check-box">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                     </span>
-                    <span class="contract-label" id="guarantee-label-text">I want to enable my guarantee</span>
+                    <span class="contract-label" id="guarantee-label-text">I want to enable my 90-Day Refund Protection Guarantee</span>
                 </label>
 
                 <div class="signature-field">
@@ -1418,7 +1489,7 @@
                     <input type="text" id="contract-date" readonly>
                 </div>
 
-                <button class="v-btn" id="v-contract-btn" onclick="handleContractSubmit()" disabled>Submit Agreement</button>
+                <button class="v-btn" id="v-contract-btn" onclick="handleContractSubmit()" disabled>Enable Protection & Continue</button>
             </div>
         </div>
 
@@ -1446,11 +1517,11 @@
         </div>
     </div>
 
-    <!-- Contract Modal -->
+    <!-- Agreement Modal -->
     <div class="contract-modal-overlay" id="contract-modal-overlay" onclick="closeContractModal(event)">
         <div class="contract-modal" onclick="event.stopPropagation()">
             <div class="contract-modal-header">
-                <h3>Terms & Conditions</h3>
+                <h3>Program Agreement</h3>
                 <button class="contract-modal-close" onclick="closeContractModal()">&times;</button>
             </div>
             <div class="contract-modal-body">
@@ -1491,12 +1562,29 @@
                 </div>
                 <h2 class="booking-title">Book Your Setup Call</h2>
                 <p class="booking-subtitle">You've completed all lessons! Book your setup call now.</p>
-                <a href="/booking/" class="booking-btn" id="booking-btn">
+                <a href="/booking/" class="booking-btn" id="booking-btn" target="_blank">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     Book Your Setup Call Now
                 </a>
+
+                <div class="portal-continue" id="portal-continue">
+                    <a href="/" class="portal-continue-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                        Continue to Member Portal
+                    </a>
+                </div>
+
+                <div class="bookmark-notice" id="bookmark-notice">
+                    <p>
+                        <strong>Save this link for future logins!</strong><br>
+                        Bookmark the link below so you always know where to sign in to your member portal.
+                    </p>
+                    <span class="bookmark-url" id="bookmark-url"></span>
+                </div>
             </div>
         </div>
     </div>
@@ -1722,10 +1810,16 @@
                 var result = await window.supabaseClient
                     .from('admin_settings')
                     .select('*')
-                    .limit(1)
-                    .single();
-                if (result.data) {
-                    adminSettings = result.data;
+                    .in('key', ['contract_config', 'payment_plans']);
+
+                if (result.data && result.data.length > 0) {
+                    adminSettings = {};
+                    result.data.forEach(function(row) {
+                        if (row.key === 'contract_config' && row.value) {
+                            adminSettings.contract_url = row.value.contract_url || '';
+                            adminSettings.guarantee_label = row.value.guarantee_label || '90-Day Refund Protection Guarantee';
+                        }
+                    });
                     // Update guarantee label if available
                     if (adminSettings.guarantee_label) {
                         var labelEl = document.getElementById('guarantee-label-text');
@@ -2148,7 +2242,7 @@
             var signature = document.getElementById('contract-signature').value.trim();
 
             if (!termsChecked || !signature) {
-                errorEl.textContent = 'Please agree to the terms and provide your signature.';
+                errorEl.textContent = 'Please agree to the program terms and provide your signature.';
                 errorEl.classList.add('show');
                 return;
             }
@@ -2157,12 +2251,28 @@
             btn.textContent = 'Submitting...';
 
             try {
+                // Build signed URL for the verification photo to use as avatar
+                var avatarUrl = null;
+                if (verificationPhotoUrl) {
+                    try {
+                        var signedResult = await window.supabaseClient.storage
+                            .from('verification-photos')
+                            .createSignedUrl(verificationPhotoUrl, 60 * 60 * 24 * 365);
+                        if (signedResult.data && signedResult.data.signedUrl) {
+                            avatarUrl = signedResult.data.signedUrl;
+                        }
+                    } catch (urlErr) {
+                        console.warn('Could not get signed URL for avatar:', urlErr);
+                    }
+                }
+
                 var verificationData = {
                     contract_signed_at: new Date().toISOString(),
                     contract_signature: signature,
                     guarantee_opted_in: guaranteeChecked,
                     verification_photo_url: verificationPhotoUrl || null,
                     verification_completed_at: new Date().toISOString(),
+                    avatar_url: avatarUrl || null,
                     status: 'onboarding'
                 };
 
@@ -2456,6 +2566,18 @@
             if (bookingCard) {
                 bookingCard.style.display = 'block';
                 bookingCard.classList.add('unlocked');
+            }
+
+            // Show portal continue button and bookmark notice
+            var portalContinue = document.getElementById('portal-continue');
+            if (portalContinue) portalContinue.classList.add('show');
+            var bookmarkNotice = document.getElementById('bookmark-notice');
+            if (bookmarkNotice) bookmarkNotice.classList.add('show');
+
+            // Set the bookmark URL
+            var bookmarkEl = document.getElementById('bookmark-url');
+            if (bookmarkEl) {
+                bookmarkEl.textContent = window.location.origin + '/auth/';
             }
 
             // Hide all lesson screens

@@ -52,22 +52,23 @@ window.updateLastLogin = async function(userId) {
     }
 };
 
-// Helper function to get user IP address
+// Helper function to get user IP address and location
 window.getUserIP = async function() {
     try {
         const response = await fetch('https://api.ipify.org?format=json');
         const data = await response.json();
         const ip = data.ip || 'Unknown';
         window._geoData = { ip: ip, city: '', region: '', country: '' };
-        // Try to get geo data in background (non-blocking)
-        fetch('https://freeipapi.com/api/json/' + ip)
-            .then(r => r.json())
-            .then(geo => {
-                window._geoData.city = geo.cityName || '';
-                window._geoData.region = geo.regionName || '';
-                window._geoData.country = geo.countryName || '';
-            })
-            .catch(() => {});
+        // Fetch geo data and wait for it
+        try {
+            const geoResponse = await fetch('https://freeipapi.com/api/json/' + ip);
+            const geo = await geoResponse.json();
+            window._geoData.city = geo.cityName || '';
+            window._geoData.region = geo.regionName || '';
+            window._geoData.country = geo.countryName || '';
+        } catch (geoErr) {
+            console.warn('Geo lookup failed, continuing with IP only');
+        }
         return ip;
     } catch (error) {
         console.error('Error getting IP:', error);

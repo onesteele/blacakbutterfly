@@ -629,12 +629,17 @@ ON CONFLICT (key) DO NOTHING;
 
 -- Seed contract config (configurable by super admin)
 INSERT INTO admin_settings (id, key, value, updated_at)
-VALUES (gen_random_uuid(), 'contract_config', '{"contract_url": "", "guarantee_label": "90-Day Performance Guarantee"}'::jsonb, NOW())
+VALUES (gen_random_uuid(), 'contract_config', '{"contract_url": "", "guarantee_label": "90-Day Refund Protection Guarantee"}'::jsonb, NOW())
 ON CONFLICT (key) DO NOTHING;
 
--- Allow authenticated users to read onboarding config
-CREATE POLICY "Authenticated users can read onboarding config" ON admin_settings
-    FOR SELECT USING (key IN ('payment_plans', 'contract_config') AND auth.uid() IS NOT NULL);
+-- Seed booking config (configurable by super admin)
+INSERT INTO admin_settings (id, key, value, updated_at)
+VALUES (gen_random_uuid(), 'booking_config', '{"booking_url": "https://scheduling.profit-insiders.com/book.html?slug=algorithm-alignment-call"}'::jsonb, NOW())
+ON CONFLICT (key) DO NOTHING;
+
+-- Allow anyone to read onboarding config (needed before auth on onboarding page)
+CREATE POLICY "Anyone can read onboarding config" ON admin_settings
+    FOR SELECT USING (key IN ('payment_plans', 'contract_config', 'booking_config'));
 
 -- RPC: Lookup pending verification user by email (callable by anon for onboarding entry)
 CREATE OR REPLACE FUNCTION public.lookup_pending_user(user_email TEXT)
