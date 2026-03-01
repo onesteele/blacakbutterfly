@@ -555,6 +555,39 @@ CREATE INDEX IF NOT EXISTS idx_chat_conversations_user_created ON chat_conversat
 
 
 -- ============================================================================
+-- STEP 23: AI chat support, escalation tracking, and user tags
+-- ============================================================================
+
+-- Conversation handler tracking (AI vs human)
+ALTER TABLE chat_conversations ADD COLUMN IF NOT EXISTS handler_type TEXT DEFAULT 'ai';
+ALTER TABLE chat_conversations ADD COLUMN IF NOT EXISTS is_escalated BOOLEAN DEFAULT FALSE;
+ALTER TABLE chat_conversations ADD COLUMN IF NOT EXISTS escalated_at TIMESTAMP WITH TIME ZONE;
+ALTER TABLE chat_conversations ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'ai';
+ALTER TABLE chat_conversations ADD COLUMN IF NOT EXISTS assigned_admin_id UUID REFERENCES users(id);
+
+-- AI message flag on chat_messages
+ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS is_ai_message BOOLEAN DEFAULT FALSE;
+
+-- User tags (JSONB array, separate from lifecycle status)
+ALTER TABLE users ADD COLUMN IF NOT EXISTS tags JSONB DEFAULT '[]'::jsonb;
+
+-- Indexes for admin filtering
+CREATE INDEX IF NOT EXISTS idx_chat_conversations_handler ON chat_conversations(handler_type);
+CREATE INDEX IF NOT EXISTS idx_chat_conversations_category ON chat_conversations(category);
+
+-- AI chat configuration seed
+INSERT INTO admin_settings (key, value)
+VALUES ('ai_chat_config', '{"enabled": true, "webhook_url": "", "greeting_message": "Hi! How can I help you today?", "ai_display_name": "Support Team", "auto_escalation_keywords": ["refund", "cancel", "dispute", "chargeback"]}'::jsonb)
+ON CONFLICT (key) DO NOTHING;
+
+-- Backfill existing conversations as human-handled
+UPDATE chat_conversations
+SET handler_type = 'human',
+    category = CASE WHEN status = 'resolved' THEN 'resolved' ELSE 'open' END
+WHERE handler_type IS NULL OR handler_type = 'ai';
+
+
+-- ============================================================================
 -- DONE! You should see "Success. No rows returned" - that's normal.
 -- ============================================================================
 -- All tables, policies, functions, and triggers are now set up.

@@ -41,7 +41,7 @@
             overflow-x: hidden;
         }
 
-        /* ========== Background Animation ========== */
+        /* ========== Background ========== */
         .bg-animation {
             position: fixed;
             top: 0; left: 0;
@@ -88,7 +88,7 @@
             66% { transform: translate(-20px, 20px); }
         }
 
-        /* ========== Page Layout ========== */
+        /* ========== Layout ========== */
         .support-wrapper {
             position: relative;
             z-index: 2;
@@ -98,91 +98,98 @@
             flex-direction: column;
         }
 
-        /* ========== TICKET LIST VIEW ========== */
-        .ticket-list-view {
+        /* ========== SUPPORT HUB VIEW ========== */
+        .support-hub {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
 
-        .ticket-list-header {
-            padding: 28px 32px 20px;
-            border-bottom: 1px solid var(--border);
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-        }
-
-        .ticket-list-header h1 {
-            font-family: 'Gilroy ExtraBold', sans-serif;
-            font-size: 22px;
-            color: var(--text-primary);
-        }
-
-        .ticket-list-header p {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-top: 2px;
-        }
-
-        .btn-new-ticket {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: var(--accent);
-            color: #000;
-            border: none;
-            border-radius: 10px;
-            font-family: 'Manrope', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        .support-hero {
+            text-align: center;
+            padding: 56px 32px 40px;
             flex-shrink: 0;
         }
 
-        .btn-new-ticket:hover {
+        .support-hero-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--accent-dim);
+            border: 1px solid rgba(240, 200, 50, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .support-hero-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--accent);
+        }
+
+        .support-hero h1 {
+            font-family: 'Gilroy ExtraBold', sans-serif;
+            font-size: 28px;
+            background: linear-gradient(135deg, #ffffff 0%, #d4d4d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .support-hero p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+        }
+
+        .btn-start-conv {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 32px;
+            background: var(--accent);
+            color: #000;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Manrope', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-start-conv:hover:not(:disabled) {
             background: var(--accent-light);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 16px rgba(240, 200, 50, 0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(240, 200, 50, 0.3);
         }
 
-        .btn-new-ticket svg {
-            width: 16px;
-            height: 16px;
+        .btn-start-conv:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
-        .btn-new-ticket.hidden {
-            display: none;
+        .btn-start-conv svg {
+            width: 18px;
+            height: 18px;
         }
 
-        /* Ticket Cards Scroll Area */
-        .ticket-cards-area {
+        /* Conversation History */
+        .conv-history {
             flex: 1;
             overflow-y: auto;
-            padding: 24px 32px;
+            padding: 0 32px 32px;
         }
 
-        .ticket-cards-area::-webkit-scrollbar {
-            width: 5px;
-        }
+        .conv-history::-webkit-scrollbar { width: 5px; }
+        .conv-history::-webkit-scrollbar-track { background: transparent; }
+        .conv-history::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-        .ticket-cards-area::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .ticket-cards-area::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        /* Section Labels */
-        .ticket-section-label {
+        .conv-section-label {
             font-size: 11px;
             font-weight: 700;
             color: var(--text-muted);
@@ -194,325 +201,129 @@
             gap: 12px;
         }
 
-        .ticket-section-label::after {
+        .conv-section-label::after {
             content: '';
             flex: 1;
             height: 1px;
             background: var(--border);
         }
 
-        .ticket-section-label.past {
-            margin-top: 28px;
+        .conv-section-label.past {
+            margin-top: 24px;
         }
 
-        /* Ticket Card */
-        .ticket-card {
+        /* Conversation Card */
+        .conv-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 14px;
-            padding: 18px 20px;
-            margin-bottom: 12px;
+            padding: 16px 20px;
+            margin-bottom: 10px;
             cursor: pointer;
             transition: all 0.2s ease;
-            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
 
-        .ticket-card:hover {
-            border-color: rgba(240, 200, 50, 0.25);
+        .conv-card:hover {
+            border-color: rgba(240, 200, 50, 0.2);
             background: rgba(20, 20, 20, 0.9);
             transform: translateY(-1px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
         }
 
-        .ticket-card.active {
-            border-color: rgba(240, 200, 50, 0.3);
+        .conv-card-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-dim);
+            border: 1px solid rgba(240, 200, 50, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
-        .ticket-card-top {
+        .conv-card-avatar svg {
+            width: 18px;
+            height: 18px;
+            color: var(--accent);
+        }
+
+        .conv-card-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .conv-card-top {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 3px;
         }
 
-        .ticket-card-id {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-muted);
-            letter-spacing: 0.3px;
-        }
-
-        .ticket-card-id .ticket-title {
-            color: var(--text-secondary);
+        .conv-card-name {
+            font-size: 14px;
             font-weight: 600;
-            margin-left: 6px;
-        }
-
-        .ticket-status {
-            display: inline-flex;
+            color: var(--text-primary);
+            display: flex;
             align-items: center;
-            gap: 5px;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            gap: 8px;
         }
 
-        .ticket-status.open {
-            background: rgba(34, 197, 94, 0.1);
-            color: var(--success);
-            border: 1px solid rgba(34, 197, 94, 0.2);
-        }
-
-        .ticket-status.open .status-dot {
-            width: 6px;
-            height: 6px;
+        .conv-card-dot {
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .conv-card-dot.active {
             background: var(--success);
-            animation: pulse-dot 2s ease-in-out infinite;
+            box-shadow: 0 0 6px rgba(34, 197, 94, 0.4);
         }
 
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
+        .conv-card-dot.resolved {
+            background: var(--text-muted);
         }
 
-        .ticket-status.resolved {
-            background: rgba(107, 114, 128, 0.1);
+        .conv-card-time {
+            font-size: 11px;
             color: var(--text-muted);
-            border: 1px solid rgba(107, 114, 128, 0.2);
+            flex-shrink: 0;
         }
 
-        .ticket-card-preview {
+        .conv-card-preview {
             font-size: 13px;
             color: var(--text-secondary);
-            line-height: 1.5;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
+            white-space: nowrap;
             overflow: hidden;
-            margin-bottom: 10px;
+            text-overflow: ellipsis;
         }
 
-        .ticket-card-bottom {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .ticket-card-date {
-            font-size: 11px;
+        .conv-card-arrow {
+            width: 16px;
+            height: 16px;
             color: var(--text-muted);
-        }
-
-        .ticket-card-action {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 4px;
+            flex-shrink: 0;
             opacity: 0;
             transition: opacity 0.15s ease;
         }
 
-        .ticket-card:hover .ticket-card-action {
+        .conv-card:hover .conv-card-arrow {
             opacity: 1;
-        }
-
-        .ticket-card-action svg {
-            width: 14px;
-            height: 14px;
         }
 
         /* Empty state */
-        .tickets-empty {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+        .conv-empty {
             text-align: center;
-            padding: 60px 40px;
+            padding: 40px 20px;
             color: var(--text-muted);
-        }
-
-        .tickets-empty .empty-icon {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
-            background: rgba(240, 200, 50, 0.06);
-            border: 1px solid rgba(240, 200, 50, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .tickets-empty .empty-icon svg {
-            width: 32px;
-            height: 32px;
-            color: var(--accent);
-            opacity: 0.6;
-        }
-
-        .tickets-empty h3 {
-            font-family: 'Gilroy ExtraBold', sans-serif;
-            font-size: 20px;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-
-        .tickets-empty p {
             font-size: 14px;
-            max-width: 360px;
-            line-height: 1.6;
-            margin-bottom: 24px;
         }
 
-        /* ========== NEW TICKET MODAL ========== */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
-        }
-
-        .modal-overlay.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            width: 90%;
-            max-width: 480px;
-            padding: 28px;
-            transform: translateY(16px) scale(0.97);
-            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .modal-overlay.show .modal {
-            transform: translateY(0) scale(1);
-        }
-
-        .modal h2 {
-            font-family: 'Gilroy ExtraBold', sans-serif;
-            font-size: 18px;
-            margin-bottom: 4px;
-        }
-
-        .modal .modal-subtitle {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 24px;
-        }
-
-        .modal-field {
-            margin-bottom: 16px;
-        }
-
-        .modal-field label {
-            display: block;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-
-        .modal-field input,
-        .modal-field textarea {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 10px 14px;
-            color: var(--text-primary);
-            font-family: 'Manrope', sans-serif;
-            font-size: 14px;
-            outline: none;
-            transition: border-color 0.2s ease;
-        }
-
-        .modal-field input:focus,
-        .modal-field textarea:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(240, 200, 50, 0.08);
-        }
-
-        .modal-field input::placeholder,
-        .modal-field textarea::placeholder {
-            color: var(--text-muted);
-        }
-
-        .modal-field textarea {
-            resize: none;
-            min-height: 100px;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 24px;
-        }
-
-        .btn-modal-cancel {
-            padding: 10px 20px;
-            background: transparent;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-secondary);
-            font-family: 'Manrope', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .btn-modal-cancel:hover {
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--text-primary);
-        }
-
-        .btn-modal-submit {
-            padding: 10px 24px;
-            background: var(--accent);
-            border: none;
-            border-radius: 10px;
-            color: #000;
-            font-family: 'Manrope', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-modal-submit:hover:not(:disabled) {
-            background: var(--accent-light);
-        }
-
-        .btn-modal-submit:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
-
-        /* ========== CHAT VIEW (DRILL-IN) ========== */
+        /* ========== CHAT VIEW ========== */
         .chat-view {
             flex: 1;
             display: none;
@@ -526,20 +337,20 @@
         }
 
         .chat-header {
-            padding: 16px 32px;
+            padding: 14px 24px;
             border-bottom: 1px solid var(--border);
             background: rgba(20, 20, 20, 0.8);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
         }
 
         .btn-back {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             background: transparent;
             border: none;
             color: var(--text-secondary);
@@ -563,36 +374,60 @@
             height: 16px;
         }
 
-        .chat-header-info {
+        .chat-header-team {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             flex: 1;
             min-width: 0;
         }
 
-        .chat-header-info h2 {
-            font-family: 'Gilroy ExtraBold', sans-serif;
-            font-size: 16px;
-            color: var(--text-primary);
+        .chat-header-team-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--accent-dim);
+            border: 1px solid rgba(240, 200, 50, 0.15);
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
-        .chat-header-info h2 .ticket-num {
-            font-family: 'Manrope', sans-serif;
-            font-size: 12px;
+        .chat-header-team-avatar svg {
+            width: 16px;
+            height: 16px;
+            color: var(--accent);
+        }
+
+        .chat-header-team-info {
+            min-width: 0;
+        }
+
+        .chat-header-team-name {
+            font-size: 15px;
             font-weight: 700;
-            color: var(--text-muted);
+            color: var(--text-primary);
         }
 
-        .chat-header-info .chat-header-subtitle {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-top: 1px;
+        .chat-header-team-status {
+            font-size: 11px;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .chat-header-team-status .online-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
         }
 
         /* Resolved Banner */
         .resolved-banner {
-            padding: 10px 32px;
+            padding: 10px 24px;
             background: rgba(107, 114, 128, 0.08);
             border-bottom: 1px solid var(--border);
             display: flex;
@@ -608,31 +443,21 @@
             flex-shrink: 0;
         }
 
-        /* ========== Messages Area ========== */
+        /* ========== Messages ========== */
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 24px 32px;
+            padding: 24px 24px 8px;
             display: flex;
             flex-direction: column;
             gap: 16px;
             min-height: 0;
         }
 
-        .chat-messages::-webkit-scrollbar {
-            width: 5px;
-        }
+        .chat-messages::-webkit-scrollbar { width: 5px; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
+        .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-        .chat-messages::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        /* Date Separator */
         .msg-date-separator {
             display: flex;
             align-items: center;
@@ -657,7 +482,6 @@
             white-space: nowrap;
         }
 
-        /* Message Rows */
         .msg-row {
             display: flex;
             gap: 10px;
@@ -703,13 +527,8 @@
             flex-direction: column;
         }
 
-        .msg-row.me .msg-content {
-            align-items: flex-end;
-        }
-
-        .msg-row.them .msg-content {
-            align-items: flex-start;
-        }
+        .msg-row.me .msg-content { align-items: flex-end; }
+        .msg-row.them .msg-content { align-items: flex-start; }
 
         .msg-bubble {
             padding: 10px 16px;
@@ -741,13 +560,40 @@
             color: var(--text-muted);
         }
 
-        .msg-sender {
-            font-weight: 600;
+        .msg-sender { font-weight: 600; }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            padding: 0 24px 8px;
         }
 
-        /* ========== Chat Input Area ========== */
+        .typing-bubble {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 12px 18px !important;
+            min-width: 60px;
+        }
+
+        .typing-bubble .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            animation: typingBounce 1.2s ease-in-out infinite;
+        }
+
+        .typing-bubble .dot:nth-child(2) { animation-delay: 0.15s; }
+        .typing-bubble .dot:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-5px); opacity: 1; }
+        }
+
+        /* ========== Input Area ========== */
         .chat-input-area {
-            padding: 16px 32px 24px;
+            padding: 12px 24px 20px;
             border-top: 1px solid var(--border);
             background: rgba(20, 20, 20, 0.8);
             backdrop-filter: blur(20px);
@@ -757,7 +603,7 @@
         .chat-input-wrapper {
             display: flex;
             align-items: flex-end;
-            gap: 12px;
+            gap: 10px;
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--border);
             border-radius: 16px;
@@ -784,13 +630,11 @@
             outline: none;
         }
 
-        .chat-input::placeholder {
-            color: var(--text-muted);
-        }
+        .chat-input::placeholder { color: var(--text-muted); }
 
         .btn-send {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             border-radius: 12px;
             background: var(--accent);
             border: none;
@@ -808,17 +652,11 @@
             transform: scale(1.05);
         }
 
-        .btn-send:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
+        .btn-send:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        .btn-send svg {
-            width: 18px;
-            height: 18px;
-        }
+        .btn-send svg { width: 17px; height: 17px; }
 
-        /* ========== Chat Empty State ========== */
+        /* ========== Empty / Loading ========== */
         .chat-empty-state {
             flex: 1;
             display: flex;
@@ -830,27 +668,15 @@
             color: var(--text-muted);
         }
 
-        .chat-empty-state svg {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 20px;
-            opacity: 0.3;
-        }
-
         .chat-empty-state h3 {
             font-family: 'Gilroy ExtraBold', sans-serif;
-            font-size: 20px;
+            font-size: 18px;
             color: var(--text-primary);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
-        .chat-empty-state p {
-            font-size: 14px;
-            max-width: 360px;
-            line-height: 1.6;
-        }
+        .chat-empty-state p { font-size: 14px; }
 
-        /* ========== Loading Spinner ========== */
         .loading-spinner {
             flex: 1;
             display: flex;
@@ -867,9 +693,7 @@
             animation: spin 0.8s linear infinite;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         /* ========== Toast ========== */
         .toast {
@@ -887,64 +711,21 @@
             pointer-events: none;
         }
 
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .toast.success {
-            background: rgba(34, 197, 94, 0.15);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            color: var(--success);
-        }
-
-        .toast.error {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            color: var(--error);
-        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: rgba(34, 197, 94, 0.15); border: 1px solid rgba(34, 197, 94, 0.3); color: var(--success); }
+        .toast.error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: var(--error); }
 
         /* ========== Mobile ========== */
         @media (max-width: 768px) {
-            .support-wrapper {
-                padding-left: 0;
-            }
-
-            .ticket-list-header {
-                padding: 20px;
-                flex-direction: column;
-                gap: 16px;
-            }
-
-            .btn-new-ticket {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .ticket-cards-area {
-                padding: 16px 20px;
-            }
-
-            .chat-header {
-                padding: 12px 16px;
-            }
-
-            .chat-messages {
-                padding: 16px 20px;
-            }
-
-            .chat-input-area {
-                padding: 12px 20px 20px;
-            }
-
-            .msg-row {
-                max-width: 85%;
-            }
-
-            .modal {
-                width: 95%;
-                padding: 20px;
-            }
+            .support-wrapper { padding-left: 0; }
+            .support-hero { padding: 40px 20px 28px; }
+            .support-hero h1 { font-size: 24px; }
+            .conv-history { padding: 0 20px 20px; }
+            .chat-header { padding: 12px 16px; }
+            .chat-messages { padding: 16px 16px 8px; }
+            .chat-input-area { padding: 10px 16px 16px; }
+            .msg-row { max-width: 85%; }
+            .typing-indicator { padding: 0 16px 8px; }
         }
     </style>
 </head>
@@ -962,50 +743,60 @@
     <!-- Main Wrapper -->
     <div class="support-wrapper" id="supportWrapper" style="display: none;">
 
-        <!-- ========== TICKET LIST VIEW ========== -->
-        <div class="ticket-list-view" id="ticketListView">
-            <div class="ticket-list-header">
-                <div>
-                    <h1>Support</h1>
-                    <p>Get help from our team</p>
-                </div>
-                <button class="btn-new-ticket" id="btnNewTicket" onclick="openNewTicketModal()">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        <!-- ========== SUPPORT HUB ========== -->
+        <div class="support-hub" id="supportHub">
+            <div class="support-hero">
+                <div class="support-hero-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
                     </svg>
-                    Open a Ticket
+                </div>
+                <h1>How can we help?</h1>
+                <p>Our team is here to assist you</p>
+                <button class="btn-start-conv" id="btnStartConv" onclick="startConversation()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
+                    </svg>
+                    Start a Conversation
                 </button>
             </div>
-            <div class="ticket-cards-area" id="ticketCardsArea">
+
+            <div class="conv-history" id="convHistory">
                 <div class="loading-spinner"><div class="spinner"></div></div>
             </div>
         </div>
 
-        <!-- ========== CHAT VIEW (DRILL-IN) ========== -->
+        <!-- ========== CHAT VIEW ========== -->
         <div class="chat-view" id="chatView">
             <div class="chat-header">
-                <button class="btn-back" onclick="backToTicketList()">
+                <button class="btn-back" onclick="backToHub()">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                     </svg>
-                    Tickets
+                    Back
                 </button>
-                <div class="chat-header-info">
-                    <h2 id="chatHeaderTitle">
-                        <span class="ticket-num" id="chatTicketNum">#1001</span>
-                        <span id="chatTicketTitle">Support Request</span>
-                    </h2>
-                    <div class="chat-header-subtitle" id="chatHeaderSubtitle">Chatting with the Profit Insider team</div>
+                <div class="chat-header-team">
+                    <div class="chat-header-team-avatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                        </svg>
+                    </div>
+                    <div class="chat-header-team-info">
+                        <div class="chat-header-team-name" id="chatTeamName">Support Team</div>
+                        <div class="chat-header-team-status">
+                            <span class="online-dot"></span>
+                            <span>Available</span>
+                        </div>
+                    </div>
                 </div>
-                <div id="chatHeaderStatus"></div>
             </div>
 
-            <!-- Resolved banner (hidden by default) -->
+            <!-- Resolved banner -->
             <div class="resolved-banner" id="resolvedBanner" style="display: none;">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span>This ticket has been resolved. Send a message to reopen it.</span>
+                <span>This conversation has been resolved. Send a message to reopen it.</span>
             </div>
 
             <!-- Messages -->
@@ -1013,13 +804,31 @@
                 <div class="loading-spinner"><div class="spinner"></div></div>
             </div>
 
-            <!-- Input (hidden when resolved) -->
+            <!-- Typing indicator (for future AI integration) -->
+            <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                <div class="msg-row them">
+                    <div class="msg-avatar" style="background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(240,200,50,0.2); font-size: 9px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                        </svg>
+                    </div>
+                    <div class="msg-content">
+                        <div class="msg-bubble typing-bubble" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-bottom-left-radius: 4px;">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input -->
             <div class="chat-input-area" id="chatInputArea">
                 <div class="chat-input-wrapper">
                     <textarea
                         class="chat-input"
                         id="chatInput"
-                        placeholder="Type a message..."
+                        placeholder="Send a message..."
                         rows="1"
                         onkeydown="handleInputKeydown(event)"
                         oninput="autoResizeInput(this); toggleSendBtn();"
@@ -1030,29 +839,6 @@
                         </svg>
                     </button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- New Ticket Modal -->
-    <div class="modal-overlay" id="newTicketModal">
-        <div class="modal" onclick="event.stopPropagation()">
-            <h2>Open a New Ticket</h2>
-            <p class="modal-subtitle">Describe your issue and our team will get back to you.</p>
-
-            <div class="modal-field">
-                <label for="ticketSubject">Subject</label>
-                <input type="text" id="ticketSubject" placeholder="e.g. Account setup help" maxlength="120">
-            </div>
-
-            <div class="modal-field">
-                <label for="ticketMessage">Message</label>
-                <textarea id="ticketMessage" placeholder="Describe what you need help with..."></textarea>
-            </div>
-
-            <div class="modal-actions">
-                <button class="btn-modal-cancel" onclick="closeNewTicketModal()">Cancel</button>
-                <button class="btn-modal-submit" id="btnSubmitTicket" onclick="submitNewTicket()" disabled>Submit Ticket</button>
             </div>
         </div>
     </div>
@@ -1071,10 +857,11 @@
         let currentProfile = null;
         let autoLogoutTimer = null;
 
-        let currentView = 'list'; // 'list' | 'chat'
-        let allTickets = [];
-        let selectedTicketId = null;
-        let selectedTicketStatus = 'open';
+        let currentView = 'hub';
+        let allConversations = [];
+        let selectedConvId = null;
+        let selectedConvStatus = 'open';
+        let teamDisplayName = 'Support Team';
 
         let messagesSubscription = null;
         let pollingInterval = null;
@@ -1085,9 +872,7 @@
         // ============================================================
         function resetAutoLogout() {
             if (autoLogoutTimer) clearTimeout(autoLogoutTimer);
-            autoLogoutTimer = setTimeout(() => {
-                window.signOut();
-            }, 30 * 60 * 1000);
+            autoLogoutTimer = setTimeout(() => { window.signOut(); }, 30 * 60 * 1000);
         }
 
         ['mousedown', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
@@ -1095,22 +880,16 @@
         });
 
         // ============================================================
-        // INITIALIZATION
+        // INIT
         // ============================================================
         (async function init() {
             try {
                 const user = await window.getCurrentUser();
-                if (!user) {
-                    window.location.href = '/auth';
-                    return;
-                }
+                if (!user) { window.location.href = '/auth'; return; }
                 currentUser = user;
 
                 const profile = await window.getUserProfile(user.id);
-                if (!profile) {
-                    window.location.href = '/auth';
-                    return;
-                }
+                if (!profile) { window.location.href = '/auth'; return; }
                 currentProfile = profile;
 
                 const userStatus = (profile.status || 'onboarding').toLowerCase();
@@ -1126,24 +905,26 @@
                     window.trackActivity('page_view', '/portal/chat');
                 }
 
-                document.getElementById('supportWrapper').style.display = '';
+                // Load AI config for team display name
+                try {
+                    const aiConfig = await window.getAIChatConfig();
+                    teamDisplayName = aiConfig.ai_display_name || 'Support Team';
+                } catch (e) { /* use default */ }
 
-                // Load tickets
-                await loadTickets();
+                document.getElementById('supportWrapper').style.display = '';
+                await loadConversations();
 
             } catch (err) {
                 console.error('Init error:', err);
-                if (!currentUser) {
-                    window.location.href = '/auth';
-                }
+                if (!currentUser) window.location.href = '/auth';
             }
         })();
 
         // ============================================================
-        // LOAD TICKETS
+        // LOAD CONVERSATIONS
         // ============================================================
-        async function loadTickets() {
-            const area = document.getElementById('ticketCardsArea');
+        async function loadConversations() {
+            const area = document.getElementById('convHistory');
             area.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
 
             try {
@@ -1154,179 +935,178 @@
                     .order('created_at', { ascending: false });
 
                 if (error) throw error;
-
-                allTickets = data || [];
-                renderTicketList();
+                allConversations = data || [];
+                renderConversationList();
 
             } catch (err) {
-                console.error('Error loading tickets:', err);
-                area.innerHTML = `
-                    <div class="tickets-empty">
-                        <div class="empty-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.832c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                            </svg>
-                        </div>
-                        <h3>Error Loading Tickets</h3>
-                        <p>Please try refreshing the page.</p>
-                    </div>`;
+                console.error('Error loading conversations:', err);
+                area.innerHTML = '<div class="conv-empty">Failed to load conversations. Please refresh.</div>';
             }
         }
 
         // ============================================================
-        // RENDER TICKET LIST
+        // RENDER CONVERSATION LIST
         // ============================================================
-        function renderTicketList() {
-            const area = document.getElementById('ticketCardsArea');
-            const btnNew = document.getElementById('btnNewTicket');
+        function renderConversationList() {
+            const area = document.getElementById('convHistory');
 
-            // Check if there's an open ticket
-            const hasOpenTicket = allTickets.some(t => (t.status || 'open') === 'open');
-            btnNew.classList.toggle('hidden', hasOpenTicket);
-
-            if (allTickets.length === 0) {
-                area.innerHTML = `
-                    <div class="tickets-empty">
-                        <div class="empty-icon">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z" />
-                            </svg>
-                        </div>
-                        <h3>No Tickets Yet</h3>
-                        <p>Need help? Open a support ticket and our team will assist you as soon as possible.</p>
-                        <button class="btn-new-ticket" onclick="openNewTicketModal()">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                            Open a Ticket
-                        </button>
-                    </div>`;
+            if (allConversations.length === 0) {
+                area.innerHTML = '<div class="conv-empty">No conversations yet. Start a new one above!</div>';
                 return;
             }
 
-            const openTickets = allTickets.filter(t => (t.status || 'open') === 'open');
-            const resolvedTickets = allTickets.filter(t => (t.status || 'open') !== 'open');
+            const active = allConversations.filter(c => (c.status || 'open') === 'open');
+            const resolved = allConversations.filter(c => (c.status || 'open') !== 'open');
 
             let html = '';
 
-            // Active tickets
-            if (openTickets.length > 0) {
-                html += '<div class="ticket-section-label">Active Ticket</div>';
-                openTickets.forEach(ticket => {
-                    html += renderTicketCard(ticket, true);
-                });
+            if (active.length > 0) {
+                html += '<div class="conv-section-label">Active</div>';
+                active.forEach(c => { html += renderConvCard(c, true); });
             }
 
-            // Past tickets
-            if (resolvedTickets.length > 0) {
-                html += `<div class="ticket-section-label ${openTickets.length > 0 ? 'past' : ''}">Past Tickets</div>`;
-                resolvedTickets.forEach(ticket => {
-                    html += renderTicketCard(ticket, false);
-                });
+            if (resolved.length > 0) {
+                html += `<div class="conv-section-label ${active.length > 0 ? 'past' : ''}">Past Conversations</div>`;
+                resolved.forEach(c => { html += renderConvCard(c, false); });
             }
 
             area.innerHTML = html;
         }
 
-        function renderTicketCard(ticket, isActive) {
-            const status = ticket.status || 'open';
-            const isOpen = status === 'open';
-            const ticketNum = ticket.ticket_number || '—';
-            const title = escapeHtml(ticket.title || 'Support Request');
-            const preview = escapeHtml(ticket.last_message_preview || 'No messages yet');
-            const actionLabel = isOpen ? 'Continue Chat' : 'View';
-
-            let dateStr;
-            if (isOpen) {
-                const lastActivity = ticket.last_message_at || ticket.created_at;
-                dateStr = 'Last activity: ' + formatRelativeTime(lastActivity);
-            } else {
-                const resolved = ticket.resolved_at || ticket.updated_at || ticket.created_at;
-                dateStr = 'Resolved ' + formatDate(resolved);
-            }
+        function renderConvCard(conv, isActive) {
+            const preview = escapeHtml(conv.last_message_preview || 'No messages yet');
+            const timeStr = isActive
+                ? formatRelativeTime(conv.last_message_at || conv.created_at)
+                : formatDate(conv.resolved_at || conv.updated_at || conv.created_at);
 
             return `
-                <div class="ticket-card ${isActive ? 'active' : ''}" onclick="openTicketView('${ticket.id}')">
-                    <div class="ticket-card-top">
-                        <div class="ticket-card-id">
-                            #${ticketNum}<span class="ticket-title">${title}</span>
+                <div class="conv-card" onclick="openChatView('${conv.id}')">
+                    <div class="conv-card-avatar">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                        </svg>
+                    </div>
+                    <div class="conv-card-body">
+                        <div class="conv-card-top">
+                            <span class="conv-card-name">
+                                <span class="conv-card-dot ${isActive ? 'active' : 'resolved'}"></span>
+                                ${escapeHtml(teamDisplayName)}
+                            </span>
+                            <span class="conv-card-time">${timeStr}</span>
                         </div>
-                        <span class="ticket-status ${isOpen ? 'open' : 'resolved'}">
-                            ${isOpen ? '<span class="status-dot"></span>' : ''}
-                            ${isOpen ? 'Open' : 'Resolved'}
-                        </span>
+                        <div class="conv-card-preview">${preview}</div>
                     </div>
-                    <div class="ticket-card-preview">${preview}</div>
-                    <div class="ticket-card-bottom">
-                        <span class="ticket-card-date">${dateStr}</span>
-                        <span class="ticket-card-action">
-                            ${actionLabel}
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                            </svg>
-                        </span>
-                    </div>
+                    <svg class="conv-card-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
                 </div>`;
         }
 
         // ============================================================
-        // OPEN TICKET VIEW (DRILL-IN)
+        // START A CONVERSATION
         // ============================================================
-        async function openTicketView(ticketId) {
-            const ticket = allTickets.find(t => t.id === ticketId);
-            if (!ticket) return;
+        async function startConversation() {
+            const btn = document.getElementById('btnStartConv');
+            btn.disabled = true;
+            btn.textContent = 'Connecting...';
 
-            selectedTicketId = ticketId;
-            selectedTicketStatus = ticket.status || 'open';
+            try {
+                const aiConfig = await window.getAIChatConfig();
+                const greetingText = aiConfig.greeting_message || 'Hi! How can I help you today?';
+                const displayName = aiConfig.ai_display_name || 'Support Team';
+
+                // Create conversation
+                const { data: newConv, error: convError } = await window.supabaseClient
+                    .from('chat_conversations')
+                    .insert({
+                        user_id: currentUser.id,
+                        status: 'open',
+                        handler_type: 'ai',
+                        category: 'ai',
+                        title: 'Support Request',
+                        last_message_at: new Date().toISOString(),
+                        last_message_preview: greetingText.substring(0, 100),
+                        user_unread_count: 0
+                    })
+                    .select()
+                    .single();
+
+                if (convError) throw convError;
+
+                // Insert greeting from "team"
+                await window.supabaseClient
+                    .from('chat_messages')
+                    .insert({
+                        conversation_id: newConv.id,
+                        sender_id: currentUser.id,
+                        sender_type: 'admin',
+                        content: greetingText,
+                        message: greetingText,
+                        is_ai_message: true,
+                        display_name_override: displayName
+                    });
+
+                allConversations.unshift(newConv);
+                await openChatView(newConv.id);
+
+            } catch (err) {
+                console.error('Error starting conversation:', err);
+                showToast('Failed to start conversation. Please try again.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
+                    </svg>
+                    Start a Conversation`;
+            }
+        }
+
+        // ============================================================
+        // OPEN CHAT VIEW
+        // ============================================================
+        async function openChatView(convId) {
+            const conv = allConversations.find(c => c.id === convId);
+            if (!conv) return;
+
+            selectedConvId = convId;
+            selectedConvStatus = conv.status || 'open';
             currentView = 'chat';
             lastMessageTimestamp = null;
 
-            // Update header
-            document.getElementById('chatTicketNum').textContent = '#' + (ticket.ticket_number || '—');
-            document.getElementById('chatTicketTitle').textContent = ticket.title || 'Support Request';
+            // Set team name in header
+            document.getElementById('chatTeamName').textContent = teamDisplayName;
 
-            // Status badge in header
-            const isOpen = selectedTicketStatus === 'open';
-            document.getElementById('chatHeaderStatus').innerHTML = `
-                <span class="ticket-status ${isOpen ? 'open' : 'resolved'}">
-                    ${isOpen ? '<span class="status-dot"></span>' : ''}
-                    ${isOpen ? 'Open' : 'Resolved'}
-                </span>`;
-
-            // Resolved banner + input
+            // Resolved state
+            const isOpen = selectedConvStatus === 'open';
             document.getElementById('resolvedBanner').style.display = isOpen ? 'none' : '';
             document.getElementById('chatInputArea').style.display = isOpen ? '' : 'none';
 
             // Switch views
-            document.getElementById('ticketListView').style.display = 'none';
+            document.getElementById('supportHub').style.display = 'none';
             document.getElementById('chatView').classList.add('visible');
 
-            // Mark as read
-            if (ticket.user_unread_count > 0) {
+            // Mark read
+            if (conv.user_unread_count > 0) {
                 window.supabaseClient
                     .from('chat_conversations')
                     .update({ user_unread_count: 0 })
-                    .eq('id', ticketId)
-                    .then(({ error }) => { if (error) console.warn('Mark read error:', error.message); });
+                    .eq('id', convId);
             }
 
-            // Load messages
             await loadMessages();
-
-            // Subscribe to realtime + polling
             subscribeToMessages();
             startPolling();
         }
 
         // ============================================================
-        // BACK TO TICKET LIST
+        // BACK TO HUB
         // ============================================================
-        function backToTicketList() {
-            currentView = 'list';
-            selectedTicketId = null;
+        function backToHub() {
+            currentView = 'hub';
+            selectedConvId = null;
             lastMessageTimestamp = null;
 
-            // Cleanup subscriptions
             if (messagesSubscription) {
                 window.supabaseClient.removeChannel(messagesSubscription);
                 messagesSubscription = null;
@@ -1336,115 +1116,9 @@
                 pollingInterval = null;
             }
 
-            // Switch views
             document.getElementById('chatView').classList.remove('visible');
-            document.getElementById('ticketListView').style.display = '';
-
-            // Refresh ticket list to get latest data
-            loadTickets();
-        }
-
-        // ============================================================
-        // NEW TICKET MODAL
-        // ============================================================
-        function openNewTicketModal() {
-            document.getElementById('ticketSubject').value = '';
-            document.getElementById('ticketMessage').value = '';
-            document.getElementById('btnSubmitTicket').disabled = true;
-            document.getElementById('newTicketModal').classList.add('show');
-
-            // Focus subject input
-            setTimeout(() => document.getElementById('ticketSubject').focus(), 200);
-        }
-
-        function closeNewTicketModal() {
-            document.getElementById('newTicketModal').classList.remove('show');
-        }
-
-        // Enable/disable submit button
-        document.getElementById('ticketSubject').addEventListener('input', validateTicketForm);
-        document.getElementById('ticketMessage').addEventListener('input', validateTicketForm);
-
-        function validateTicketForm() {
-            const subject = document.getElementById('ticketSubject').value.trim();
-            const message = document.getElementById('ticketMessage').value.trim();
-            document.getElementById('btnSubmitTicket').disabled = !subject || !message;
-        }
-
-        // Close modal on overlay click
-        document.getElementById('newTicketModal').addEventListener('click', function(e) {
-            if (e.target === this) closeNewTicketModal();
-        });
-
-        // Close modal on Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && document.getElementById('newTicketModal').classList.contains('show')) {
-                closeNewTicketModal();
-            }
-        });
-
-        // ============================================================
-        // SUBMIT NEW TICKET
-        // ============================================================
-        async function submitNewTicket() {
-            const subjectEl = document.getElementById('ticketSubject');
-            const messageEl = document.getElementById('ticketMessage');
-            const submitBtn = document.getElementById('btnSubmitTicket');
-
-            const subject = subjectEl.value.trim();
-            const messageText = messageEl.value.trim();
-
-            if (!subject || !messageText) return;
-
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Creating...';
-
-            try {
-                // Create conversation
-                const { data: newConv, error: convError } = await window.supabaseClient
-                    .from('chat_conversations')
-                    .insert({
-                        user_id: currentUser.id,
-                        status: 'open',
-                        title: subject,
-                        last_message_at: new Date().toISOString(),
-                        last_message_preview: messageText.substring(0, 100),
-                        admin_unread_count: 1
-                    })
-                    .select()
-                    .single();
-
-                if (convError) throw convError;
-
-                // Insert first message
-                const { error: msgError } = await window.supabaseClient
-                    .from('chat_messages')
-                    .insert({
-                        conversation_id: newConv.id,
-                        sender_id: currentUser.id,
-                        sender_type: 'customer',
-                        content: messageText,
-                        message: messageText
-                    });
-
-                if (msgError) throw msgError;
-
-                // Close modal
-                closeNewTicketModal();
-
-                // Add to local tickets list and drill in
-                allTickets.unshift(newConv);
-                await openTicketView(newConv.id);
-
-                showToast('Ticket created successfully!', 'success');
-
-            } catch (err) {
-                console.error('Error creating ticket:', err);
-                showToast('Failed to create ticket. Please try again.', 'error');
-                submitBtn.disabled = false;
-            } finally {
-                submitBtn.textContent = 'Submit Ticket';
-            }
+            document.getElementById('supportHub').style.display = '';
+            loadConversations();
         }
 
         // ============================================================
@@ -1460,34 +1134,20 @@
                     .select(`
                         *,
                         sender:users!chat_messages_sender_id_fkey (
-                            id,
-                            first_name,
-                            last_name,
-                            email,
-                            is_admin,
-                            chat_display_name
+                            id, first_name, last_name, email, is_admin, chat_display_name
                         )
                     `)
-                    .eq('conversation_id', selectedTicketId)
+                    .eq('conversation_id', selectedConvId)
                     .order('created_at', { ascending: true });
 
                 if (error) throw error;
-
                 renderMessages(data || []);
                 if (data && data.length > 0) {
                     lastMessageTimestamp = data[data.length - 1].created_at;
                 }
-
             } catch (err) {
                 console.error('Error loading messages:', err);
-                container.innerHTML = `
-                    <div class="chat-empty-state">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4.832c-.77-.833-2.694-.833-3.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
-                        </svg>
-                        <h3>Error Loading Messages</h3>
-                        <p>Please try refreshing the page.</p>
-                    </div>`;
+                container.innerHTML = '<div class="chat-empty-state"><h3>Error Loading Messages</h3><p>Please try refreshing the page.</p></div>';
             }
         }
 
@@ -1498,14 +1158,7 @@
             const container = document.getElementById('chatMessages');
 
             if (messages.length === 0) {
-                container.innerHTML = `
-                    <div class="chat-empty-state">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                        <h3>No Messages Yet</h3>
-                        <p>Send a message to start the conversation.</p>
-                    </div>`;
+                container.innerHTML = '<div class="chat-empty-state"><h3>No Messages Yet</h3><p>Send a message to start the conversation.</p></div>';
                 return;
             }
 
@@ -1513,129 +1166,99 @@
             let lastDate = '';
 
             messages.forEach(msg => {
-                const msgDate = new Date(msg.created_at).toLocaleDateString('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric'
-                });
-
+                const msgDate = new Date(msg.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                 if (msgDate !== lastDate) {
                     html += `<div class="msg-date-separator"><span>${msgDate}</span></div>`;
                     lastDate = msgDate;
                 }
 
-                const isMe = msg.sender_id === currentUser.id;
-                const senderName = msg.display_name_override
-                    || (msg.sender ? (msg.sender.chat_display_name || ((msg.sender.first_name || '') + ' ' + (msg.sender.last_name || '')).trim() || msg.sender.email) : null)
-                    || (isMe ? 'You' : 'Team');
-                const initialsSource = msg.display_name_override || (msg.sender ? (msg.sender.chat_display_name || ((msg.sender.first_name || '') + ' ' + (msg.sender.last_name || '')).trim()) : null);
-                const initials = initialsSource
-                    ? initialsSource.split(' ').map(n => n[0]).join('').substring(0, 2)
-                    : (isMe ? 'Y' : 'T');
-                const timeStr = new Date(msg.created_at).toLocaleTimeString('en-US', {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    hour12: true
-                });
+                // Determine if this is "me" (customer) or "them" (team/AI)
+                const isMe = msg.sender_type === 'customer';
+                const senderName = isMe ? 'You' : (msg.display_name_override || (msg.sender ? (msg.sender.chat_display_name || ((msg.sender.first_name || '') + ' ' + (msg.sender.last_name || '')).trim() || msg.sender.email) : teamDisplayName));
+
+                const initialsRaw = isMe
+                    ? ((currentProfile?.first_name || '')[0] || '') + ((currentProfile?.last_name || '')[0] || '')
+                    : '';
+                const initials = initialsRaw || (isMe ? 'Y' : '');
+
+                const timeStr = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+                // For "them" messages, show a chat icon instead of initials
+                const avatarContent = isMe
+                    ? `${(initials || 'Y').toUpperCase()}`
+                    : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>`;
+
+                const themAvatarStyle = isMe ? '' : ' style="background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(240,200,50,0.2);"';
 
                 html += `
                     <div class="msg-row ${isMe ? 'me' : 'them'}" data-msg-id="${msg.id}">
-                        <div class="msg-avatar">${(initials || '?').toUpperCase()}</div>
+                        <div class="msg-avatar"${themAvatarStyle}>${avatarContent}</div>
                         <div class="msg-content">
                             <div class="msg-bubble">${escapeHtml(msg.content || msg.message || '')}</div>
                             <div class="msg-meta">
-                                <span class="msg-sender">${escapeHtml(isMe ? 'You' : senderName)}</span>
-                                <span class="msg-time">${timeStr}</span>
+                                <span class="msg-sender">${escapeHtml(senderName)}</span>
+                                <span>${timeStr}</span>
                             </div>
                         </div>
                     </div>`;
             });
 
             container.innerHTML = html;
-
-            requestAnimationFrame(() => {
-                container.scrollTop = container.scrollHeight;
-            });
+            requestAnimationFrame(() => { container.scrollTop = container.scrollHeight; });
         }
 
         // ============================================================
-        // SUBSCRIBE TO REALTIME MESSAGES
+        // REALTIME + POLLING
         // ============================================================
         function subscribeToMessages() {
-            if (!selectedTicketId) return;
-
-            // Cleanup previous subscription
-            if (messagesSubscription) {
-                window.supabaseClient.removeChannel(messagesSubscription);
-            }
+            if (!selectedConvId) return;
+            if (messagesSubscription) window.supabaseClient.removeChannel(messagesSubscription);
 
             messagesSubscription = window.supabaseClient
-                .channel('client-chat-' + selectedTicketId)
+                .channel('client-chat-' + selectedConvId)
                 .on('postgres_changes', {
                     event: 'INSERT',
                     schema: 'public',
                     table: 'chat_messages',
-                    filter: `conversation_id=eq.${selectedTicketId}`
+                    filter: `conversation_id=eq.${selectedConvId}`
                 }, (payload) => {
-                    if (payload.new.sender_id !== currentUser.id) {
+                    if (payload.new.sender_type !== 'customer') {
                         appendMessage(payload.new);
                     }
-                    if (payload.new.created_at) {
-                        lastMessageTimestamp = payload.new.created_at;
-                    }
+                    if (payload.new.created_at) lastMessageTimestamp = payload.new.created_at;
                 })
                 .on('postgres_changes', {
                     event: '*',
                     schema: 'public',
                     table: 'chat_conversations',
-                    filter: `id=eq.${selectedTicketId}`
+                    filter: `id=eq.${selectedConvId}`
                 }, (payload) => {
                     if (payload.new) {
-                        selectedTicketStatus = payload.new.status || 'open';
-                        const isOpen = selectedTicketStatus === 'open';
-
+                        selectedConvStatus = payload.new.status || 'open';
+                        const isOpen = selectedConvStatus === 'open';
                         document.getElementById('resolvedBanner').style.display = isOpen ? 'none' : '';
                         document.getElementById('chatInputArea').style.display = isOpen ? '' : 'none';
-
-                        // Update header status badge
-                        document.getElementById('chatHeaderStatus').innerHTML = `
-                            <span class="ticket-status ${isOpen ? 'open' : 'resolved'}">
-                                ${isOpen ? '<span class="status-dot"></span>' : ''}
-                                ${isOpen ? 'Open' : 'Resolved'}
-                            </span>`;
-
                         if (payload.new.user_unread_count > 0) {
-                            window.supabaseClient
-                                .from('chat_conversations')
-                                .update({ user_unread_count: 0 })
-                                .eq('id', selectedTicketId);
+                            window.supabaseClient.from('chat_conversations').update({ user_unread_count: 0 }).eq('id', selectedConvId);
                         }
                     }
                 })
-                .subscribe((status) => {
-                    console.log('Realtime status:', status);
-                });
+                .subscribe();
         }
 
-        // ============================================================
-        // POLLING FALLBACK (every 12s)
-        // ============================================================
         function startPolling() {
             if (pollingInterval) clearInterval(pollingInterval);
-
             pollingInterval = setInterval(async () => {
-                if (!selectedTicketId || currentView !== 'chat') return;
+                if (!selectedConvId || currentView !== 'chat') return;
                 try {
                     let query = window.supabaseClient
                         .from('chat_messages')
                         .select('*, sender:users!chat_messages_sender_id_fkey (id, first_name, last_name, email, is_admin, chat_display_name)')
-                        .eq('conversation_id', selectedTicketId)
+                        .eq('conversation_id', selectedConvId)
                         .order('created_at', { ascending: false })
                         .limit(5);
 
-                    if (lastMessageTimestamp) {
-                        query = query.gt('created_at', lastMessageTimestamp);
-                    }
+                    if (lastMessageTimestamp) query = query.gt('created_at', lastMessageTimestamp);
 
                     const { data, error } = await query;
                     if (error) throw error;
@@ -1643,70 +1266,52 @@
                     if (data && data.length > 0) {
                         const newMsgs = data.reverse();
                         for (const msg of newMsgs) {
-                            if (msg.sender_id === currentUser.id) continue;
+                            if (msg.sender_type === 'customer') continue;
                             if (document.querySelector(`[data-msg-id="${msg.id}"]`)) continue;
                             appendMessage(msg);
                         }
                         lastMessageTimestamp = newMsgs[newMsgs.length - 1].created_at;
                     }
-                } catch (err) {
-                    console.error('Polling error:', err);
-                }
+                } catch (err) { console.error('Polling error:', err); }
             }, 12000);
         }
 
         // ============================================================
-        // APPEND SINGLE MESSAGE (REALTIME)
+        // APPEND MESSAGE
         // ============================================================
         async function appendMessage(msg) {
             const container = document.getElementById('chatMessages');
+            if (container.querySelector('.chat-empty-state')) container.innerHTML = '';
 
-            if (container.querySelector('.chat-empty-state')) {
-                container.innerHTML = '';
-            }
-
-            // Fetch sender info
             let sender = null;
             if (msg.sender_id) {
-                const { data } = await window.supabaseClient
-                    .from('users')
-                    .select('id, first_name, last_name, email, is_admin, chat_display_name')
-                    .eq('id', msg.sender_id)
-                    .single();
+                const { data } = await window.supabaseClient.from('users').select('id, first_name, last_name, email, is_admin, chat_display_name').eq('id', msg.sender_id).single();
                 sender = data;
             }
 
-            const isMe = msg.sender_id === currentUser.id;
-            const senderName = msg.display_name_override
-                || (sender ? (sender.chat_display_name || ((sender.first_name || '') + ' ' + (sender.last_name || '')).trim() || sender.email) : null)
-                || (isMe ? 'You' : 'Team');
-            const initialsSource = msg.display_name_override || (sender ? (sender.chat_display_name || ((sender.first_name || '') + ' ' + (sender.last_name || '')).trim()) : null);
-            const initials = initialsSource
-                ? initialsSource.split(' ').map(n => n[0]).join('').substring(0, 2)
-                : (isMe ? 'Y' : 'T');
-            const timeStr = new Date(msg.created_at).toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            });
+            const isMe = msg.sender_type === 'customer';
+            const senderName = isMe ? 'You' : (msg.display_name_override || (sender ? (sender.chat_display_name || ((sender.first_name || '') + ' ' + (sender.last_name || '')).trim() || sender.email) : teamDisplayName));
+            const timeStr = new Date(msg.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+
+            const avatarContent = isMe
+                ? ((currentProfile?.first_name || '')[0] || 'Y').toUpperCase() + ((currentProfile?.last_name || '')[0] || '').toUpperCase()
+                : `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>`;
+            const themAvatarStyle = isMe ? '' : ' style="background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(240,200,50,0.2);"';
 
             const msgHtml = `
                 <div class="msg-row ${isMe ? 'me' : 'them'}" data-msg-id="${msg.id}">
-                    <div class="msg-avatar">${(initials || '?').toUpperCase()}</div>
+                    <div class="msg-avatar"${themAvatarStyle}>${avatarContent}</div>
                     <div class="msg-content">
                         <div class="msg-bubble">${escapeHtml(msg.content || msg.message || '')}</div>
                         <div class="msg-meta">
-                            <span class="msg-sender">${escapeHtml(isMe ? 'You' : senderName)}</span>
-                            <span class="msg-time">${timeStr}</span>
+                            <span class="msg-sender">${escapeHtml(senderName)}</span>
+                            <span>${timeStr}</span>
                         </div>
                     </div>
                 </div>`;
 
             container.insertAdjacentHTML('beforeend', msgHtml);
-
-            requestAnimationFrame(() => {
-                container.scrollTop = container.scrollHeight;
-            });
+            requestAnimationFrame(() => { container.scrollTop = container.scrollHeight; });
         }
 
         // ============================================================
@@ -1716,39 +1321,27 @@
             const input = document.getElementById('chatInput');
             const btn = document.getElementById('btnSend');
             const text = input.value.trim();
-
-            if (!text || !currentUser || !selectedTicketId) return;
+            if (!text || !currentUser || !selectedConvId) return;
 
             btn.disabled = true;
             input.disabled = true;
 
             try {
-                // If ticket was resolved, reopen it
-                if (selectedTicketStatus === 'resolved') {
+                // Reopen if resolved
+                if (selectedConvStatus === 'resolved') {
                     await window.supabaseClient
                         .from('chat_conversations')
-                        .update({
-                            status: 'open',
-                            resolved_at: null
-                        })
-                        .eq('id', selectedTicketId);
-
-                    selectedTicketStatus = 'open';
+                        .update({ status: 'open', resolved_at: null })
+                        .eq('id', selectedConvId);
+                    selectedConvStatus = 'open';
                     document.getElementById('resolvedBanner').style.display = 'none';
                     document.getElementById('chatInputArea').style.display = '';
-
-                    document.getElementById('chatHeaderStatus').innerHTML = `
-                        <span class="ticket-status open">
-                            <span class="status-dot"></span>
-                            Open
-                        </span>`;
                 }
 
-                // Insert message
                 const { data: newMsg, error: msgError } = await window.supabaseClient
                     .from('chat_messages')
                     .insert({
-                        conversation_id: selectedTicketId,
+                        conversation_id: selectedConvId,
                         sender_id: currentUser.id,
                         sender_type: 'customer',
                         content: text,
@@ -1759,7 +1352,6 @@
 
                 if (msgError) throw msgError;
 
-                // Update conversation metadata
                 await window.supabaseClient
                     .from('chat_conversations')
                     .update({
@@ -1767,49 +1359,32 @@
                         last_message_preview: text.substring(0, 100),
                         admin_unread_count: 1
                     })
-                    .eq('id', selectedTicketId);
+                    .eq('id', selectedConvId);
 
-                // Clear input
                 input.value = '';
                 input.style.height = 'auto';
 
                 // Append locally
                 const container = document.getElementById('chatMessages');
-                if (container.querySelector('.chat-empty-state')) {
-                    container.innerHTML = '';
-                }
+                if (container.querySelector('.chat-empty-state')) container.innerHTML = '';
 
-                const myInitials = currentProfile
-                    ? ((currentProfile.first_name || '')[0] || '') + ((currentProfile.last_name || '')[0] || '')
-                    : 'Y';
-                const timeStr = new Date().toLocaleTimeString('en-US', {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                    hour12: true
-                });
+                const myInitials = ((currentProfile?.first_name || '')[0] || 'Y').toUpperCase() + ((currentProfile?.last_name || '')[0] || '').toUpperCase();
+                const timeStr = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
-                const msgHtml = `
+                container.insertAdjacentHTML('beforeend', `
                     <div class="msg-row me" data-msg-id="${newMsg.id}">
-                        <div class="msg-avatar">${(myInitials || 'Y').toUpperCase()}</div>
+                        <div class="msg-avatar">${myInitials}</div>
                         <div class="msg-content">
                             <div class="msg-bubble">${escapeHtml(text)}</div>
                             <div class="msg-meta">
                                 <span class="msg-sender">You</span>
-                                <span class="msg-time">${timeStr}</span>
+                                <span>${timeStr}</span>
                             </div>
                         </div>
-                    </div>`;
+                    </div>`);
 
-                container.insertAdjacentHTML('beforeend', msgHtml);
-
-                requestAnimationFrame(() => {
-                    container.scrollTop = container.scrollHeight;
-                });
-
-                // Update lastMessageTimestamp
-                if (newMsg.created_at) {
-                    lastMessageTimestamp = newMsg.created_at;
-                }
+                requestAnimationFrame(() => { container.scrollTop = container.scrollHeight; });
+                if (newMsg.created_at) lastMessageTimestamp = newMsg.created_at;
 
             } catch (err) {
                 console.error('Error sending message:', err);
@@ -1822,13 +1397,10 @@
         }
 
         // ============================================================
-        // INPUT HELPERS
+        // HELPERS
         // ============================================================
         function handleInputKeydown(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
         }
 
         function autoResizeInput(el) {
@@ -1837,14 +1409,9 @@
         }
 
         function toggleSendBtn() {
-            const input = document.getElementById('chatInput');
-            const btn = document.getElementById('btnSend');
-            btn.disabled = !input.value.trim();
+            document.getElementById('btnSend').disabled = !document.getElementById('chatInput').value.trim();
         }
 
-        // ============================================================
-        // UTILITY
-        // ============================================================
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
@@ -1855,40 +1422,28 @@
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.className = `toast ${type} show`;
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
         }
 
         function formatRelativeTime(dateStr) {
-            const date = new Date(dateStr);
-            const now = new Date();
-            const diffMs = now - date;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHrs = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
-
-            if (diffMins < 1) return 'Just now';
-            if (diffMins < 60) return diffMins + (diffMins === 1 ? ' minute ago' : ' minutes ago');
-            if (diffHrs < 24) return diffHrs + (diffHrs === 1 ? ' hour ago' : ' hours ago');
-            if (diffDays < 7) return diffDays + (diffDays === 1 ? ' day ago' : ' days ago');
+            const diffMs = Date.now() - new Date(dateStr);
+            const mins = Math.floor(diffMs / 60000);
+            const hrs = Math.floor(diffMs / 3600000);
+            const days = Math.floor(diffMs / 86400000);
+            if (mins < 1) return 'Just now';
+            if (mins < 60) return mins + 'm ago';
+            if (hrs < 24) return hrs + 'h ago';
+            if (days < 7) return days + 'd ago';
             return formatDate(dateStr);
         }
 
         function formatDate(dateStr) {
-            return new Date(dateStr).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-            });
+            return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
 
-        // Cleanup on page leave
         window.addEventListener('beforeunload', () => {
             if (pollingInterval) clearInterval(pollingInterval);
-            if (messagesSubscription) {
-                window.supabaseClient.removeChannel(messagesSubscription);
-            }
+            if (messagesSubscription) window.supabaseClient.removeChannel(messagesSubscription);
         });
     </script>
 </body>

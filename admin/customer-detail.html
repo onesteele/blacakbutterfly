@@ -506,6 +506,16 @@
             color: var(--error);
         }
 
+        .status-badge.at_risk {
+            background: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+        }
+
+        .status-badge.dispute {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--error);
+        }
+
         .status-dot {
             width: 6px;
             height: 6px;
@@ -561,6 +571,23 @@
         .status-dropdown-item .sdi-dot.active { background: var(--success); }
         .status-dropdown-item .sdi-dot.inactive { background: var(--text-muted); }
         .status-dropdown-item .sdi-dot.churned { background: var(--error); }
+        .status-dropdown-item .sdi-dot.at_risk { background: #f59e0b; }
+        .status-dropdown-item .sdi-dot.dispute { background: var(--error); }
+
+        /* Tags in profile header */
+        .profile-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+        .profile-tag-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; }
+        .profile-tag-pill .tag-remove-btn { background: none; border: none; color: inherit; cursor: pointer; font-size: 14px; line-height: 1; opacity: 0.6; padding: 0 0 0 2px; }
+        .profile-tag-pill .tag-remove-btn:hover { opacity: 1; }
+        .profile-tag-pill.at_risk, .profile-tag-pill.churn_risk { background: rgba(245, 158, 11, 0.12); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+        .profile-tag-pill.refund_requested, .profile-tag-pill.dispute { background: rgba(239, 68, 68, 0.12); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .profile-tag-pill.vip, .profile-tag-pill.high_value { background: rgba(240, 200, 50, 0.12); color: var(--accent); border: 1px solid rgba(240, 200, 50, 0.2); }
+        .btn-add-profile-tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; background: rgba(255,255,255,0.04); border: 1px dashed var(--border); color: var(--text-muted); cursor: pointer; transition: all 0.2s ease; position: relative; }
+        .btn-add-profile-tag:hover { border-color: var(--text-muted); color: var(--text-secondary); }
+        .profile-tag-dropdown { position: absolute; top: 100%; left: 0; margin-top: 4px; background: #1a1a1a; border: 1px solid var(--border); border-radius: 8px; padding: 4px; min-width: 160px; z-index: 60; box-shadow: 0 8px 24px rgba(0,0,0,0.4); display: none; }
+        .profile-tag-dropdown.show { display: block; }
+        .profile-tag-dd-item { padding: 6px 10px; font-size: 12px; color: var(--text-secondary); cursor: pointer; border-radius: 4px; transition: background 0.15s ease; }
+        .profile-tag-dd-item:hover { background: rgba(240, 200, 50, 0.1); color: var(--accent); }
 
         /* Quick action buttons */
         .profile-actions {
@@ -1853,8 +1880,15 @@
                                         <div class="status-dropdown-item" onclick="changeStatus('churned')">
                                             <span class="sdi-dot churned"></span> Churned
                                         </div>
+                                        <div class="status-dropdown-item" onclick="changeStatus('at_risk')">
+                                            <span class="sdi-dot at_risk"></span> At Risk
+                                        </div>
+                                        <div class="status-dropdown-item" onclick="changeStatus('dispute')">
+                                            <span class="sdi-dot dispute"></span> Dispute
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="profile-tags" id="profile-tags"></div>
                                 <span id="profile-email-meta">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -2180,7 +2214,8 @@
             const status = c.status || 'onboarding';
             const badge = document.getElementById('status-badge');
             badge.className = `status-badge ${status}`;
-            document.getElementById('status-label').textContent = status;
+            const statusLabels = { onboarding: 'Onboarding', member: 'Member', verified_member: 'Verified Member', active: 'Active', inactive: 'Inactive', churned: 'Churned', at_risk: 'At Risk', dispute: 'Dispute' };
+            document.getElementById('status-label').textContent = statusLabels[status] || status;
 
             // Email button
             if (c.email) {
@@ -2192,7 +2227,80 @@
                 const cleanPhone = c.phone.replace(/[^0-9]/g, '');
                 document.getElementById('whatsapp-btn').href = `https://wa.me/${cleanPhone}`;
             }
+
+            // Tags
+            renderProfileTags();
         }
+
+        // ============================================================
+        // TAGS MANAGEMENT
+        // ============================================================
+        const PROFILE_TAGS = ['at_risk', 'refund_requested', 'dispute', 'churn_risk', 'vip', 'high_value'];
+        const PROFILE_TAG_LABELS = { at_risk: 'At Risk', refund_requested: 'Refund', dispute: 'Dispute', churn_risk: 'Churn Risk', vip: 'VIP', high_value: 'High Value' };
+        let profileTagDDOpen = false;
+
+        function renderProfileTags() {
+            const tags = window.getUserTags ? window.getUserTags(customerData) : (Array.isArray(customerData?.tags) ? customerData.tags : []);
+            const container = document.getElementById('profile-tags');
+            let html = tags.map(t =>
+                `<span class="profile-tag-pill ${t}">${PROFILE_TAG_LABELS[t] || t}<button class="tag-remove-btn" onclick="removeProfileTag('${t}')">&times;</button></span>`
+            ).join('');
+            html += `<span style="position:relative; display:inline-block;">
+                <button class="btn-add-profile-tag" onclick="toggleProfileTagDD()">+ Add tag</button>
+                <div class="profile-tag-dropdown" id="profile-tag-dropdown"></div>
+            </span>`;
+            container.innerHTML = html;
+        }
+
+        function toggleProfileTagDD() {
+            const dd = document.getElementById('profile-tag-dropdown');
+            profileTagDDOpen = !profileTagDDOpen;
+            dd.classList.toggle('show', profileTagDDOpen);
+            if (profileTagDDOpen) {
+                const current = window.getUserTags ? window.getUserTags(customerData) : (Array.isArray(customerData?.tags) ? customerData.tags : []);
+                const avail = PROFILE_TAGS.filter(t => !current.includes(t));
+                dd.innerHTML = avail.length ? avail.map(t =>
+                    `<div class="profile-tag-dd-item" onclick="addProfileTag('${t}')">${PROFILE_TAG_LABELS[t] || t}</div>`
+                ).join('') : '<div style="padding:8px 10px;font-size:12px;color:var(--text-muted);">All tags added</div>';
+            }
+        }
+
+        async function addProfileTag(tag) {
+            profileTagDDOpen = false;
+            try {
+                if (typeof window.addUserTag === 'function') {
+                    await window.addUserTag(customerId, tag);
+                } else {
+                    const tags = Array.isArray(customerData.tags) ? [...customerData.tags] : [];
+                    if (!tags.includes(tag)) tags.push(tag);
+                    await window.supabaseClient.from('users').update({ tags }).eq('id', customerId);
+                }
+                if (!Array.isArray(customerData.tags)) customerData.tags = [];
+                if (!customerData.tags.includes(tag)) customerData.tags.push(tag);
+                renderProfileTags();
+            } catch (err) { console.error('Error adding tag:', err); alert('Failed to add tag.'); }
+        }
+
+        async function removeProfileTag(tag) {
+            try {
+                if (typeof window.removeUserTag === 'function') {
+                    await window.removeUserTag(customerId, tag);
+                } else {
+                    const tags = (Array.isArray(customerData.tags) ? customerData.tags : []).filter(t => t !== tag);
+                    await window.supabaseClient.from('users').update({ tags }).eq('id', customerId);
+                }
+                customerData.tags = (customerData.tags || []).filter(t => t !== tag);
+                renderProfileTags();
+            } catch (err) { console.error('Error removing tag:', err); alert('Failed to remove tag.'); }
+        }
+
+        // Close tag dropdown on outside click
+        document.addEventListener('click', (e) => {
+            if (profileTagDDOpen && !e.target.closest('.btn-add-profile-tag') && !e.target.closest('.profile-tag-dropdown')) {
+                const dd = document.getElementById('profile-tag-dropdown');
+                if (dd) { dd.classList.remove('show'); profileTagDDOpen = false; }
+            }
+        });
 
         // ============================================================
         // STATUS DROPDOWN

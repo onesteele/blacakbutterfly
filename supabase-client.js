@@ -878,6 +878,109 @@ window.triggerWorkflow = async function(workflowId, customerData, triggeredByEma
     }
 };
 
+// ============================================================
+// AI CHAT CONFIG
+// ============================================================
+
+window.getAIChatConfig = async function() {
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('admin_settings')
+            .select('value')
+            .eq('key', 'ai_chat_config')
+            .single();
+        if (error) throw error;
+        return data?.value || {};
+    } catch (err) {
+        console.error('Error fetching AI config:', err);
+        return { enabled: true, webhook_url: '', greeting_message: 'Hi! How can I help you today?', ai_display_name: 'Support Team' };
+    }
+};
+
+window.updateAIChatConfig = async function(config) {
+    const { error } = await window.supabaseClient
+        .from('admin_settings')
+        .upsert({ key: 'ai_chat_config', value: config, updated_at: new Date().toISOString() });
+    if (error) { console.error('Error updating AI config:', error); return false; }
+    return true;
+};
+
+// ============================================================
+// CONVERSATION HANDLER MANAGEMENT
+// ============================================================
+
+window.setConversationHandler = async function(conversationId, handlerType, adminId) {
+    const updateData = { handler_type: handlerType };
+    if (handlerType === 'human' && adminId) {
+        updateData.assigned_admin_id = adminId;
+        updateData.category = 'open';
+    } else if (handlerType === 'ai') {
+        updateData.assigned_admin_id = null;
+        updateData.category = 'ai';
+    }
+    const { error } = await window.supabaseClient
+        .from('chat_conversations')
+        .update(updateData)
+        .eq('id', conversationId);
+    if (error) { console.error('Error setting handler:', error); return false; }
+    return true;
+};
+
+window.escalateConversation = async function(conversationId) {
+    const { error } = await window.supabaseClient
+        .from('chat_conversations')
+        .update({
+            is_escalated: true,
+            escalated_at: new Date().toISOString(),
+            handler_type: 'human',
+            category: 'escalated'
+        })
+        .eq('id', conversationId);
+    if (error) { console.error('Error escalating:', error); return false; }
+    return true;
+};
+
+window.getConversationCategory = function(conv) {
+    if (conv.status === 'resolved') return 'resolved';
+    if (conv.is_escalated) return 'escalated';
+    if (conv.handler_type === 'ai') return 'ai';
+    return 'open';
+};
+
+// ============================================================
+// USER TAGS
+// ============================================================
+
+window.getUserTags = function(profile) {
+    return Array.isArray(profile?.tags) ? profile.tags : [];
+};
+
+window.addUserTag = async function(userId, tag) {
+    const profile = await window.getUserProfile(userId);
+    if (!profile) return false;
+    const tags = Array.isArray(profile.tags) ? [...profile.tags] : [];
+    if (tags.includes(tag)) return true;
+    tags.push(tag);
+    const { error } = await window.supabaseClient
+        .from('users')
+        .update({ tags })
+        .eq('id', userId);
+    if (error) { console.error('Error adding tag:', error); return false; }
+    return true;
+};
+
+window.removeUserTag = async function(userId, tag) {
+    const profile = await window.getUserProfile(userId);
+    if (!profile) return false;
+    const tags = (Array.isArray(profile.tags) ? profile.tags : []).filter(t => t !== tag);
+    const { error } = await window.supabaseClient
+        .from('users')
+        .update({ tags })
+        .eq('id', userId);
+    if (error) { console.error('Error removing tag:', error); return false; }
+    return true;
+};
+
 // Format relative time
 window.formatRelativeTime = function(dateString) {
     if (!dateString) return 'Never';
