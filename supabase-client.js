@@ -198,18 +198,6 @@ window.applySidebarRole = function(profile, activePage) {
         }
     });
 
-    // Populate theme toggle icons in admin sidebar
-    window.initAdminThemeToggle();
-};
-
-window.initAdminThemeToggle = function() {
-    var isDark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
-    document.querySelectorAll('.theme-toggle-icon').forEach(function(el) {
-        el.innerHTML = isDark ? window._themeSunIcon : window._themeMoonIcon;
-    });
-    document.querySelectorAll('.theme-toggle-label').forEach(function(el) {
-        el.textContent = isDark ? 'Light Mode' : 'Dark Mode';
-    });
 };
 
 // ============================================================
@@ -261,99 +249,15 @@ window.applyClientSidebar = function(activePage) {
 };
 
 // ============================================================
-// THEME SYSTEM (dark/light mode)
+// THEME SYSTEM (dark mode only)
 // ============================================================
-window.THEME_LIGHT_CSS = `
-    [data-theme="light"] {
-        --bg-dark: #f5f5f7;
-        --bg-card: #ffffff;
-        --accent: #c49b00;
-        --accent-light: #b38d00;
-        --accent-dim: rgba(196, 155, 0, 0.1);
-        --accent-glow: rgba(196, 155, 0, 0.15);
-        --text-primary: #111111;
-        --text-secondary: #4b5563;
-        --text-muted: #9ca3af;
-        --border: #e5e7eb;
-        --success: #16a34a;
-        --error: #dc2626;
-    }
-    [data-theme="light"] .client-sidebar,
-    [data-theme="light"] .sidebar {
-        background: rgba(255, 255, 255, 0.97) !important;
-        border-right-color: var(--border) !important;
-    }
-    [data-theme="light"] .cs-logo,
-    [data-theme="light"] .cs-bottom {
-        border-color: var(--border) !important;
-    }
-    [data-theme="light"] .cs-nav-item {
-        color: var(--text-secondary);
-    }
-    [data-theme="light"] .cs-nav-item:hover {
-        color: var(--text-primary);
-    }
-    [data-theme="light"] .cs-nav-item.active {
-        color: var(--accent);
-    }
-    [data-theme="light"] .cs-signout,
-    [data-theme="light"] .cs-theme-toggle {
-        color: var(--text-secondary);
-    }
-    [data-theme="light"] .cs-mobile-toggle {
-        background: rgba(255, 255, 255, 0.95);
-        border-color: var(--border);
-        color: var(--text-primary);
-    }
-    [data-theme="light"] .dot-pattern {
-        background-image: radial-gradient(rgba(196, 155, 0, 0.08) 1px, transparent 1px) !important;
-    }
-    [data-theme="light"] .sidebar-logo {
-        border-color: var(--border) !important;
-    }
-    [data-theme="light"] .sidebar-bottom {
-        border-color: var(--border) !important;
-    }
-    [data-theme="light"] .nav-item {
-        color: var(--text-secondary);
-    }
-    [data-theme="light"] .nav-item:hover {
-        color: var(--text-primary);
-    }
-    [data-theme="light"] .nav-item.active {
-        color: var(--accent);
-        background: var(--accent-dim);
-    }
-`;
-
-window._themeSunIcon = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="12" cy="12" r="5"/><path stroke-linecap="round" d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>';
-window._themeMoonIcon = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"/></svg>';
-
 window.initTheme = function() {
-    var saved = localStorage.getItem('pi-theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', saved);
-    // Inject light mode CSS if not present
-    if (!document.getElementById('pi-theme-css')) {
-        var s = document.createElement('style');
-        s.id = 'pi-theme-css';
-        s.textContent = window.THEME_LIGHT_CSS;
-        document.head.appendChild(s);
-    }
+    document.documentElement.setAttribute('data-theme', 'dark');
+    localStorage.removeItem('pi-theme');
 };
 
-window.toggleTheme = function() {
-    var current = document.documentElement.getAttribute('data-theme') || 'dark';
-    var next = current === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('pi-theme', next);
-    // Update all toggle icons/labels
-    document.querySelectorAll('.theme-toggle-icon').forEach(function(el) {
-        el.innerHTML = next === 'dark' ? window._themeSunIcon : window._themeMoonIcon;
-    });
-    document.querySelectorAll('.theme-toggle-label').forEach(function(el) {
-        el.textContent = next === 'dark' ? 'Light Mode' : 'Dark Mode';
-    });
-};
+// No-op: kept for backwards compatibility with admin pages that still reference it
+window.toggleTheme = function() {};
 
 // Apply theme immediately on script load
 window.initTheme();
@@ -488,7 +392,6 @@ window.CLIENT_SIDEBAR_CSS = `
         padding: 8px 0;
         flex-shrink: 0;
     }
-    .cs-theme-toggle,
     .cs-signout {
         display: flex;
         align-items: center;
@@ -509,33 +412,25 @@ window.CLIENT_SIDEBAR_CSS = `
         white-space: nowrap;
         min-height: 44px;
     }
-    .client-sidebar:hover .cs-theme-toggle,
     .client-sidebar:hover .cs-signout {
         padding-left: 16px;
-    }
-    .cs-theme-toggle:hover {
-        background: rgba(255, 255, 255, 0.05);
-        color: #ffffff;
     }
     .cs-signout:hover {
         background: rgba(239, 68, 68, 0.08);
         color: #ef4444;
     }
-    .cs-theme-toggle svg,
     .cs-signout svg {
         width: 20px;
         height: 20px;
         flex-shrink: 0;
     }
-    .cs-signout-label,
-    .cs-theme-label {
+    .cs-signout-label {
         font-size: 13px;
         font-weight: 600;
         opacity: 0;
         transition: opacity 0.15s ease 0.05s;
     }
-    .client-sidebar:hover .cs-signout-label,
-    .client-sidebar:hover .cs-theme-label {
+    .client-sidebar:hover .cs-signout-label {
         opacity: 1;
     }
     .cs-main-content {
@@ -582,15 +477,13 @@ window.CLIENT_SIDEBAR_CSS = `
             justify-content: flex-start;
             padding-left: 16px;
         }
-        .client-sidebar.open .cs-theme-toggle,
         .client-sidebar.open .cs-signout {
             justify-content: flex-start;
             padding-left: 16px;
         }
         .client-sidebar.open .cs-nav-label,
         .client-sidebar.open .cs-logo-text,
-        .client-sidebar.open .cs-signout-label,
-        .client-sidebar.open .cs-theme-label {
+        .client-sidebar.open .cs-signout-label {
             opacity: 1;
         }
         .cs-overlay.open {
@@ -835,41 +728,6 @@ window.NOTIFICATION_SYSTEM_CSS = `
         to { opacity: 1; transform: translateX(0); }
     }
 
-    /* Light theme overrides */
-    [data-theme="light"] .notif-bell {
-        background: rgba(0,0,0,0.06);
-        border-color: rgba(0,0,0,0.1);
-        color: #374151;
-    }
-    [data-theme="light"] .notif-bell:hover { background: rgba(0,0,0,0.1); }
-    [data-theme="light"] .notif-dropdown {
-        background: rgba(255,255,255,0.97);
-        border-color: rgba(0,0,0,0.1);
-        box-shadow: 0 16px 48px rgba(0,0,0,0.15);
-    }
-    [data-theme="light"] .notif-dd-header { color: #111827; border-bottom-color: rgba(0,0,0,0.08); }
-    [data-theme="light"] .notif-dd-item:hover { background: rgba(0,0,0,0.04); }
-    [data-theme="light"] .notif-dd-title { color: #111827; }
-    [data-theme="light"] .notif-dd-preview { color: #6b7280; }
-    [data-theme="light"] .notif-dd-empty { color: #9ca3af; }
-    [data-theme="light"] .notif-modal {
-        background: rgba(255,255,255,0.98);
-        border-color: rgba(240,200,50,0.35);
-        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-    }
-    [data-theme="light"] .notif-modal-overlay { background: rgba(0,0,0,0.35); }
-    [data-theme="light"] .notif-modal-close { background: rgba(0,0,0,0.06); color: #6b7280; }
-    [data-theme="light"] .notif-modal-close:hover { background: rgba(0,0,0,0.1); color: #111; }
-    [data-theme="light"] .notif-modal-title { color: #111827; }
-    [data-theme="light"] .notif-modal-message { color: #374151; }
-    [data-theme="light"] .notif-toast {
-        background: rgba(255,255,255,0.97);
-        border-color: rgba(240,200,50,0.4);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-    }
-    [data-theme="light"] .notif-toast-title { color: #111827; }
-    [data-theme="light"] .notif-toast-preview { color: #6b7280; }
-
     /* Mobile responsive */
     @media (max-width: 600px) {
         .notif-bell { top: 12px; right: 12px; width: 36px; height: 36px; }
@@ -880,11 +738,184 @@ window.NOTIFICATION_SYSTEM_CSS = `
     }
 `;
 
+// Chat widget CSS (Intercom-style floating chat)
+window.CHAT_WIDGET_CSS = `
+    .cw-bubble {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f0c832 0%, #e6b800 100%);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 290;
+        box-shadow: 0 4px 20px rgba(240, 200, 50, 0.35);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .cw-bubble:hover {
+        transform: scale(1.08);
+        box-shadow: 0 6px 28px rgba(240, 200, 50, 0.5);
+    }
+    .cw-bubble svg { width: 26px; height: 26px; color: #0a0a0a; }
+    .cw-bubble-badge {
+        position: absolute;
+        top: -2px; right: -2px;
+        width: 14px; height: 14px;
+        border-radius: 50%;
+        background: #ef4444;
+        border: 2px solid #0a0a0a;
+        display: none;
+    }
+    .cw-bubble-badge.visible { display: block; }
+
+    .cw-panel {
+        position: fixed;
+        bottom: 92px;
+        right: 24px;
+        width: 380px;
+        height: 520px;
+        max-height: calc(100vh - 120px);
+        background: rgba(14, 14, 14, 0.97);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(240, 200, 50, 0.2);
+        border-radius: 16px;
+        z-index: 295;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 16px 60px rgba(0, 0, 0, 0.6);
+        animation: cwSlideUp 0.3s ease-out;
+    }
+    .cw-panel.open { display: flex; }
+    @keyframes cwSlideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .cw-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 18px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        flex-shrink: 0;
+    }
+    .cw-header-avatar {
+        width: 36px; height: 36px;
+        border-radius: 50%;
+        background: rgba(240, 200, 50, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border: 1px solid rgba(240, 200, 50, 0.2);
+    }
+    .cw-header-avatar svg { width: 18px; height: 18px; color: #f0c832; }
+    .cw-header-info { flex: 1; }
+    .cw-header-name { font-weight: 700; font-size: 14px; color: #f5f5f5; }
+    .cw-header-status {
+        font-size: 11px; color: #22c55e;
+        display: flex; align-items: center; gap: 4px;
+    }
+    .cw-header-status::before {
+        content: ''; width: 6px; height: 6px;
+        border-radius: 50%; background: #22c55e;
+    }
+    .cw-close {
+        width: 30px; height: 30px; border-radius: 50%;
+        background: rgba(255, 255, 255, 0.06); border: none;
+        color: #9ca3af; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: background 0.15s;
+    }
+    .cw-close:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+    .cw-close svg { width: 16px; height: 16px; }
+
+    .cw-messages {
+        flex: 1; overflow-y: auto; padding: 16px;
+        display: flex; flex-direction: column; gap: 12px;
+    }
+    .cw-messages::-webkit-scrollbar { width: 4px; }
+    .cw-messages::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1); border-radius: 2px;
+    }
+
+    .cw-msg { display: flex; flex-direction: column; max-width: 85%; }
+    .cw-msg.them { align-self: flex-start; }
+    .cw-msg.me { align-self: flex-end; }
+    .cw-msg-bubble {
+        padding: 10px 14px; border-radius: 14px;
+        font-size: 13px; line-height: 1.5; word-wrap: break-word;
+    }
+    .cw-msg.them .cw-msg-bubble {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: #e5e7eb; border-bottom-left-radius: 4px;
+    }
+    .cw-msg.me .cw-msg-bubble {
+        background: rgba(240, 200, 50, 0.15);
+        border: 1px solid rgba(240, 200, 50, 0.2);
+        color: #f5f5f5; border-bottom-right-radius: 4px;
+    }
+    .cw-msg-time {
+        font-size: 10px; color: #6b7280; margin-top: 4px; padding: 0 4px;
+    }
+    .cw-msg.me .cw-msg-time { text-align: right; }
+
+    .cw-empty {
+        flex: 1; display: flex; align-items: center; justify-content: center;
+        color: #6b7280; font-size: 13px; text-align: center; padding: 20px;
+    }
+
+    .cw-input-area {
+        padding: 12px 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        display: flex; align-items: flex-end; gap: 8px; flex-shrink: 0;
+    }
+    .cw-input {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 10px 14px;
+        color: #f5f5f5;
+        font-family: 'Manrope', sans-serif;
+        font-size: 13px;
+        resize: none; outline: none;
+        max-height: 100px; line-height: 1.4;
+        transition: border-color 0.2s;
+    }
+    .cw-input::placeholder { color: #6b7280; }
+    .cw-input:focus { border-color: rgba(240, 200, 50, 0.3); }
+    .cw-send {
+        width: 36px; height: 36px; border-radius: 50%;
+        background: linear-gradient(135deg, #f0c832, #e6b800);
+        border: none; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0; transition: opacity 0.2s, transform 0.15s;
+    }
+    .cw-send:disabled { opacity: 0.4; cursor: not-allowed; }
+    .cw-send:not(:disabled):hover { transform: scale(1.05); }
+    .cw-send svg { width: 16px; height: 16px; color: #0a0a0a; }
+
+    @media (max-width: 600px) {
+        .cw-panel {
+            right: 0; bottom: 0; left: 0;
+            width: 100%; height: 100%;
+            max-height: 100vh; border-radius: 0;
+        }
+        .cw-bubble { bottom: 16px; right: 16px; width: 50px; height: 50px; }
+    }
+`;
+
 // Client sidebar HTML builder (function so logoPath resolves at call time)
 window.buildClientSidebarHTML = function(logoPath) {
-    var isDark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
-    var themeIcon = isDark ? window._themeSunIcon : window._themeMoonIcon;
-    var themeLabel = isDark ? 'Light Mode' : 'Dark Mode';
     return `
     <button class="cs-mobile-toggle" onclick="toggleClientSidebar()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -899,10 +930,6 @@ window.buildClientSidebarHTML = function(logoPath) {
         </div>
         <div class="client-sidebar-nav"></div>
         <div class="cs-bottom">
-            <button class="cs-theme-toggle" onclick="window.toggleTheme()">
-                <span class="theme-toggle-icon">${themeIcon}</span>
-                <span class="cs-theme-label theme-toggle-label">${themeLabel}</span>
-            </button>
             <button class="cs-signout" onclick="window.signOut()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
@@ -988,6 +1015,9 @@ window.injectClientSidebar = function(activePage, logoPath) {
         // Init notification system (async, non-blocking)
         window.initNotificationSystem();
     }
+
+    // Init chat widget (async, non-blocking)
+    window._initChatWidget();
 };
 
 // ============================================================
@@ -1536,3 +1566,380 @@ window.initNotificationSystem = async function() {
     // Subscribe to real-time
     window._subscribeNotifications();
 };
+
+// ============================================================
+// CHAT WIDGET (Intercom-style floating chat)
+// ============================================================
+
+window._chatWidgetState = {
+    conversationId: null,
+    messages: [],
+    isOpen: false,
+    subscription: null,
+    initialized: false,
+    userId: null,
+    displayName: 'Support Team',
+    greetingMessage: 'Hi! How can I help you today?'
+};
+
+// Initialize chat widget
+window._initChatWidget = async function() {
+    if (window._chatWidgetState.initialized) return;
+
+    // Skip on chat.html page
+    var path = window.location.pathname;
+    if (path.indexOf('/portal/chat') !== -1) return;
+
+    // Check auth
+    var sessionResult = await window.supabaseClient.auth.getSession();
+    var session = sessionResult.data.session;
+    if (!session || !session.user) return;
+
+    // Skip admins and non-members
+    var userData = await window.supabaseClient
+        .from('users')
+        .select('is_admin, status, first_name, last_name')
+        .eq('id', session.user.id)
+        .single();
+
+    if (!userData.data || userData.data.is_admin) return;
+    var userStatus = (userData.data.status || '').toLowerCase();
+    if (['member', 'verified_member', 'active'].indexOf(userStatus) === -1) return;
+
+    window._chatWidgetState.userId = session.user.id;
+    window._chatWidgetState.initialized = true;
+
+    // Load AI config
+    try {
+        var aiConfig = await window.getAIChatConfig();
+        if (aiConfig) {
+            window._chatWidgetState.displayName = aiConfig.ai_display_name || 'Support Team';
+            window._chatWidgetState.greetingMessage = aiConfig.greeting_message || 'Hi! How can I help you today?';
+        }
+    } catch (e) { /* use defaults */ }
+
+    window._injectChatWidgetHTML();
+};
+
+// Inject widget HTML into DOM
+window._injectChatWidgetHTML = function() {
+    if (document.getElementById('cw-bubble')) return;
+
+    // Inject CSS
+    if (!document.getElementById('cw-css')) {
+        var style = document.createElement('style');
+        style.id = 'cw-css';
+        style.textContent = window.CHAT_WIDGET_CSS;
+        document.head.appendChild(style);
+    }
+
+    // Bubble
+    var bubble = document.createElement('button');
+    bubble.id = 'cw-bubble';
+    bubble.className = 'cw-bubble';
+    bubble.onclick = function() { window._toggleChatWidget(); };
+    bubble.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="cw-bubble-badge" id="cw-badge"></span>';
+    document.body.appendChild(bubble);
+
+    // Panel
+    var panel = document.createElement('div');
+    panel.id = 'cw-panel';
+    panel.className = 'cw-panel';
+    panel.innerHTML =
+        '<div class="cw-header">' +
+            '<div class="cw-header-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg></div>' +
+            '<div class="cw-header-info">' +
+                '<div class="cw-header-name">' + _escCw(window._chatWidgetState.displayName) + '</div>' +
+                '<div class="cw-header-status">Online</div>' +
+            '</div>' +
+            '<button class="cw-close" onclick="window._toggleChatWidget()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
+        '</div>' +
+        '<div class="cw-messages" id="cw-messages"><div class="cw-empty">Send a message to get started</div></div>' +
+        '<div class="cw-input-area">' +
+            '<textarea class="cw-input" id="cw-input" placeholder="Type a message..." rows="1"></textarea>' +
+            '<button class="cw-send" id="cw-send" onclick="window._sendWidgetMessage()" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg></button>' +
+        '</div>';
+    document.body.appendChild(panel);
+
+    // Wire input events
+    var cwInput = document.getElementById('cw-input');
+    cwInput.addEventListener('input', function() {
+        document.getElementById('cw-send').disabled = !cwInput.value.trim();
+        cwInput.style.height = 'auto';
+        cwInput.style.height = Math.min(cwInput.scrollHeight, 100) + 'px';
+    });
+    cwInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            window._sendWidgetMessage();
+        }
+    });
+};
+
+// HTML escape helper for chat widget
+function _escCw(str) {
+    var div = document.createElement('div');
+    div.textContent = str || '';
+    return div.innerHTML;
+}
+
+// Toggle panel open/close
+window._toggleChatWidget = function() {
+    var panel = document.getElementById('cw-panel');
+    if (!panel) return;
+    var isOpen = panel.classList.contains('open');
+
+    if (isOpen) {
+        panel.classList.remove('open');
+        window._chatWidgetState.isOpen = false;
+    } else {
+        panel.classList.add('open');
+        window._chatWidgetState.isOpen = true;
+        // Clear badge
+        var badge = document.getElementById('cw-badge');
+        if (badge) badge.classList.remove('visible');
+        // Load or create conversation on first open
+        window._openOrCreateWidgetConversation();
+        setTimeout(function() {
+            var inp = document.getElementById('cw-input');
+            if (inp) inp.focus();
+        }, 300);
+    }
+};
+
+// Open existing or create new Quick Chat conversation
+window._openOrCreateWidgetConversation = async function() {
+    var state = window._chatWidgetState;
+    if (state.conversationId) {
+        window._scrollWidgetToBottom();
+        return;
+    }
+
+    var messagesEl = document.getElementById('cw-messages');
+    messagesEl.innerHTML = '<div class="cw-empty">Connecting...</div>';
+
+    try {
+        // Look for existing open Quick Chat
+        var result = await window.supabaseClient
+            .from('chat_conversations')
+            .select('*')
+            .eq('user_id', state.userId)
+            .eq('title', 'Quick Chat')
+            .eq('status', 'open')
+            .order('created_at', { ascending: false })
+            .limit(1);
+
+        if (result.error) throw result.error;
+
+        if (result.data && result.data.length > 0) {
+            state.conversationId = result.data[0].id;
+            await window._loadWidgetMessages(state.conversationId);
+            window._subscribeChatWidget();
+            return;
+        }
+
+        // Create new conversation
+        var now = new Date().toISOString();
+        var greeting = state.greetingMessage;
+
+        var convResult = await window.supabaseClient
+            .from('chat_conversations')
+            .insert({
+                user_id: state.userId,
+                status: 'open',
+                handler_type: 'ai',
+                category: 'ai',
+                title: 'Quick Chat',
+                last_message_at: now,
+                last_message_preview: greeting.substring(0, 100),
+                user_unread_count: 0
+            })
+            .select()
+            .single();
+
+        if (convResult.error) throw convResult.error;
+
+        state.conversationId = convResult.data.id;
+
+        // Insert AI greeting
+        await window.supabaseClient
+            .from('chat_messages')
+            .insert({
+                conversation_id: state.conversationId,
+                sender_id: state.userId,
+                sender_type: 'admin',
+                content: greeting,
+                message: greeting,
+                is_ai_message: true,
+                display_name_override: state.displayName
+            });
+
+        await window._loadWidgetMessages(state.conversationId);
+        window._subscribeChatWidget();
+
+    } catch (err) {
+        console.error('Chat widget: error opening conversation:', err);
+        messagesEl.innerHTML = '<div class="cw-empty">Unable to connect. Please try again.</div>';
+    }
+};
+
+// Load messages for a conversation
+window._loadWidgetMessages = async function(convId) {
+    var messagesEl = document.getElementById('cw-messages');
+    if (!messagesEl) return;
+
+    try {
+        var result = await window.supabaseClient
+            .from('chat_messages')
+            .select('*')
+            .eq('conversation_id', convId)
+            .order('created_at', { ascending: true });
+
+        if (result.error) throw result.error;
+
+        var messages = result.data || [];
+        window._chatWidgetState.messages = messages;
+
+        if (messages.length === 0) {
+            messagesEl.innerHTML = '<div class="cw-empty">Send a message to get started.</div>';
+            return;
+        }
+
+        messagesEl.innerHTML = '';
+        messages.forEach(function(msg) {
+            window._renderWidgetMessage(msg);
+        });
+        window._scrollWidgetToBottom();
+
+    } catch (err) {
+        console.error('Chat widget: error loading messages:', err);
+        messagesEl.innerHTML = '<div class="cw-empty">Error loading messages.</div>';
+    }
+};
+
+// Render a single message bubble
+window._renderWidgetMessage = function(msg) {
+    var messagesEl = document.getElementById('cw-messages');
+    if (!messagesEl) return;
+
+    var empty = messagesEl.querySelector('.cw-empty');
+    if (empty) empty.remove();
+
+    var isMe = msg.sender_type === 'customer';
+    var timeStr = new Date(msg.created_at).toLocaleTimeString('en-US', {
+        hour: 'numeric', minute: '2-digit', hour12: true
+    });
+    var content = msg.content || msg.message || '';
+
+    var msgEl = document.createElement('div');
+    msgEl.className = 'cw-msg ' + (isMe ? 'me' : 'them');
+    msgEl.setAttribute('data-msg-id', msg.id);
+    msgEl.innerHTML =
+        '<div class="cw-msg-bubble">' + _escCw(content) + '</div>' +
+        '<div class="cw-msg-time">' + timeStr + '</div>';
+
+    messagesEl.appendChild(msgEl);
+};
+
+// Send a message
+window._sendWidgetMessage = async function() {
+    var input = document.getElementById('cw-input');
+    var sendBtn = document.getElementById('cw-send');
+    if (!input) return;
+
+    var text = input.value.trim();
+    if (!text) return;
+
+    var state = window._chatWidgetState;
+    if (!state.userId || !state.conversationId) return;
+
+    sendBtn.disabled = true;
+    input.disabled = true;
+
+    try {
+        var result = await window.supabaseClient
+            .from('chat_messages')
+            .insert({
+                conversation_id: state.conversationId,
+                sender_id: state.userId,
+                sender_type: 'customer',
+                content: text,
+                message: text
+            })
+            .select()
+            .single();
+
+        if (result.error) throw result.error;
+
+        // Update conversation metadata
+        await window.supabaseClient
+            .from('chat_conversations')
+            .update({
+                last_message_at: new Date().toISOString(),
+                last_message_preview: text.substring(0, 100),
+                admin_unread_count: 1
+            })
+            .eq('id', state.conversationId);
+
+        input.value = '';
+        input.style.height = 'auto';
+
+        window._renderWidgetMessage(result.data);
+        window._scrollWidgetToBottom();
+
+    } catch (err) {
+        console.error('Chat widget: error sending message:', err);
+    } finally {
+        input.disabled = false;
+        input.focus();
+        sendBtn.disabled = !input.value.trim();
+    }
+};
+
+// Subscribe to real-time messages
+window._subscribeChatWidget = function() {
+    var state = window._chatWidgetState;
+    if (!state.conversationId) return;
+    if (state.subscription) {
+        window.supabaseClient.removeChannel(state.subscription);
+    }
+
+    state.subscription = window.supabaseClient
+        .channel('widget-chat-' + state.conversationId)
+        .on('postgres_changes', {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'chat_messages',
+            filter: 'conversation_id=eq.' + state.conversationId
+        }, function(payload) {
+            if (!payload.new) return;
+            if (payload.new.sender_type === 'customer') return;
+            var existing = document.querySelector('[data-msg-id="' + payload.new.id + '"]');
+            if (existing) return;
+
+            window._renderWidgetMessage(payload.new);
+            window._scrollWidgetToBottom();
+
+            // Show badge if panel is closed
+            if (!window._chatWidgetState.isOpen) {
+                var badge = document.getElementById('cw-badge');
+                if (badge) badge.classList.add('visible');
+            }
+        })
+        .subscribe();
+};
+
+// Scroll to bottom of chat
+window._scrollWidgetToBottom = function() {
+    var el = document.getElementById('cw-messages');
+    if (el) {
+        requestAnimationFrame(function() { el.scrollTop = el.scrollHeight; });
+    }
+};
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', function() {
+    if (window._chatWidgetState.subscription) {
+        window.supabaseClient.removeChannel(window._chatWidgetState.subscription);
+    }
+});
