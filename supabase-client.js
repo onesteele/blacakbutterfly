@@ -234,7 +234,7 @@ window.applyClientSidebar = function(activePage) {
         { href: '/portal/performance.html', icon: 'performance', label: 'Performance', id: 'performance' },
         { href: '/portal/content.html', icon: 'content', label: 'Content', id: 'content' },
         { href: '/portal/announcements.html', icon: 'announcements', label: 'Announcements', id: 'announcements' },
-        { href: '/portal/chat.html', icon: 'messages', label: 'Messages', id: 'messages' },
+        { href: '/portal/chat.html', icon: 'messages', label: 'Support', id: 'messages' },
         { href: '/portal/account.html', icon: 'account', label: 'Account', id: 'account' },
     ];
 
@@ -431,19 +431,17 @@ window.CLIENT_SIDEBAR_CSS = `
         align-items: center;
         gap: 14px;
         padding: 12px 0;
+        padding-left: 19px;
         margin: 0 6px;
         border-radius: 10px;
         text-decoration: none;
         color: #9ca3af;
         transition: all 0.2s ease;
         white-space: nowrap;
-        overflow: hidden;
         min-height: 44px;
         position: relative;
-        justify-content: center;
     }
     .client-sidebar:hover .cs-nav-item {
-        justify-content: flex-start;
         padding-left: 16px;
     }
     .cs-nav-item:hover {
@@ -496,6 +494,7 @@ window.CLIENT_SIDEBAR_CSS = `
         align-items: center;
         gap: 14px;
         padding: 12px 0;
+        padding-left: 20px;
         margin: 0 6px;
         border-radius: 10px;
         text-decoration: none;
@@ -508,13 +507,10 @@ window.CLIENT_SIDEBAR_CSS = `
         font-size: 14px;
         width: calc(100% - 12px);
         white-space: nowrap;
-        overflow: hidden;
         min-height: 44px;
-        justify-content: center;
     }
     .client-sidebar:hover .cs-theme-toggle,
     .client-sidebar:hover .cs-signout {
-        justify-content: flex-start;
         padding-left: 16px;
     }
     .cs-theme-toggle:hover {
