@@ -1145,16 +1145,23 @@ window.updateUserStatus = async function(userId, status) {
     return true;
 };
 
-// Delete a user (admin only) - removes from users table; auth user remains but can't access anything
+// Delete a user (admin only) - removes from both public.users and auth.users
 window.deleteUser = async function(userId) {
-    const { error } = await window.supabaseClient
-        .from('users')
-        .delete()
-        .eq('id', userId);
+    const { error } = await window.supabaseClient.rpc('admin_delete_user', {
+        target_user_id: userId
+    });
 
     if (error) {
         console.error('Error deleting user:', error);
-        return false;
+        // Fallback: try deleting from public.users only
+        const { error: fallbackError } = await window.supabaseClient
+            .from('users')
+            .delete()
+            .eq('id', userId);
+        if (fallbackError) {
+            console.error('Fallback delete also failed:', fallbackError);
+            return false;
+        }
     }
     return true;
 };

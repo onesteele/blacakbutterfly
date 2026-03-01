@@ -729,6 +729,29 @@ CREATE TRIGGER on_auth_user_created
     FOR EACH ROW
     EXECUTE FUNCTION handle_new_user();
 
+-- RPC: Admin delete user (removes from both auth.users and public.users)
+CREATE OR REPLACE FUNCTION public.admin_delete_user(target_user_id UUID)
+RETURNS VOID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    -- Verify caller is admin
+    IF NOT public.is_user_admin(auth.uid()) THEN
+        RAISE EXCEPTION 'Not authorized';
+    END IF;
+
+    -- Delete from public.users (cascade will handle related rows)
+    DELETE FROM public.users WHERE id = target_user_id;
+
+    -- Delete from auth.users
+    DELETE FROM auth.users WHERE id = target_user_id;
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.admin_delete_user(UUID) TO authenticated;
+
 -- Storage bucket for verification photos (run in Supabase dashboard if SQL fails)
 -- INSERT INTO storage.buckets (id, name, public) VALUES ('verification-photos', 'verification-photos', false);
 -- Storage policies:

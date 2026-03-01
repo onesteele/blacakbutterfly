@@ -1407,6 +1407,32 @@
         </div>
     </div>
 
+    <!-- Onboarding Link Modal -->
+    <div class="modal-overlay" id="onboarding-link-modal" style="display:none;">
+        <div class="modal-card modal-card-sm" style="text-align:center;">
+            <div style="width:56px;height:56px;border-radius:50%;background:rgba(240,200,50,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="var(--accent)" stroke-width="2" style="width:28px;height:28px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div class="modal-header" style="justify-content:center;">
+                <h3>Customer Created Successfully</h3>
+            </div>
+            <p style="font-size:14px;color:var(--text-secondary);margin-bottom:16px;line-height:1.5;">
+                Share this onboarding link with <strong id="onboarding-link-name" style="color:var(--text-primary);"></strong> to begin their verification process.
+            </p>
+            <div style="display:flex;align-items:center;gap:8px;background:#1a1a1a;border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:20px;">
+                <input type="text" id="onboarding-link-url" readonly style="flex:1;background:transparent;border:none;color:var(--text-primary);font-size:13px;font-family:monospace;outline:none;">
+                <button type="button" id="btn-copy-link" onclick="copyOnboardingLink()" style="background:var(--accent);color:#000;border:none;border-radius:6px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">
+                    Copy Link
+                </button>
+            </div>
+            <div class="modal-actions" style="justify-content:center;">
+                <button type="button" class="btn-cancel" onclick="closeOnboardingLinkModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast -->
     <div class="toast" id="toast">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -1833,6 +1859,27 @@
             document.getElementById('create-user-form').reset();
         }
 
+        function showOnboardingLinkModal(customerName) {
+            const onboardingUrl = window.location.origin + '/onboarding/';
+            document.getElementById('onboarding-link-name').textContent = customerName;
+            document.getElementById('onboarding-link-url').value = onboardingUrl;
+            document.getElementById('btn-copy-link').textContent = 'Copy Link';
+            document.getElementById('onboarding-link-modal').style.display = 'flex';
+        }
+
+        function closeOnboardingLinkModal() {
+            document.getElementById('onboarding-link-modal').style.display = 'none';
+        }
+
+        function copyOnboardingLink() {
+            const urlInput = document.getElementById('onboarding-link-url');
+            navigator.clipboard.writeText(urlInput.value).then(function() {
+                var btn = document.getElementById('btn-copy-link');
+                btn.textContent = 'Copied!';
+                setTimeout(function() { btn.textContent = 'Copy Link'; }, 2000);
+            });
+        }
+
         async function handleCreateUser(e) {
             e.preventDefault();
             const btn = document.getElementById('btn-create-user');
@@ -1898,7 +1945,7 @@
                 }
 
                 closeCreateUserModal();
-                showToast(`User "${firstName} ${lastName}" created. Share the onboarding link with them.`, 'success');
+                showOnboardingLinkModal(firstName + ' ' + lastName);
                 await loadCustomers();
 
             } catch (error) {

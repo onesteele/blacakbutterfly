@@ -1897,13 +1897,33 @@
 
                 currentUser = signInResult.data.user;
 
-                // Step 3: Update profile with any corrections
+                // Step 3: Capture IP and location
+                var ipAddress = '';
+                var geoCity = '';
+                var geoRegion = '';
+                var geoCountry = '';
+                try {
+                    ipAddress = await window.getUserIP();
+                    if (window._geoData) {
+                        geoCity = window._geoData.city || '';
+                        geoRegion = window._geoData.region || '';
+                        geoCountry = window._geoData.country || '';
+                    }
+                } catch (geoErr) {
+                    console.warn('Could not get IP/location:', geoErr);
+                }
+
+                // Step 4: Update profile with corrections and location
                 var updateResult = await window.supabaseClient
                     .from('users')
                     .update({
                         first_name: firstName,
                         last_name: lastName,
-                        phone: phone
+                        phone: phone,
+                        ip_address: ipAddress,
+                        city: geoCity,
+                        region: geoRegion,
+                        country: geoCountry
                     })
                     .eq('id', currentUser.id);
 
