@@ -712,6 +712,300 @@
         .form-group.has-error textarea { border-color: var(--error); }
         .form-group.has-error .field-error { display: block; }
 
+        /* ── Live Camera / Selfie ── */
+        .camera-container {
+            text-align: center;
+        }
+
+        .camera-viewfinder {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #0e0e0f;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 2px solid var(--border);
+        }
+
+        .camera-viewfinder video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        .camera-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .face-guide {
+            width: 160px;
+            height: 200px;
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 50%;
+        }
+
+        .camera-loading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #9b9ba0;
+            font-size: 13px;
+            background: #0e0e0f;
+        }
+
+        .camera-loading svg {
+            width: 32px;
+            height: 32px;
+            animation: pulse 1.5s ease infinite;
+        }
+
+        .camera-loading.hidden { display: none; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        .camera-capture-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 4px solid var(--accent);
+            background: transparent;
+            cursor: pointer;
+            margin: 16px auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+            position: relative;
+        }
+
+        .camera-capture-btn:hover {
+            border-color: var(--accent-light);
+            transform: scale(1.05);
+        }
+
+        .camera-capture-btn:active {
+            transform: scale(0.95);
+        }
+
+        .capture-ring {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: block;
+            transition: all 0.15s ease;
+        }
+
+        .camera-capture-btn:hover .capture-ring {
+            background: var(--accent-light);
+        }
+
+        .camera-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .camera-preview {
+            text-align: center;
+        }
+
+        .camera-preview img {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            border-radius: var(--radius);
+            border: 2px solid var(--success-border);
+            transform: scaleX(-1);
+        }
+
+        .camera-preview-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+
+        .btn-retake {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text);
+            font-size: 13px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-retake svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .btn-retake:hover {
+            background: var(--border);
+        }
+
+        .camera-preview-check {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .camera-preview-check svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .camera-error {
+            padding: 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .camera-error svg {
+            width: 32px;
+            height: 32px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        /* ── Eligibility Warning Modal ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: modalFadeIn 0.25s ease;
+        }
+
+        .modal-overlay.visible {
+            display: flex;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes modalSlideUp {
+            from { opacity: 0; transform: translateY(16px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .modal-box {
+            background: var(--surface);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.05);
+            max-width: 440px;
+            width: 100%;
+            padding: 28px;
+            animation: modalSlideUp 0.3s ease;
+            position: relative;
+        }
+
+        .modal-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-icon svg {
+            width: 24px;
+            height: 24px;
+            color: var(--warning);
+        }
+
+        .modal-box h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+            letter-spacing: -0.2px;
+        }
+
+        .modal-box .modal-body {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+            margin-bottom: 22px;
+        }
+
+        .modal-box .modal-body strong {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .modal-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-btns .btn-modal {
+            flex: 1;
+            padding: 11px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s ease;
+        }
+
+        .modal-btns .btn-modal-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text);
+        }
+
+        .modal-btns .btn-modal-secondary:hover {
+            background: var(--border);
+        }
+
+        .modal-btns .btn-modal-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .modal-btns .btn-modal-primary:hover {
+            background: var(--accent-light);
+        }
+
         /* ── Footer ── */
         .page-footer {
             margin-top: 28px;
@@ -864,25 +1158,52 @@
                 </div>
             </div>
 
-            <!-- Panel: Selfie -->
+            <!-- Panel: Selfie (Live Camera) -->
             <div class="verify-panel" id="vp-selfie">
                 <div class="info-box">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <p>Take or upload a clear photo of your face. Make sure your face is well-lit and clearly visible.</p>
+                    <p>Position your face in the frame and take a photo. Make sure your face is well-lit and clearly visible.</p>
                 </div>
                 <div class="form-group">
                     <label>Face Photo <span class="required">*</span></label>
-                    <div class="upload-zone" id="uz-selfie" onclick="document.getElementById('f-selfie').click()">
-                        <input type="file" id="f-selfie" accept="image/*" capture="user" onchange="handleFileUpload(this, 'uz-selfie')">
-                        <div class="upload-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
-                        <div class="upload-label">Take a selfie or upload a photo</div>
-                        <div class="upload-sublabel">JPG or PNG up to 10MB</div>
-                        <div class="upload-filename" id="fn-selfie"></div>
+
+                    <!-- Camera viewfinder -->
+                    <div class="camera-container" id="camera-container">
+                        <div class="camera-viewfinder" id="camera-viewfinder">
+                            <video id="selfie-video" autoplay playsinline muted></video>
+                            <canvas id="selfie-canvas" style="display:none"></canvas>
+                            <div class="camera-overlay">
+                                <div class="face-guide"></div>
+                            </div>
+                            <div class="camera-loading" id="camera-loading">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                <span>Starting camera...</span>
+                            </div>
+                        </div>
+                        <button type="button" class="camera-capture-btn" id="btn-capture" onclick="captureSelfie()">
+                            <span class="capture-ring"></span>
+                        </button>
+                        <p class="camera-hint">Tap the button to take your photo</p>
+                    </div>
+
+                    <!-- Captured preview (hidden until photo taken) -->
+                    <div class="camera-preview" id="camera-preview" style="display:none">
+                        <img id="selfie-preview-img" alt="Captured selfie">
+                        <div class="camera-preview-actions">
+                            <button type="button" class="btn-retake" onclick="retakeSelfie()">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                Retake Photo
+                            </button>
+                            <span class="camera-preview-check">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                Photo captured
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="field-error" id="err-verify" style="margin-bottom:8px">Please upload a photo ID or selfie</div>
+            <div class="field-error" id="err-verify" style="margin-bottom:8px">Please upload a photo ID or take a selfie</div>
 
             <div class="btn-row">
                 <button class="btn btn-secondary" onclick="prevStep(4)"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12"/></svg> Back</button>
@@ -1113,6 +1434,21 @@
         </div>
     </div>
 
+    <!-- Eligibility Warning Modal -->
+    <div class="modal-overlay" id="eligibility-modal">
+        <div class="modal-box">
+            <div class="modal-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <h3 id="modal-title">Eligibility Notice</h3>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-btns">
+                <button class="btn-modal btn-modal-secondary" id="modal-btn-back" onclick="closeModal(false)">Go Back</button>
+                <button class="btn-modal btn-modal-primary" id="modal-btn-continue" onclick="closeModal(true)">Continue Anyway</button>
+            </div>
+        </div>
+    </div>
+
     <div class="page-footer">
         <p>&copy; 2026 Profit Insider - RP Profits. All rights reserved.</p>
         <p style="margin-top:4px"><a href="/legal/contract.html" target="_blank">Customer Agreement</a></p>
@@ -1135,6 +1471,8 @@
         var cur = document.getElementById('step-' + currentStep);
         var next = document.getElementById('step-' + n);
         if (!cur || !next) return;
+        // Stop camera when leaving step 4
+        if (currentStep === 4 && n !== 4) stopCamera();
         cur.classList.add('slide-out');
         setTimeout(function() {
             cur.classList.remove('active','slide-out');
@@ -1145,11 +1483,103 @@
         }, 240);
     }
 
+    var pendingStep = null;
+    var modalResolve = null;
+
     function nextStep(from) {
         if (!validateStep(from)) return;
+
+        var warning = checkEligibilityWarning(from);
+        if (warning) {
+            showEligibilityModal(warning, function(proceed) {
+                if (proceed) {
+                    if (from === 2) populateConfirmGrid();
+                    if (from === 12) populateReview();
+                    goToStep(from + 1);
+                }
+            });
+            return;
+        }
+
         if (from === 2) populateConfirmGrid();
         if (from === 12) populateReview();
         goToStep(from + 1);
+    }
+
+    function checkEligibilityWarning(step) {
+        if (step === 5) {
+            var startDate = document.getElementById('f-start-date').value;
+            if (startDate) {
+                var start = new Date(startDate);
+                var today = new Date();
+                var diffDays = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+                if (diffDays < 90) {
+                    return {
+                        title: 'Evaluation Period In Progress',
+                        body: 'Based on the start date you provided, it appears the <strong>90-day evaluation period</strong> may not yet be complete. Our refund guarantee is designed to give the algorithm a full evaluation window to demonstrate results.' +
+                              '<br><br>We want to make sure you get the most accurate assessment possible. That said, you\'re welcome to continue with your request and our team will review all the details carefully.' +
+                              '<br><br><strong>Would you like to proceed with your submission?</strong>'
+                    };
+                }
+            }
+        }
+
+        if (step === 7) {
+            var setup = getRadioValue('setup');
+            if (setup === 'no') {
+                return {
+                    title: 'Configuration Notice',
+                    body: 'We noticed you selected that a <strong>different configuration</strong> was used rather than the recommended setup provided during onboarding. The refund guarantee is based on the algorithm performing under the prescribed settings and parameters.' +
+                          '<br><br>Our review team will take this into consideration when evaluating your request. We encourage you to provide as much detail as possible in the later steps so we can give your case a thorough review.' +
+                          '<br><br><strong>Would you like to continue with your request?</strong>'
+                };
+            }
+        }
+
+        if (step === 8) {
+            var duration = getRadioValue('duration');
+            if (duration === '<30' || duration === '30-59' || duration === '60-89') {
+                var durationLabels = {'<30': 'less than 30 days', '30-59': '30 to 59 days', '60-89': '60 to 89 days'};
+                return {
+                    title: 'Evaluation Period Notice',
+                    body: 'It looks like the algorithm was run for <strong>' + durationLabels[duration] + '</strong>, which is under the full <strong>90-day evaluation period</strong> outlined in your agreement. The guarantee is structured around a complete evaluation window to ensure fair and accurate performance assessment.' +
+                          '<br><br>We understand circumstances vary, and you\'re absolutely welcome to continue submitting your request. Our team will carefully review all the information you provide and consider the full context of your situation.' +
+                          '<br><br><strong>Would you like to proceed?</strong>'
+                };
+            }
+        }
+
+        if (step === 9) {
+            var tradepost = getRadioValue('tradepost');
+            if (tradepost === 'no') {
+                return {
+                    title: 'Platform Verification Notice',
+                    body: 'You\'ve indicated that <strong>TradePost</strong> was not used to connect the algorithm. As part of the agreement, TradePost is the designated platform for verifying algorithm activity and performance during the evaluation period.' +
+                          '<br><br>Without TradePost records, our team may need additional documentation to verify your usage. You can still continue, and we\'d encourage you to upload any alternative evidence of algorithm activity in the upcoming steps.' +
+                          '<br><br><strong>Would you like to proceed with your request?</strong>'
+                };
+            }
+        }
+
+        return null;
+    }
+
+    function showEligibilityModal(warning, callback) {
+        document.getElementById('modal-title').textContent = warning.title;
+        document.getElementById('modal-body').innerHTML = warning.body;
+        document.getElementById('eligibility-modal').classList.add('visible');
+        document.body.style.overflow = 'hidden';
+        modalResolve = callback;
+    }
+
+    function closeModal(proceed) {
+        document.getElementById('eligibility-modal').classList.remove('visible');
+        document.body.style.overflow = '';
+        if (modalResolve) {
+            var cb = modalResolve;
+            modalResolve = null;
+            cb(proceed);
+        }
     }
 
     function prevStep(from) { goToStep(from - 1); }
@@ -1161,6 +1591,83 @@
         document.getElementById('progress-label').textContent = stepLabels[currentStep] || '';
     }
 
+    // ── Selfie Camera ──
+    var selfieStream = null;
+    var selfieBlob = null;
+
+    function startCamera() {
+        var video = document.getElementById('selfie-video');
+        var loading = document.getElementById('camera-loading');
+        var container = document.getElementById('camera-container');
+        var preview = document.getElementById('camera-preview');
+
+        // Reset to camera view
+        container.style.display = '';
+        preview.style.display = 'none';
+        loading.classList.remove('hidden');
+        selfieBlob = null;
+
+        if (selfieStream) {
+            selfieStream.getTracks().forEach(function(t) { t.stop(); });
+            selfieStream = null;
+        }
+
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 960 } }, audio: false })
+            .then(function(stream) {
+                selfieStream = stream;
+                video.srcObject = stream;
+                video.onloadedmetadata = function() {
+                    loading.classList.add('hidden');
+                };
+            })
+            .catch(function(err) {
+                console.error('Camera error:', err);
+                loading.innerHTML = '<div class="camera-error"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg><br>Unable to access your camera.<br>Please allow camera permissions in your browser and try again.</div>';
+            });
+    }
+
+    function stopCamera() {
+        if (selfieStream) {
+            selfieStream.getTracks().forEach(function(t) { t.stop(); });
+            selfieStream = null;
+        }
+        var video = document.getElementById('selfie-video');
+        if (video) video.srcObject = null;
+    }
+
+    function captureSelfie() {
+        var video = document.getElementById('selfie-video');
+        var canvas = document.getElementById('selfie-canvas');
+        if (!video || !video.srcObject) return;
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        var ctx = canvas.getContext('2d');
+        // Mirror the capture to match the mirrored preview
+        ctx.translate(canvas.width, 0);
+        ctx.scale(-1, 1);
+        ctx.drawImage(video, 0, 0);
+
+        // Stop camera
+        stopCamera();
+
+        // Convert to blob
+        canvas.toBlob(function(blob) {
+            selfieBlob = blob;
+
+            // Show preview
+            var img = document.getElementById('selfie-preview-img');
+            img.src = URL.createObjectURL(blob);
+            document.getElementById('camera-container').style.display = 'none';
+            document.getElementById('camera-preview').style.display = 'block';
+        }, 'image/jpeg', 0.92);
+    }
+
+    function retakeSelfie() {
+        selfieBlob = null;
+        startCamera();
+    }
+
     // ── Verify Tab Switch ──
     function switchVerifyTab(tab) {
         activeVerifyTab = tab;
@@ -1169,9 +1676,11 @@
         if (tab === 'id') {
             document.querySelectorAll('.verify-tab')[0].classList.add('active');
             document.getElementById('vp-id').classList.add('active');
+            stopCamera();
         } else {
             document.querySelectorAll('.verify-tab')[1].classList.add('active');
             document.getElementById('vp-selfie').classList.add('active');
+            startCamera();
         }
     }
 
@@ -1191,7 +1700,7 @@
         }
         if (step === 4) {
             var hasId = document.getElementById('f-id').files.length > 0;
-            var hasSelfie = document.getElementById('f-selfie').files.length > 0;
+            var hasSelfie = !!selfieBlob;
             if (!hasId && !hasSelfie) { document.getElementById('err-verify').style.display = 'block'; valid = false; }
         }
         if (step === 5) {
@@ -1273,6 +1782,7 @@
             zone.addEventListener('drop', function(e) { e.preventDefault(); zone.classList.remove('dragover'); var inp = zone.querySelector('input[type="file"]'); if (inp && e.dataTransfer.files.length) { inp.files = e.dataTransfer.files; inp.dispatchEvent(new Event('change')); } });
         });
         document.getElementById('f-email').addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); nextStep(1); } });
+        document.getElementById('eligibility-modal').addEventListener('click', function(e) { if (e.target === this) closeModal(false); });
     });
 
     // ── Option Select ──
@@ -1302,8 +1812,8 @@
         var dl = {'90+':'90+ days','60-89':'60-89 days','30-59':'30-59 days','<30':'Less than 30 days'};
 
         var hasId = document.getElementById('f-id').files.length > 0;
-        var hasSelfie = document.getElementById('f-selfie').files.length > 0;
-        var verifyFile = hasId ? document.getElementById('f-id').files[0].name : (hasSelfie ? document.getElementById('f-selfie').files[0].name : 'None');
+        var hasSelfie = !!selfieBlob;
+        var verifyFile = hasId ? document.getElementById('f-id').files[0].name : (hasSelfie ? 'selfie-capture.jpg' : 'None');
         var verifyType = hasId ? 'Photo ID' : 'Selfie';
 
         var h = '';
@@ -1380,7 +1890,7 @@
             verification_type: hasId ? 'photo_id' : 'selfie',
             files: {
                 id: document.getElementById('f-id').files[0] || null,
-                selfie: document.getElementById('f-selfie').files[0] || null,
+                selfie: selfieBlob || null,
                 agreement: document.getElementById('f-agreement').files[0] || null,
                 pnl: multiFiles.pnl, activity: multiFiles.activity, extra: multiFiles.extra
             }
