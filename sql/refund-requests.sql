@@ -133,13 +133,12 @@ CREATE POLICY "Allow public reads from refund-files"
 -- Only enable this AFTER setting up Resend API key
 -- =====================================================
 
--- Uncomment the lines below after you have:
--- 1. Signed up at resend.com (free tier)
--- 2. Added your API key as a Supabase Vault secret:
---    SELECT vault.create_secret('YOUR_RESEND_API_KEY', 'resend_api_key');
+-- STEP 1: Store your Resend API key in Supabase Vault (run this FIRST, separately):
+   SELECT vault.create_secret('re_4KP7SqYB_GRbbrkxRLs5brpLn4niqaLaD', 'resend_api_key');
 
-/*
--- Enable pg_net extension (may already be enabled)
+-- STEP 2: Then run everything below:
+
+-- Enable pg_net extension
 CREATE EXTENSION IF NOT EXISTS pg_net WITH SCHEMA extensions;
 
 -- Create the email notification function
@@ -182,7 +181,7 @@ BEGIN
         || '<a href="' || viewer_url || '" style="display:inline-block;padding:12px 32px;background:#FF6243;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;font-size:14px">View Full Request</a>'
         || '</div></div></div></body></html>';
 
-    -- Send email via Resend API
+    -- Send email via Resend API (using Resend free sender)
     PERFORM net.http_post(
         url := 'https://api.resend.com/emails',
         headers := jsonb_build_object(
@@ -190,7 +189,7 @@ BEGIN
             'Content-Type', 'application/json'
         ),
         body := jsonb_build_object(
-            'from', 'Profit Insider <noreply@profit-insiders.com>',
+            'from', 'Profit Insider Refunds <onboarding@resend.dev>',
             'to', ARRAY['reece@reecephillips.com', 'steele@lucentcapital.xyz', 'clientsupport@profit-insiders.com'],
             'subject', 'New Refund Request: ' || NEW.reference_number || ' - ' || NEW.first_name || ' ' || NEW.last_name,
             'html', email_body
@@ -210,4 +209,3 @@ CREATE TRIGGER trigger_notify_refund_request
     AFTER INSERT ON refund_requests
     FOR EACH ROW
     EXECUTE FUNCTION notify_refund_request();
-*/
