@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg: #ffffff;
@@ -575,6 +576,57 @@
 
         .info-box svg { width: 16px; height: 16px; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
         .info-box p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+        .clause-ref { display: inline-block; margin-top: 6px; font-size: 11px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.2px; }
+        .clause-ref strong { color: var(--text-secondary); font-weight: 600; }
+
+        .compliance-alert {
+            background: var(--error-bg);
+            border: 1px solid var(--error);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-top: 16px;
+        }
+
+        .compliance-alert-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .compliance-alert-header svg {
+            width: 22px;
+            height: 22px;
+            color: var(--error);
+            flex-shrink: 0;
+        }
+
+        .compliance-alert-header strong {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--error);
+        }
+
+        .compliance-alert p {
+            font-size: 13px;
+            line-height: 1.65;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .compliance-alert p:last-child { margin-bottom: 0; }
+
+        .compliance-alert strong { color: var(--text); font-weight: 600; }
+
+        .compliance-alert ul {
+            margin: 8px 0 12px 18px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .compliance-alert ul li { margin-bottom: 4px; }
+        .compliance-alert ul li strong { color: var(--error); }
 
         .warning-box {
             background: var(--warning-bg);
@@ -1078,7 +1130,7 @@
 
             <div class="info-box">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <p>Per your agreement, refund requests must be submitted formally and our team will have 10 business days to review.</p>
+                <p>Per your signed agreement, refund requests must be submitted formally through this process and our team will have 10 business days to review. All refund claims are governed exclusively by the terms of your Trading Algorithm Customer Agreement.<br><span class="clause-ref">Ref: <strong>Section 8.1</strong> (Refund Guarantee), <strong>Section 15.1</strong> (Pre-Dispute Notice &amp; Cure Period), <strong>Annex B</strong></span></p>
             </div>
 
             <div class="form-group">
@@ -1144,7 +1196,7 @@
             <div class="verify-panel active" id="vp-id">
                 <div class="info-box">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    <p>Upload a photo of your government-issued ID. Accepted: driver's license, passport, or national ID card.</p>
+                    <p>Upload a photo of your government-issued ID. Accepted: driver's license, passport, or national ID card. Identity verification is required to process your claim and prevent fraud.<br><span class="clause-ref">Ref: <strong>Section 15.4</strong> (Evidence and Cooperation for Dispute Defense)</span></p>
                 </div>
                 <div class="form-group">
                     <label>Photo ID (front) <span class="required">*</span></label>
@@ -1217,7 +1269,11 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
             <h2>Purchase Details</h2>
-            <p class="step-desc">Provide details about your original purchase of the Profit Insider algorithm.</p>
+            <p class="step-desc">Provide details about your original purchase of the Profit Insider algorithm. Accurate information is required per your signed agreement.</p>
+            <div class="info-box" style="margin-bottom:16px">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p>The refund guarantee applies to the license fee paid per Section 7.1. All fees are non-refundable except through the process outlined in Annex B of your agreement.<br><span class="clause-ref">Ref: <strong>Section 7.3</strong> (No Refunds Except as Provided), <strong>Section 8.1</strong> (Guarantee Overview), <strong>Annex B</strong></span></p>
+            </div>
 
             <div class="form-group"><label>Amount Paid (USD) <span class="required">*</span></label><input type="number" id="f-amount" placeholder="3000.00" step="0.01" min="0"><div class="field-error" id="err-amount">Required</div></div>
             <div class="form-group"><label>Date of Purchase <span class="required">*</span></label><input type="date" id="f-purchase-date"><div class="field-error" id="err-purchase-date">Required</div></div>
@@ -1243,7 +1299,7 @@
 
             <div class="info-box">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <p>The refund guarantee requires proper documentation. Your signed agreement is required to process this claim.</p>
+                <p>Your signed Trading Algorithm Customer Agreement is a required document for processing any refund claim. You are contractually obligated to maintain and provide all records and documentation upon request.<br><span class="clause-ref">Ref: <strong>Section 5.4(b)(c)</strong> (Maintain &amp; Provide Documentation), <strong>Section 15.4</strong> (Evidence &amp; Cooperation)</span></p>
             </div>
 
             <div class="form-group">
@@ -1271,6 +1327,10 @@
             </div>
             <h2>Setup & Configuration</h2>
             <p class="step-desc">Did you follow all setup and configuration instructions provided during onboarding?</p>
+            <div class="info-box" style="margin-bottom:16px">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p>Your agreement requires that you follow all setup and configuration instructions provided during onboarding, and use the Software in strict accordance with the prescribed conditions to remain eligible for the refund guarantee.<br><span class="clause-ref">Ref: <strong>Section 5.1(d)</strong> (Follow Setup Instructions), <strong>Section 5.4(a)</strong> (Strict Accordance with Annex B Conditions)</span></p>
+            </div>
             <div class="option-group" id="og-setup">
                 <label class="option-item" onclick="selectOption(this,'og-setup')"><input type="radio" name="setup" value="yes"><span class="option-radio"></span><span class="option-text">Yes, I followed all instructions exactly</span></label>
                 <label class="option-item" onclick="selectOption(this,'og-setup')"><input type="radio" name="setup" value="mostly"><span class="option-radio"></span><span class="option-text">I followed most instructions but made some changes</span></label>
@@ -1289,7 +1349,11 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
             <h2>Usage Duration</h2>
-            <p class="step-desc">How long did you run the algorithm continuously? The 90-day evaluation period requires continuous use.</p>
+            <p class="step-desc">How long did you run the algorithm continuously?</p>
+            <div class="info-box" style="margin-bottom:16px">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p>The refund guarantee is based on the Software's profitability over the full <strong>90-day Evaluation Period</strong> as defined in your agreement. Continuous use during the entire evaluation window is required for your claim to be eligible.<br><span class="clause-ref">Ref: <strong>Section 1.1</strong> ("Evaluation Period" Definition), <strong>Section 8.1</strong> (Guarantee Overview), <strong>Annex B</strong> (Full Evaluation Terms)</span></p>
+            </div>
             <div class="option-group" id="og-duration">
                 <label class="option-item" onclick="selectOption(this,'og-duration')"><input type="radio" name="duration" value="90+"><span class="option-radio"></span><span class="option-text">90 days or more (full evaluation period)</span></label>
                 <label class="option-item" onclick="selectOption(this,'og-duration')"><input type="radio" name="duration" value="60-89"><span class="option-radio"></span><span class="option-text">60 - 89 days</span></label>
@@ -1310,6 +1374,10 @@
             </div>
             <h2>Platform & Broker</h2>
             <p class="step-desc">Confirm the platforms you used during the evaluation period.</p>
+            <div class="info-box" style="margin-bottom:16px">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p>Your agreement requires the use of <strong>TradePost</strong> as the designated platform for connecting the algorithm to your brokerage account. TradePost activity records serve as the primary means of verifying algorithm performance.<br><span class="clause-ref">Ref: <strong>Section 5.1(b)(c)</strong> (Active TradePost Account &amp; Connection), <strong>Section 6.1</strong> (TradePost Integration), <strong>Section 10.2(d)</strong> (Data Used to Verify Refund Claims)</span></p>
+            </div>
             <div class="form-group"><label>Did you use TradePost to connect the algorithm? <span class="required">*</span></label>
                 <div class="option-group" id="og-tradepost">
                     <label class="option-item" onclick="selectOption(this,'og-tradepost')"><input type="radio" name="tradepost" value="yes"><span class="option-radio"></span><span class="option-text">Yes</span></label>
@@ -1332,6 +1400,10 @@
             </div>
             <h2>Trading Performance Evidence</h2>
             <p class="step-desc">Upload screenshots showing your trading results during the evaluation period, including your P&L statement from your broker.</p>
+            <div class="info-box" style="margin-bottom:16px">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p>You are contractually required to maintain trading logs and performance records, and to provide them to the Company upon request. Broker P&L statements are necessary to verify your claim.<br><span class="clause-ref">Ref: <strong>Section 5.4(b)(c)</strong> (Maintain &amp; Provide Logs/Records), <strong>Section 15.4</strong> (Provide Broker Statements, Logs, Screenshots)</span></p>
+            </div>
             <div class="form-group"><label>P&L / Broker Statements <span class="required">*</span></label>
                 <div class="upload-zone" id="uz-pnl" onclick="document.getElementById('f-pnl').click()">
                     <input type="file" id="f-pnl" accept="image/*,.pdf" multiple onchange="handleMultiUpload(this,'uz-pnl','fl-pnl')">
@@ -1355,6 +1427,10 @@
             </div>
             <h2>Algorithm Activity Proof</h2>
             <p class="step-desc">Upload screenshots showing the algorithm was actively running. TradePost dashboards, execution logs, or signal history are all accepted.</p>
+            <div class="info-box" style="margin-bottom:16px">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p>Proof of continuous algorithm activity is essential to your claim. Your agreement requires that the Software was used in strict accordance with the conditions outlined in Annex B throughout the full Evaluation Period.<br><span class="clause-ref">Ref: <strong>Section 5.4(a)</strong> (Strict Accordance with Annex B), <strong>Section 5.1(f)</strong> (Monitor Software Operation), <strong>Section 15.4</strong> (Configuration Screenshots &amp; Read-Only Data Access)</span></p>
+            </div>
             <div class="form-group"><label>Activity Screenshots <span class="required">*</span></label>
                 <div class="upload-zone" id="uz-activity" onclick="document.getElementById('f-activity').click()">
                     <input type="file" id="f-activity" accept="image/*,.pdf" multiple onchange="handleMultiUpload(this,'uz-activity','fl-activity')">
@@ -1378,6 +1454,10 @@
             </div>
             <h2>Describe Your Issue</h2>
             <p class="step-desc">Explain in detail why you believe you are entitled to a refund under the 90-Day Profitability Guarantee.</p>
+            <div class="info-box" style="margin-bottom:16px">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <p>Per Section 15.1 of your agreement, your written request must include a clear description of the dispute, all supporting evidence, and your contact information. This is a required condition before any claim can proceed.<br><span class="clause-ref">Ref: <strong>Section 15.1</strong> (Pre-Dispute Written Notice), <strong>Section 8.2</strong> (Annex B as Exclusive Remedy)</span></p>
+            </div>
 
             <div class="form-group"><label>Reason for Refund Request <span class="required">*</span></label>
                 <select id="f-reason"><option value="">Select primary reason...</option><option value="not_profitable">Algorithm was not profitable over 90-day period</option><option value="significant_losses">Experienced significant trading losses</option><option value="not_working">Software did not function as described</option><option value="connection_issues">Persistent connection/technical issues</option><option value="other">Other</option></select>
@@ -1409,8 +1489,9 @@
             <div id="review-summary"></div>
             <div class="warning-box" style="margin-top:4px">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
-                <p>By submitting, you certify all information is true and accurate. Our team will review and respond within 10 business days to the email you provided.</p>
+                <p>By submitting, you certify that all information provided is true and accurate. Misrepresentations may result in denial of your claim and constitute a breach of your agreement <strong>(Section 13.1(f))</strong>. Our team will review and respond within <strong>10 business days</strong> to the email you provided per <strong>Section 15.1</strong>.</p>
             </div>
+            <div id="compliance-warning"></div>
             <div class="btn-row">
                 <button class="btn btn-secondary" onclick="prevStep(13)"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5h12"/></svg> Back</button>
                 <button class="btn btn-primary" id="btn-submit" onclick="submitRequest()">Submit Refund Request <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></button>
@@ -1506,6 +1587,9 @@
         goToStep(from + 1);
     }
 
+    // Track non-compliant selections for final review
+    var complianceFlags = [];
+
     function checkEligibilityWarning(step) {
         if (step === 5) {
             var startDate = document.getElementById('f-start-date').value;
@@ -1514,12 +1598,17 @@
                 var today = new Date();
                 var diffDays = Math.floor((today - start) / (1000 * 60 * 60 * 24));
                 if (diffDays < 90) {
+                    if (complianceFlags.indexOf('duration_start') === -1) complianceFlags.push('duration_start');
                     return {
-                        title: 'Evaluation Period In Progress',
-                        body: 'Based on the start date you provided, it appears the <strong>90-day evaluation period</strong> may not yet be complete. Our refund guarantee is designed to give the algorithm a full evaluation window to demonstrate results.' +
-                              '<br><br>We want to make sure you get the most accurate assessment possible. That said, you\'re welcome to continue with your request and our team will review all the details carefully.' +
-                              '<br><br><strong>Would you like to proceed with your submission?</strong>'
+                        title: 'Contractual Eligibility Notice',
+                        body: 'Based on the start date you provided, it appears the <strong>90-day Evaluation Period</strong> has not yet been completed.' +
+                              '<br><br>Per <strong>Section 1.1</strong> and <strong>Section 8.1</strong> of your Trading Algorithm Customer Agreement, the refund guarantee is contingent upon the Software being evaluated over the full 90-day period as defined in <strong>Annex B</strong>. Claims submitted before the completion of the Evaluation Period <strong>do not meet the contractual requirements for approval</strong>.' +
+                              '<br><br>You are welcome to continue submitting your request, however please understand that because this does not currently align with the terms of your signed agreement, <strong>your claim is unlikely to be approved</strong>. Our team will still review all submissions received.' +
+                              '<br><br>Would you like to proceed?'
                     };
+                } else {
+                    var idx = complianceFlags.indexOf('duration_start');
+                    if (idx !== -1) complianceFlags.splice(idx, 1);
                 }
             }
         }
@@ -1527,37 +1616,52 @@
         if (step === 7) {
             var setup = getRadioValue('setup');
             if (setup === 'no') {
+                if (complianceFlags.indexOf('setup') === -1) complianceFlags.push('setup');
                 return {
-                    title: 'Configuration Notice',
-                    body: 'We noticed you selected that a <strong>different configuration</strong> was used rather than the recommended setup provided during onboarding. The refund guarantee is based on the algorithm performing under the prescribed settings and parameters.' +
-                          '<br><br>Our review team will take this into consideration when evaluating your request. We encourage you to provide as much detail as possible in the later steps so we can give your case a thorough review.' +
-                          '<br><br><strong>Would you like to continue with your request?</strong>'
+                    title: 'Setup Compliance Notice',
+                    body: 'You\'ve indicated that you used a <strong>different configuration</strong> than what was provided during onboarding.' +
+                          '<br><br>Per <strong>Section 5.1(d)</strong> of your agreement, you are required to follow all setup and configuration instructions provided by the Company. Additionally, <strong>Section 5.4(a)</strong> requires use of the Software in <strong>strict accordance</strong> with the conditions outlined in Annex B to remain eligible for the refund guarantee.' +
+                          '<br><br>Using a non-prescribed configuration means your usage <strong>falls outside the contractual conditions for a refund</strong>. You may still submit your request, but please be aware that claims that do not meet the terms of the signed agreement are <strong>unlikely to be approved</strong>.' +
+                          '<br><br>Would you like to continue?'
                 };
+            } else {
+                var idx = complianceFlags.indexOf('setup');
+                if (idx !== -1) complianceFlags.splice(idx, 1);
             }
         }
 
         if (step === 8) {
             var duration = getRadioValue('duration');
             if (duration === '<30' || duration === '30-59' || duration === '60-89') {
+                if (complianceFlags.indexOf('duration') === -1) complianceFlags.push('duration');
                 var durationLabels = {'<30': 'less than 30 days', '30-59': '30 to 59 days', '60-89': '60 to 89 days'};
                 return {
-                    title: 'Evaluation Period Notice',
-                    body: 'It looks like the algorithm was run for <strong>' + durationLabels[duration] + '</strong>, which is under the full <strong>90-day evaluation period</strong> outlined in your agreement. The guarantee is structured around a complete evaluation window to ensure fair and accurate performance assessment.' +
-                          '<br><br>We understand circumstances vary, and you\'re absolutely welcome to continue submitting your request. Our team will carefully review all the information you provide and consider the full context of your situation.' +
-                          '<br><br><strong>Would you like to proceed?</strong>'
+                    title: 'Evaluation Period Not Met',
+                    body: 'You\'ve indicated the algorithm was run for <strong>' + durationLabels[duration] + '</strong>.' +
+                          '<br><br>Per <strong>Section 1.1</strong>, <strong>Section 8.1</strong>, and <strong>Annex B</strong> of your Trading Algorithm Customer Agreement, the refund guarantee requires the Software to have been used continuously for the full <strong>90-day Evaluation Period</strong>. Running the algorithm for less than 90 days means the contractual threshold for a refund claim <strong>has not been met</strong>.' +
+                          '<br><br>You may still continue with your submission, but because this falls outside the terms of your signed agreement, <strong>your claim is unlikely to be approved</strong>. Per <strong>Section 8.3</strong>, no refunds are issued for any reason outside the conditions outlined in Annex B.' +
+                          '<br><br>Would you like to proceed?'
                 };
+            } else {
+                var idx = complianceFlags.indexOf('duration');
+                if (idx !== -1) complianceFlags.splice(idx, 1);
             }
         }
 
         if (step === 9) {
             var tradepost = getRadioValue('tradepost');
             if (tradepost === 'no') {
+                if (complianceFlags.indexOf('tradepost') === -1) complianceFlags.push('tradepost');
                 return {
-                    title: 'Platform Verification Notice',
-                    body: 'You\'ve indicated that <strong>TradePost</strong> was not used to connect the algorithm. As part of the agreement, TradePost is the designated platform for verifying algorithm activity and performance during the evaluation period.' +
-                          '<br><br>Without TradePost records, our team may need additional documentation to verify your usage. You can still continue, and we\'d encourage you to upload any alternative evidence of algorithm activity in the upcoming steps.' +
-                          '<br><br><strong>Would you like to proceed with your request?</strong>'
+                    title: 'Required Platform Not Used',
+                    body: 'You\'ve indicated that <strong>TradePost</strong> was not used to connect the algorithm.' +
+                          '<br><br>Per <strong>Section 5.1(b)</strong> and <strong>Section 5.1(c)</strong> of your agreement, you are required to establish and maintain an active TradePost account and correctly connect your brokerage account through TradePost. <strong>Section 6.1</strong> designates TradePost as the platform through which the Software is delivered. Per <strong>Section 10.2(d)</strong>, TradePost data is used to verify refund claims.' +
+                          '<br><br>Without TradePost usage, the Company cannot verify algorithm activity through the contractually designated channel, which means your claim <strong>does not meet the requirements for approval</strong>. You may still submit your request, but please be aware that it is <strong>unlikely to be approved</strong> under these circumstances.' +
+                          '<br><br>Would you like to proceed?'
                 };
+            } else {
+                var idx = complianceFlags.indexOf('tradepost');
+                if (idx !== -1) complianceFlags.splice(idx, 1);
             }
         }
 
@@ -1844,57 +1948,208 @@
         h += '<div class="summary-card"><h4>Refund Reason</h4>';
         h += R('Primary Reason', rl[document.getElementById('f-reason').value]||'') + '</div>';
         c.innerHTML = h;
+
+        // Build compliance warning for final review
+        buildComplianceWarning();
+    }
+
+    function buildComplianceWarning() {
+        var cw = document.getElementById('compliance-warning');
+
+        // Re-check flags based on current form data
+        complianceFlags = [];
+        var startDate = document.getElementById('f-start-date').value;
+        if (startDate) {
+            var diffDays = Math.floor((new Date() - new Date(startDate)) / (1000 * 60 * 60 * 24));
+            if (diffDays < 90) complianceFlags.push('duration_start');
+        }
+        if (getRadioValue('setup') === 'no') complianceFlags.push('setup');
+        var dur = getRadioValue('duration');
+        if (dur === '<30' || dur === '30-59' || dur === '60-89') complianceFlags.push('duration');
+        if (getRadioValue('tradepost') === 'no') complianceFlags.push('tradepost');
+
+        if (complianceFlags.length === 0) {
+            cw.innerHTML = '';
+            return;
+        }
+
+        var issueLabels = {
+            duration_start: 'Start date indicates the 90-day Evaluation Period is not yet complete <strong>(Section 1.1, 8.1, Annex B)</strong>',
+            setup: 'Algorithm was not used with the prescribed setup configuration <strong>(Section 5.1(d), 5.4(a))</strong>',
+            duration: 'Algorithm was not run for the full 90-day Evaluation Period <strong>(Section 1.1, 8.1, 8.3, Annex B)</strong>',
+            tradepost: 'TradePost was not used as the designated delivery platform <strong>(Section 5.1(b)(c), 6.1, 10.2(d))</strong>'
+        };
+
+        var html = '<div class="compliance-alert">';
+        html += '<div class="compliance-alert-header"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>';
+        html += '<strong>Your Request Does Not Meet Contractual Requirements</strong></div>';
+
+        html += '<p>Based on your responses, your refund request contains <strong>' + complianceFlags.length + ' item(s)</strong> that do not align with the terms of your signed Trading Algorithm Customer Agreement:</p>';
+        html += '<ul>';
+        for (var i = 0; i < complianceFlags.length; i++) {
+            html += '<li>' + issueLabels[complianceFlags[i]] + '</li>';
+        }
+        html += '</ul>';
+
+        html += '<p>Per <strong>Section 8.2</strong>, the Annex B refund guarantee is your <strong>sole and exclusive remedy</strong> for any performance-related claims. Per <strong>Section 8.3</strong>, <strong>no refunds are issued for any reason outside the conditions outlined in Annex B</strong> — including dissatisfaction, market conditions, or trading losses.</p>';
+
+        html += '<p>Because your submission does not currently satisfy the contractual conditions, the <strong>likelihood of approval is very low</strong>. You may still submit for review, but we want to be transparent about this outcome.</p>';
+
+        html += '<p style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(229,72,77,0.15)"><strong style="color:var(--error)">Important Legal Notice:</strong> Per <strong>Section 15.1</strong>, this formal refund request process is the required first step before pursuing any dispute. Initiating a payment dispute or chargeback with your bank without first completing this process and allowing the Company 10 business days to respond constitutes a <strong>material breach</strong> of your agreement <strong>(Section 15.2, 15.3)</strong>.</p>';
+
+        html += '<p>Under <strong>Section 15.3</strong>, unauthorized chargebacks may result in: <strong>(a)</strong> immediate and permanent termination of your license, <strong>(b)</strong> referral to third-party collections, <strong>(c)</strong> legal action for recovery of all amounts plus damages, <strong>(d)</strong> filing of liens and pursuit of asset recovery, and <strong>(e)</strong> reporting to credit bureaus and fraud-prevention networks. The <strong>prevailing party</strong> in any dispute is entitled to full recovery of attorneys\' fees and all associated costs <strong>(Section 15.5)</strong>.</p>';
+
+        html += '<p>All disputes are subject to <strong>mandatory binding arbitration</strong> in Miami-Dade County, Florida <strong>(Section 15.7)</strong>. You have waived your right to a jury trial and to participate in any class action <strong>(Section 15.8)</strong>.</p>';
+
+        html += '</div>';
+        cw.innerHTML = html;
     }
 
     function R(l, v, f) { return '<div class="summary-row"><span class="label">' + l + '</span><span class="value' + (f?' file-attached':'') + '">' + v + '</span></div>'; }
 
     // ── Submit ──
-    function submitRequest() {
+    // ── Supabase Client ──
+    var sbClient = window.supabase.createClient(
+        'https://vnhrwcerlaoipycsbigi.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZuaHJ3Y2VybGFvaXB5Y3NiaWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkzNTA3NTksImV4cCI6MjA4NDkyNjc1OX0.LOlRKqiOzsCBX2R6qcYukt3IG5onX3e4O-RIjcWWMnU'
+    );
+
+    // ── Upload a single file to Supabase storage ──
+    async function uploadFile(refNumber, file, subfolder) {
+        if (!file) return null;
+        var ext = file.name ? file.name.split('.').pop() : 'jpg';
+        var safeName = subfolder + '_' + Date.now() + '.' + ext;
+        var path = refNumber + '/' + safeName;
+
+        var { data, error } = await sbClient.storage
+            .from('refund-files')
+            .upload(path, file, {
+                contentType: file.type || 'application/octet-stream',
+                upsert: false
+            });
+
+        if (error) {
+            console.error('Upload error (' + subfolder + '):', error);
+            return null;
+        }
+        return path;
+    }
+
+    // ── Upload multiple files ──
+    async function uploadMultipleFiles(refNumber, files, subfolder) {
+        var paths = [];
+        for (var i = 0; i < files.length; i++) {
+            var path = await uploadFile(refNumber, files[i], subfolder + '_' + (i + 1));
+            if (path) paths.push(path);
+        }
+        return paths;
+    }
+
+    // ── Submit to Supabase ──
+    async function submitRequest() {
         var btn = document.getElementById('btn-submit');
         btn.disabled = true;
-        btn.innerHTML = 'Submitting...';
-        var ref = 'RR-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2,6).toUpperCase();
-        document.getElementById('ref-number').textContent = ref;
+        btn.innerHTML = '<span style="display:inline-flex;align-items:center;gap:8px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><path d="M12 2v4m0 12v4m-7.07-3.93l2.83-2.83m8.48-8.48l2.83-2.83M2 12h4m12 0h4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83"/></svg> Submitting...</span>';
 
-        setTimeout(function() {
+        var ref = 'RR-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2,6).toUpperCase();
+
+        try {
+            // 1. Upload all files
+            btn.innerHTML = 'Uploading files...';
+            var hasId = document.getElementById('f-id').files.length > 0;
+            var filePaths = {};
+
+            // ID or selfie
+            if (hasId) {
+                var idPath = await uploadFile(ref, document.getElementById('f-id').files[0], 'photo_id');
+                if (idPath) filePaths.photo_id = idPath;
+            } else if (selfieBlob) {
+                var selfieFile = new File([selfieBlob], 'selfie-capture.jpg', { type: 'image/jpeg' });
+                var selfiePath = await uploadFile(ref, selfieFile, 'selfie');
+                if (selfiePath) filePaths.selfie = selfiePath;
+            }
+
+            // Signed agreement
+            if (document.getElementById('f-agreement').files.length) {
+                var agPath = await uploadFile(ref, document.getElementById('f-agreement').files[0], 'agreement');
+                if (agPath) filePaths.agreement = agPath;
+            }
+
+            // P&L files
+            if (multiFiles.pnl.length > 0) {
+                filePaths.pnl = await uploadMultipleFiles(ref, multiFiles.pnl, 'pnl');
+            }
+
+            // Activity proof files
+            if (multiFiles.activity.length > 0) {
+                filePaths.activity = await uploadMultipleFiles(ref, multiFiles.activity, 'activity');
+            }
+
+            // Extra evidence files
+            if (multiFiles.extra.length > 0) {
+                filePaths.extra = await uploadMultipleFiles(ref, multiFiles.extra, 'extra');
+            }
+
+            // 2. Insert the refund request record
+            btn.innerHTML = 'Saving request...';
+            var { data, error } = await sbClient
+                .from('refund_requests')
+                .insert({
+                    reference_number: ref,
+                    email: document.getElementById('f-email').value.trim(),
+                    first_name: document.getElementById('f-first').value.trim(),
+                    last_name: document.getElementById('f-last').value.trim(),
+                    phone: document.getElementById('f-phone').value.trim(),
+                    address: document.getElementById('f-address').value.trim(),
+                    amount_paid: parseFloat(document.getElementById('f-amount').value) || 0,
+                    purchase_date: document.getElementById('f-purchase-date').value || null,
+                    payment_method: document.getElementById('f-payment-method').value,
+                    start_date: document.getElementById('f-start-date').value || null,
+                    setup_compliance: getRadioValue('setup'),
+                    usage_duration: getRadioValue('duration'),
+                    used_tradepost: getRadioValue('tradepost') === 'yes',
+                    broker: document.getElementById('f-broker').value.trim(),
+                    broker_id: document.getElementById('f-broker-id').value.trim(),
+                    reason: document.getElementById('f-reason').value,
+                    explanation: document.getElementById('f-explanation').value.trim(),
+                    verification_type: hasId ? 'photo_id' : 'selfie',
+                    compliance_flags: complianceFlags.slice(),
+                    compliant: complianceFlags.length === 0,
+                    file_paths: filePaths,
+                    status: 'pending'
+                })
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            // 3. Show success
+            document.getElementById('ref-number').textContent = ref;
             document.getElementById('progress-container').style.display = 'none';
             var cur = document.getElementById('step-13');
             cur.classList.add('slide-out');
             setTimeout(function() {
-                cur.classList.remove('active','slide-out');
+                cur.classList.remove('active', 'slide-out');
                 document.getElementById('step-success').classList.add('active');
             }, 240);
-            console.log('Refund request:', ref, collectFormData());
-        }, 2000);
-    }
 
-    function collectFormData() {
-        var hasId = document.getElementById('f-id').files.length > 0;
-        return {
-            email: document.getElementById('f-email').value.trim(),
-            first_name: document.getElementById('f-first').value.trim(),
-            last_name: document.getElementById('f-last').value.trim(),
-            phone: document.getElementById('f-phone').value.trim(),
-            address: document.getElementById('f-address').value.trim(),
-            amount_paid: document.getElementById('f-amount').value,
-            purchase_date: document.getElementById('f-purchase-date').value,
-            payment_method: document.getElementById('f-payment-method').value,
-            start_date: document.getElementById('f-start-date').value,
-            setup_compliance: getRadioValue('setup'),
-            usage_duration: getRadioValue('duration'),
-            used_tradepost: getRadioValue('tradepost'),
-            broker: document.getElementById('f-broker').value.trim(),
-            broker_id: document.getElementById('f-broker-id').value.trim(),
-            reason: document.getElementById('f-reason').value,
-            explanation: document.getElementById('f-explanation').value.trim(),
-            verification_type: hasId ? 'photo_id' : 'selfie',
-            files: {
-                id: document.getElementById('f-id').files[0] || null,
-                selfie: selfieBlob || null,
-                agreement: document.getElementById('f-agreement').files[0] || null,
-                pnl: multiFiles.pnl, activity: multiFiles.activity, extra: multiFiles.extra
-            }
-        };
+        } catch (err) {
+            console.error('Submission error:', err);
+            btn.disabled = false;
+            btn.innerHTML = 'Submit Refund Request <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
+
+            // Show error to user
+            var errDiv = document.createElement('div');
+            errDiv.className = 'warning-box';
+            errDiv.style.marginTop = '12px';
+            errDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>'
+                + '<p>There was an error submitting your request. Please try again. If this issue persists, contact <strong>info@profit-insiders.com</strong>.</p>';
+
+            var existing = document.querySelector('#step-13 .submit-error');
+            if (existing) existing.remove();
+            errDiv.classList.add('submit-error');
+            btn.parentElement.after(errDiv);
+        }
     }
 </script>
 </body>
