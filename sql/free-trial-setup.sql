@@ -18,3 +18,9 @@ VALUES (
     NOW()
 )
 ON CONFLICT (key) DO NOTHING;
+
+-- 2. Update RLS policy so authenticated users can read free_trial_config
+-- Drop the old policy and recreate with free_trial_config included
+DROP POLICY IF EXISTS "Anyone can read onboarding config" ON admin_settings;
+CREATE POLICY "Anyone can read onboarding config" ON admin_settings
+    FOR SELECT USING (key IN ('payment_plans', 'contract_config', 'booking_config', 'role_permissions', 'free_trial_config'));

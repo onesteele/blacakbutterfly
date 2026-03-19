@@ -1342,26 +1342,35 @@
                     <input type="tel" id="cu-phone" placeholder="+1 (555) 123-4567">
                 </div>
                 <div class="form-group">
-                    <label>Payment Plan *</label>
-                    <select id="cu-payment-plan" required>
-                        <option value="">Select payment plan...</option>
-                    </select>
+                    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;">
+                        <input type="checkbox" id="cu-free-trial" onchange="toggleFreeTrialMode()" style="width:18px;height:18px;accent-color:#a855f7;cursor:pointer;">
+                        <span>Free Trial Customer</span>
+                        <span style="font-size:11px;font-weight:600;color:#a855f7;background:rgba(168,85,247,0.12);padding:2px 8px;border-radius:100px;">No Payment</span>
+                    </label>
                 </div>
-                <div class="form-row">
+                <div id="cu-payment-section">
                     <div class="form-group">
-                        <label>Total Amount *</label>
-                        <input type="number" id="cu-payment-total" required step="0.01" min="0" placeholder="7500.00">
+                        <label>Payment Plan *</label>
+                        <select id="cu-payment-plan" required>
+                            <option value="">Select payment plan...</option>
+                        </select>
                     </div>
-                    <div class="form-group">
-                        <label>Amount Down *</label>
-                        <input type="number" id="cu-payment-down" required step="0.01" min="0" placeholder="1000.00">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Total Amount *</label>
+                            <input type="number" id="cu-payment-total" required step="0.01" min="0" placeholder="7500.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Amount Down *</label>
+                            <input type="number" id="cu-payment-down" required step="0.01" min="0" placeholder="1000.00">
+                        </div>
                     </div>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="btn-cancel" onclick="closeCreateUserModal()">Cancel</button>
                     <button type="submit" class="btn-create" id="btn-create-user">Create User</button>
                 </div>
-                <p class="modal-note">User starts as "Pending Verification". Share the onboarding link with them to begin the process.</p>
+                <p class="modal-note" id="cu-modal-note">User starts as "Pending Verification". Share the onboarding link with them to begin the process.</p>
             </form>
         </div>
     </div>
@@ -1865,10 +1874,36 @@
         function closeCreateUserModal() {
             document.getElementById('create-user-modal').style.display = 'none';
             document.getElementById('create-user-form').reset();
+            // Reset free trial toggle state
+            document.getElementById('cu-payment-section').style.display = '';
+            document.getElementById('cu-payment-plan').required = true;
+            document.getElementById('cu-payment-total').required = true;
+            document.getElementById('cu-payment-down').required = true;
+            document.getElementById('cu-modal-note').textContent = 'User starts as "Pending Verification". Share the onboarding link with them to begin the process.';
         }
 
-        function showOnboardingLinkModal(customerName) {
-            const onboardingUrl = window.location.origin + '/onboarding/';
+        function toggleFreeTrialMode() {
+            var isFreeTrial = document.getElementById('cu-free-trial').checked;
+            var paymentSection = document.getElementById('cu-payment-section');
+            var note = document.getElementById('cu-modal-note');
+
+            if (isFreeTrial) {
+                paymentSection.style.display = 'none';
+                document.getElementById('cu-payment-plan').required = false;
+                document.getElementById('cu-payment-total').required = false;
+                document.getElementById('cu-payment-down').required = false;
+                note.innerHTML = 'User starts as <strong style="color:#a855f7;">Free Trial</strong>. They will go through the trial onboarding flow with no payment required.';
+            } else {
+                paymentSection.style.display = '';
+                document.getElementById('cu-payment-plan').required = true;
+                document.getElementById('cu-payment-total').required = true;
+                document.getElementById('cu-payment-down').required = true;
+                note.textContent = 'User starts as "Pending Verification". Share the onboarding link with them to begin the process.';
+            }
+        }
+
+        function showOnboardingLinkModal(customerName, isFreeTrial) {
+            const onboardingUrl = window.location.origin + (isFreeTrial ? '/trial/' : '/onboarding/');
             document.getElementById('onboarding-link-name').textContent = customerName;
             document.getElementById('onboarding-link-url').value = onboardingUrl;
             document.getElementById('btn-copy-link').textContent = 'Copy Link';
@@ -1898,9 +1933,11 @@
             const firstName = document.getElementById('cu-first-name').value.trim();
             const lastName = document.getElementById('cu-last-name').value.trim();
             const phone = document.getElementById('cu-phone').value.trim();
-            const paymentPlan = document.getElementById('cu-payment-plan').value;
-            const paymentTotal = parseFloat(document.getElementById('cu-payment-total').value) || 0;
-            const paymentDown = parseFloat(document.getElementById('cu-payment-down').value) || 0;
+            const isFreeTrial = document.getElementById('cu-free-trial').checked;
+            const paymentPlan = isFreeTrial ? '' : document.getElementById('cu-payment-plan').value;
+            const paymentTotal = isFreeTrial ? 0 : (parseFloat(document.getElementById('cu-payment-total').value) || 0);
+            const paymentDown = isFreeTrial ? 0 : (parseFloat(document.getElementById('cu-payment-down').value) || 0);
+            const initialStatus = isFreeTrial ? 'free_trial' : 'pending_verification';
 
             // Generate temporary password (user will set their own during verification)
             const tempPassword = 'TmpPw!' + crypto.randomUUID().slice(0, 12);
@@ -1910,7 +1947,7 @@
                 const { data: { session: adminSession } } = await window.supabaseClient.auth.getSession();
                 if (!adminSession) throw new Error('Admin session lost. Please log in again.');
 
-                // 2. Create auth user with pending_verification status
+                // 2. Create auth user
                 const { data: authData, error: authError } = await window.supabaseClient.auth.signUp({
                     email: email,
                     password: tempPassword,
@@ -1919,7 +1956,7 @@
                             first_name: firstName,
                             last_name: lastName,
                             phone: phone,
-                            initial_status: 'pending_verification'
+                            initial_status: initialStatus
                         }
                     }
                 });
@@ -1956,19 +1993,22 @@
                 }
 
                 // 5. Update user profile with payment info and correct status
+                const profileUpdate = {
+                    first_name: firstName,
+                    last_name: lastName,
+                    full_name: firstName + ' ' + lastName,
+                    phone: phone,
+                    status: initialStatus,
+                    onboarding_completed: false
+                };
+                if (!isFreeTrial) {
+                    profileUpdate.payment_plan = paymentPlan;
+                    profileUpdate.payment_total = paymentTotal;
+                    profileUpdate.payment_down = paymentDown;
+                }
                 const { error: updateError } = await window.supabaseClient
                     .from('users')
-                    .update({
-                        first_name: firstName,
-                        last_name: lastName,
-                        full_name: firstName + ' ' + lastName,
-                        phone: phone,
-                        status: 'pending_verification',
-                        payment_plan: paymentPlan,
-                        payment_total: paymentTotal,
-                        payment_down: paymentDown,
-                        onboarding_completed: false
-                    })
+                    .update(profileUpdate)
                     .eq('id', newUserId);
 
                 if (updateError) {
@@ -1977,7 +2017,7 @@
                 }
 
                 closeCreateUserModal();
-                showOnboardingLinkModal(firstName + ' ' + lastName);
+                showOnboardingLinkModal(firstName + ' ' + lastName, isFreeTrial);
                 await loadCustomers();
 
             } catch (error) {
