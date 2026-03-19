@@ -1102,6 +1102,365 @@
             overflow: hidden;
         }
 
+        /* ── Trial Progress Bar ── */
+        .ft-progress-wrapper {
+            margin-bottom: 24px;
+        }
+
+        .ft-progress-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .ft-progress-label span {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        #ftProgressDay {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .ft-progress-track {
+            width: 100%;
+            height: 8px;
+            background: rgba(42, 42, 42, 0.6);
+            border-radius: 100px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #ftProgressBar {
+            height: 100%;
+            border-radius: 100px;
+            background: #22c55e;
+            transition: width 0.8s ease, background 0.5s ease, box-shadow 0.5s ease;
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
+        }
+
+        #ftProgressBar.progress-yellow {
+            background: #f0c832;
+            box-shadow: 0 0 12px rgba(240, 200, 50, 0.4);
+        }
+
+        #ftProgressBar.progress-red {
+            background: #ef4444;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+        }
+
+        /* ── Login Streak ── */
+        #ftStreakContainer {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ft-streak-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .ft-streak-dots {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ft-streak-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .ft-streak-dot.filled {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: #22c55e;
+        }
+
+        .ft-streak-dot.filled svg {
+            color: #22c55e;
+        }
+
+        .ft-streak-dot.today {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(240, 200, 50, 0.3);
+        }
+
+        .ft-streak-dot svg {
+            width: 14px;
+            height: 14px;
+            color: var(--text-muted);
+        }
+
+        .ft-streak-dot .ft-day-num {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .ft-streak-dot.filled .ft-day-num {
+            display: none;
+        }
+
+        .ft-streak-dot.filled .ft-check-icon {
+            display: block;
+        }
+
+        .ft-streak-dot .ft-check-icon {
+            display: none;
+        }
+
+        /* ── Pulse Stats ── */
+        #ftPulseStats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ft-pulse-card {
+            background: rgba(12, 12, 12, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            transition: border-color 0.3s ease;
+        }
+
+        .ft-pulse-card:hover {
+            border-color: rgba(240, 200, 50, 0.3);
+        }
+
+        .ft-pulse-card.trades {
+            border-top: 2px solid var(--accent);
+        }
+
+        .ft-pulse-card.signals {
+            border-top: 2px solid #22c55e;
+        }
+
+        .ft-pulse-card.winrate {
+            border-top: 2px solid #3b82f6;
+        }
+
+        .ft-pulse-value {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 2px;
+        }
+
+        .ft-pulse-card.trades .ft-pulse-value {
+            color: var(--accent);
+        }
+
+        .ft-pulse-card.signals .ft-pulse-value {
+            color: #22c55e;
+        }
+
+        .ft-pulse-card.winrate .ft-pulse-value {
+            color: #3b82f6;
+        }
+
+        .ft-pulse-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* ── Today's Briefing Card ── */
+        #ftBriefingCard {
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #ftBriefingCard::after {
+            content: '';
+            position: absolute;
+            top: -40%; right: -10%;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.04) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .ft-briefing-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ft-briefing-header svg {
+            width: 22px;
+            height: 22px;
+            color: #3b82f6;
+        }
+
+        .ft-briefing-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .ft-briefing-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 10px;
+            border-radius: 100px;
+            margin-left: auto;
+        }
+
+        .ft-briefing-badge.today-badge {
+            color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .ft-briefing-badge.latest-badge {
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        #ftBriefingContent {
+            position: relative;
+            z-index: 1;
+        }
+
+        .ft-briefing-video-wrap {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            background: #0c0c0c;
+        }
+
+        .ft-briefing-video-wrap iframe {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+        }
+
+        .ft-briefing-post-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .ft-briefing-post-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .ft-briefing-category {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--accent);
+            background: var(--accent-dim);
+            padding: 3px 10px;
+            border-radius: 100px;
+        }
+
+        .ft-briefing-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .ft-briefing-empty svg {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+
+        .ft-briefing-empty p {
+            font-size: 14px;
+        }
+
+        /* ── Social Proof Ticker ── */
+        #ftSocialProof {
+            background: rgba(18, 18, 18, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            min-height: 48px;
+        }
+
+        .ft-proof-pulse {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            flex-shrink: 0;
+            animation: ftProofPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes ftProofPulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 4px rgba(34, 197, 94, 0.4); }
+            50% { opacity: 0.5; box-shadow: 0 0 8px rgba(34, 197, 94, 0.6); }
+        }
+
+        #ftProofText {
+            font-size: 13px;
+            color: var(--text-secondary);
+            transition: opacity 0.5s ease;
+        }
+
         /* ── Responsive ── */
         @media (max-width: 1024px) {
             .dashboard-grid {
@@ -1114,6 +1473,10 @@
 
             .ft-terminal {
                 width: 100%;
+            }
+
+            #ftPulseStats {
+                grid-template-columns: repeat(3, 1fr);
             }
 
             .fte-stats {
@@ -1192,6 +1555,62 @@
             .ft-content-eyebrow {
                 justify-content: center;
             }
+
+            /* New feature responsive styles */
+            #ftStreakContainer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .ft-streak-dots {
+                gap: 6px;
+            }
+
+            .ft-streak-dot {
+                width: 24px;
+                height: 24px;
+            }
+
+            .ft-streak-dot svg {
+                width: 12px;
+                height: 12px;
+            }
+
+            .ft-streak-dot .ft-day-num {
+                font-size: 9px;
+            }
+
+            #ftPulseStats {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .ft-pulse-value {
+                font-size: 20px;
+            }
+
+            #ftBriefingCard {
+                padding: 24px 20px;
+                border-radius: 16px;
+            }
+
+            .ft-briefing-header {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .ft-briefing-badge {
+                margin-left: 0;
+            }
+
+            #ftSocialProof {
+                padding: 12px 16px;
+            }
+
+            #ftProofText {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -1228,6 +1647,17 @@
 
             <!-- Free Trial Dashboard -->
             <div id="freeTrialDashboard" style="display:none;">
+                <!-- Trial Progress Bar -->
+                <div class="ft-progress-wrapper">
+                    <div class="ft-progress-label">
+                        <span id="ftProgressDay">Day 1 of 7</span>
+                        <span>Free Trial</span>
+                    </div>
+                    <div class="ft-progress-track">
+                        <div id="ftProgressBar" style="width: 100%;"></div>
+                    </div>
+                </div>
+
                 <!-- Algorithm Hype Hero -->
                 <div class="ft-hero">
                     <div class="ft-hero-top">
@@ -1238,6 +1668,20 @@
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                                 <span id="ftTrialDays">7 DAYS LEFT</span>
                             </div>
+                            <!-- Daily Login Streak -->
+                            <div id="ftStreakContainer">
+                                <span class="ft-streak-label">Login Streak:</span>
+                                <div class="ft-streak-dots">
+                                    <div class="ft-streak-dot" data-day="1"><span class="ft-day-num">1</span><svg class="ft-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                                    <div class="ft-streak-dot" data-day="2"><span class="ft-day-num">2</span><svg class="ft-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                                    <div class="ft-streak-dot" data-day="3"><span class="ft-day-num">3</span><svg class="ft-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                                    <div class="ft-streak-dot" data-day="4"><span class="ft-day-num">4</span><svg class="ft-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                                    <div class="ft-streak-dot" data-day="5"><span class="ft-day-num">5</span><svg class="ft-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                                    <div class="ft-streak-dot" data-day="6"><span class="ft-day-num">6</span><svg class="ft-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                                    <div class="ft-streak-dot" data-day="7"><span class="ft-day-num">7</span><svg class="ft-check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+                                </div>
+                            </div>
+
                             <a id="ftTradelinkBtn" href="https://www.tradelink.live/login?callbackUrl=/trial/8A97B0EA" target="_blank" class="ft-tradelink-btn">
                                 Open TradeLink
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -1252,6 +1696,37 @@
                             </div>
                             <div class="ft-terminal-body" id="ftTerminalBody">
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Live Algorithm Pulse Stats -->
+                    <div id="ftPulseStats">
+                        <div class="ft-pulse-card trades">
+                            <div class="ft-pulse-value" id="ftPulseTradesVal">0</div>
+                            <div class="ft-pulse-label">Trades Scanned</div>
+                        </div>
+                        <div class="ft-pulse-card signals">
+                            <div class="ft-pulse-value" id="ftPulseSignalsVal">0</div>
+                            <div class="ft-pulse-label">Signals Today</div>
+                        </div>
+                        <div class="ft-pulse-card winrate">
+                            <div class="ft-pulse-value" id="ftPulseWinrateVal">0%</div>
+                            <div class="ft-pulse-label">Win Rate</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Briefing Card -->
+                <div id="ftBriefingCard">
+                    <div class="ft-briefing-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                        <span class="ft-briefing-title">Today's Briefing</span>
+                        <span class="ft-briefing-badge today-badge" id="ftBriefingBadge">TODAY</span>
+                    </div>
+                    <div id="ftBriefingContent">
+                        <div class="ft-briefing-empty">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                            <p>Loading briefing...</p>
                         </div>
                     </div>
                 </div>
@@ -1271,6 +1746,12 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                     </div>
                 </a>
+
+                <!-- Social Proof Ticker -->
+                <div id="ftSocialProof">
+                    <div class="ft-proof-pulse"></div>
+                    <span id="ftProofText">Loading...</span>
+                </div>
             </div>
 
             <!-- Free Trial EXPIRED Dashboard -->
@@ -1536,11 +2017,14 @@
 
                 // Calculate trial days remaining (7-day trial from created_at)
                 var trialDays = 7;
+                var remaining = trialDays;
+                var currentDay = 1;
                 if (currentProfile.created_at) {
                     var createdDate = new Date(currentProfile.created_at);
                     var now = new Date();
                     var elapsed = Math.floor((now - createdDate) / (1000 * 60 * 60 * 24));
-                    var remaining = Math.max(0, trialDays - elapsed);
+                    remaining = Math.max(0, trialDays - elapsed);
+                    currentDay = Math.min(elapsed + 1, 7);
                     var badgeEl = document.getElementById('ftTrialDays');
                     if (remaining <= 2) {
                         badgeEl.textContent = remaining + ' DAY' + (remaining !== 1 ? 'S' : '') + ' LEFT — TRIAL ENDING SOON';
@@ -1558,6 +2042,13 @@
 
                 // Start terminal animation
                 startTerminalAnimation();
+
+                // Initialize new dashboard enhancements
+                initTrialProgressBar(remaining);
+                initLoginStreak(currentUser.id, currentProfile.created_at);
+                initPulseStats();
+                loadTodaysBriefing();
+                initSocialProof();
             }
 
             // Free trial EXPIRED: locked-out dashboard with purchase CTA + content
@@ -1701,6 +2192,275 @@
             }
 
             runCycle();
+        }
+
+        // ── Trial Progress Bar ──
+        function initTrialProgressBar(remaining) {
+            var bar = document.getElementById('ftProgressBar');
+            var dayText = document.getElementById('ftProgressDay');
+            if (!bar || !dayText) return;
+
+            var total = 7;
+            var currentDay = Math.max(1, total - remaining + 1);
+            var pct = Math.round((remaining / total) * 100);
+
+            dayText.textContent = 'Day ' + currentDay + ' of ' + total;
+            bar.style.width = pct + '%';
+
+            // Remove old classes
+            bar.classList.remove('progress-yellow', 'progress-red');
+
+            if (remaining <= 2) {
+                bar.classList.add('progress-red');
+            } else if (remaining <= 4) {
+                bar.classList.add('progress-yellow');
+            }
+            // else default green
+        }
+
+        // ── Today's Briefing ──
+        async function loadTodaysBriefing() {
+            var card = document.getElementById('ftBriefingCard');
+            var content = document.getElementById('ftBriefingContent');
+            var badge = document.getElementById('ftBriefingBadge');
+            var titleEl = card ? card.querySelector('.ft-briefing-title') : null;
+            if (!card || !content) return;
+
+            try {
+                var { data, error } = await window.supabaseClient
+                    .from('content_posts')
+                    .select('*')
+                    .eq('is_published', true)
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+
+                if (error) throw error;
+                if (!data || data.length === 0) {
+                    content.innerHTML = '<div class="ft-briefing-empty">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>' +
+                        '<p>No briefing available yet — check back soon</p>' +
+                        '</div>';
+                    return;
+                }
+
+                var post = data[0];
+
+                // Check if posted today
+                var postDate = new Date(post.created_at);
+                var today = new Date();
+                var isToday = postDate.toDateString() === today.toDateString();
+
+                if (titleEl) {
+                    titleEl.textContent = isToday ? "Today's Briefing" : "Latest Briefing";
+                }
+                if (badge) {
+                    if (isToday) {
+                        badge.textContent = 'TODAY';
+                        badge.className = 'ft-briefing-badge today-badge';
+                    } else {
+                        var dateStr = postDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                        badge.textContent = dateStr;
+                        badge.className = 'ft-briefing-badge latest-badge';
+                    }
+                }
+
+                // Build embed
+                var embedHtml = '';
+                var videoUrl = post.video_url || '';
+                if (videoUrl) {
+                    var embedSrc = '';
+
+                    // Loom
+                    if (videoUrl.includes('loom.com')) {
+                        var loomMatch = videoUrl.match(/loom\.com\/(?:share|embed)\/([a-zA-Z0-9]+)/);
+                        if (loomMatch) {
+                            embedSrc = 'https://www.loom.com/embed/' + loomMatch[1];
+                        }
+                    }
+
+                    // YouTube
+                    if (!embedSrc && (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be'))) {
+                        var videoId = '';
+                        var ytLong = videoUrl.match(/youtube\.com\/watch\?v=([^&]+)/);
+                        var ytShort = videoUrl.match(/youtu\.be\/([^?&]+)/);
+                        var ytEmbed = videoUrl.match(/youtube\.com\/embed\/([^?&]+)/);
+                        if (ytLong) videoId = ytLong[1];
+                        else if (ytShort) videoId = ytShort[1];
+                        else if (ytEmbed) videoId = ytEmbed[1];
+                        if (videoId) {
+                            embedSrc = 'https://www.youtube.com/embed/' + videoId;
+                        }
+                    }
+
+                    // Fallback
+                    if (!embedSrc) {
+                        embedSrc = videoUrl;
+                    }
+
+                    embedHtml = '<div class="ft-briefing-video-wrap">' +
+                        '<iframe src="' + escapeHtml(embedSrc) + '" allowfullscreen allow="autoplay; encrypted-media" loading="lazy"></iframe>' +
+                        '</div>';
+                }
+
+                var catLabel = (post.category || 'General');
+                var descText = post.description || '';
+
+                content.innerHTML = embedHtml +
+                    '<div class="ft-briefing-post-title">' + escapeHtml(post.title || 'Untitled') + '</div>' +
+                    (descText ? '<div class="ft-briefing-post-desc">' + escapeHtml(descText) + '</div>' : '') +
+                    '<span class="ft-briefing-category">' + escapeHtml(catLabel) + '</span>';
+
+            } catch (err) {
+                console.error('Error loading briefing:', err);
+                content.innerHTML = '<div class="ft-briefing-empty">' +
+                    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>' +
+                    '<p>No briefing available yet — check back soon</p>' +
+                    '</div>';
+            }
+        }
+
+        // ── Login Streak ──
+        function initLoginStreak(userId, createdAt) {
+            var container = document.getElementById('ftStreakContainer');
+            if (!container || !createdAt) return;
+
+            var createdDate = new Date(createdAt);
+            var now = new Date();
+            var elapsed = Math.floor((now - createdDate) / (1000 * 60 * 60 * 24));
+            var currentDay = Math.min(elapsed + 1, 7);
+
+            // Get or init login days array from localStorage
+            var storageKey = 'ft_login_days_' + userId;
+            var loginDays = [];
+            try {
+                var stored = localStorage.getItem(storageKey);
+                if (stored) {
+                    loginDays = JSON.parse(stored);
+                    if (!Array.isArray(loginDays)) loginDays = [];
+                }
+            } catch (e) {
+                loginDays = [];
+            }
+
+            // Add current day if not already tracked
+            if (loginDays.indexOf(currentDay) === -1) {
+                loginDays.push(currentDay);
+                try {
+                    localStorage.setItem(storageKey, JSON.stringify(loginDays));
+                } catch (e) {
+                    // Storage full or disabled, ignore
+                }
+            }
+
+            // Update the dots
+            var dots = container.querySelectorAll('.ft-streak-dot');
+            dots.forEach(function(dot) {
+                var dayNum = parseInt(dot.getAttribute('data-day'), 10);
+                if (loginDays.indexOf(dayNum) !== -1) {
+                    dot.classList.add('filled');
+                }
+                if (dayNum === currentDay) {
+                    dot.classList.add('today');
+                }
+            });
+        }
+
+        // ── Pulse Stats ──
+        var pulseTimers = [];
+
+        function initPulseStats() {
+            var tradesEl = document.getElementById('ftPulseTradesVal');
+            var signalsEl = document.getElementById('ftPulseSignalsVal');
+            var winrateEl = document.getElementById('ftPulseWinrateVal');
+            if (!tradesEl || !signalsEl || !winrateEl) return;
+
+            // Clear any existing timers
+            pulseTimers.forEach(function(t) { clearInterval(t); clearTimeout(t); });
+            pulseTimers = [];
+
+            // Initial values
+            var trades = Math.floor(Math.random() * 601) + 1200; // 1200-1800
+            var signals = Math.floor(Math.random() * 6) + 3; // 3-8
+            var winrate = (Math.random() * 12 + 72); // 72-84
+            winrate = Math.round(winrate * 10) / 10;
+
+            tradesEl.textContent = trades.toLocaleString();
+            signalsEl.textContent = signals;
+            winrateEl.textContent = winrate.toFixed(1) + '%';
+
+            // Trades: increment 1-3 every 2-5 seconds
+            function scheduleTrades() {
+                var delay = Math.floor(Math.random() * 3001) + 2000;
+                var timer = setTimeout(function() {
+                    var add = Math.floor(Math.random() * 3) + 1;
+                    trades += add;
+                    if (tradesEl) tradesEl.textContent = trades.toLocaleString();
+                    scheduleTrades();
+                }, delay);
+                pulseTimers.push(timer);
+            }
+            scheduleTrades();
+
+            // Signals: add 1 every 30-60 seconds
+            function scheduleSignals() {
+                var delay = Math.floor(Math.random() * 30001) + 30000;
+                var timer = setTimeout(function() {
+                    signals += 1;
+                    if (signalsEl) signalsEl.textContent = signals;
+                    scheduleSignals();
+                }, delay);
+                pulseTimers.push(timer);
+            }
+            scheduleSignals();
+
+            // Win rate: twitch ±0.1% every 8-15 seconds
+            function scheduleWinrate() {
+                var delay = Math.floor(Math.random() * 7001) + 8000;
+                var timer = setTimeout(function() {
+                    var twitch = (Math.random() > 0.5 ? 0.1 : -0.1);
+                    winrate = Math.round((winrate + twitch) * 10) / 10;
+                    // Keep within 72-84 range
+                    if (winrate < 72) winrate = 72;
+                    if (winrate > 84) winrate = 84;
+                    if (winrateEl) winrateEl.textContent = winrate.toFixed(1) + '%';
+                    scheduleWinrate();
+                }, delay);
+                pulseTimers.push(timer);
+            }
+            scheduleWinrate();
+        }
+
+        // ── Social Proof Ticker ──
+        var socialProofTimer = null;
+
+        function initSocialProof() {
+            var textEl = document.getElementById('ftProofText');
+            if (!textEl) return;
+
+            var messages = [
+                '12 new members joined this week',
+                'Member from Texas closed $2,400 in profits last week',
+                'Algorithm detected 47 trading signals today',
+                '94% of members recommend the algorithm',
+                'New strategy video drops every morning at 9 AM'
+            ];
+
+            var idx = 0;
+            textEl.textContent = messages[idx];
+            textEl.style.opacity = '1';
+
+            function rotate() {
+                // Fade out
+                textEl.style.opacity = '0';
+                socialProofTimer = setTimeout(function() {
+                    idx = (idx + 1) % messages.length;
+                    textEl.textContent = messages[idx];
+                    // Fade in
+                    textEl.style.opacity = '1';
+                }, 500);
+            }
+
+            setInterval(rotate, 5000);
         }
 
         // ── Load all dashboard data ──
