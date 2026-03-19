@@ -645,20 +645,28 @@
         .ft-trial-badge {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.25);
-            border-radius: 100px;
-            padding: 8px 18px;
-            font-size: 13px;
-            font-weight: 700;
-            color: #60a5fa;
-            margin-bottom: 20px;
+            gap: 10px;
+            background: rgba(239, 68, 68, 0.12);
+            border: 2px solid rgba(239, 68, 68, 0.4);
+            border-radius: 14px;
+            padding: 14px 24px;
+            font-size: 18px;
+            font-weight: 800;
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            color: #f87171;
+            margin-bottom: 24px;
+            animation: ftBadgePulse 2s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.15);
+        }
+
+        @keyframes ftBadgePulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.3); border-color: rgba(239, 68, 68, 0.6); }
         }
 
         .ft-trial-badge svg {
-            width: 16px;
-            height: 16px;
+            width: 22px;
+            height: 22px;
             flex-shrink: 0;
         }
 
@@ -1228,7 +1236,7 @@
                             <p class="ft-hero-subtitle">Your algorithm is being calibrated. Explore your trial dashboard below.</p>
                             <div class="ft-trial-badge" id="ftTrialBadge">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                <span id="ftTrialDays">7 days remaining in your free trial</span>
+                                <span id="ftTrialDays">7 DAYS LEFT</span>
                             </div>
                             <a id="ftTradelinkBtn" href="https://www.tradelink.live/login?callbackUrl=/trial/8A97B0EA" target="_blank" class="ft-tradelink-btn">
                                 Open TradeLink
@@ -1276,10 +1284,10 @@
                     <h1 class="fte-title" id="fteTitle">Don't Miss Out on the Algorithm</h1>
                     <p class="fte-subtitle">Your free trial has expired, but the algorithm keeps running. Members are seeing real results every day. Upgrade now to keep your access and start trading live.</p>
                     <div class="fte-cta-group">
-                        <a href="/onboarding/" class="fte-purchase-btn" id="ftePurchaseBtn">
-                            Become a Member
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                        </a>
+                        <span class="fte-purchase-btn" style="cursor:default;opacity:0.85;">
+                            Contact Sales to Upgrade
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        </span>
                         <a href="https://www.tradelink.live/login?callbackUrl=/trial/8A97B0EA" target="_blank" class="fte-secondary-btn">
                             Open TradeLink
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -1533,7 +1541,12 @@
                     var now = new Date();
                     var elapsed = Math.floor((now - createdDate) / (1000 * 60 * 60 * 24));
                     var remaining = Math.max(0, trialDays - elapsed);
-                    document.getElementById('ftTrialDays').textContent = remaining + ' day' + (remaining !== 1 ? 's' : '') + ' remaining in your free trial';
+                    var badgeEl = document.getElementById('ftTrialDays');
+                    if (remaining <= 2) {
+                        badgeEl.textContent = remaining + ' DAY' + (remaining !== 1 ? 'S' : '') + ' LEFT — TRIAL ENDING SOON';
+                    } else {
+                        badgeEl.textContent = remaining + ' DAY' + (remaining !== 1 ? 'S' : '') + ' LEFT';
+                    }
                 }
 
                 // Set TradeLink URL (default already set in HTML, override from config if available)
