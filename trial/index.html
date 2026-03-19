@@ -723,7 +723,15 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
         </div>
         <h2 class="redirect-title">All Lessons Complete!</h2>
-        <p class="redirect-subtitle">Setting up your TradeLink account...</p>
+        <p class="redirect-subtitle" id="redirect-subtitle-1">We're taking you to your Customer Dashboard.</p>
+        <div style="background:rgba(240,200,50,0.08);border:1px solid rgba(240,200,50,0.25);border-radius:12px;padding:16px 24px;max-width:440px;margin:0 auto 20px;">
+            <div style="display:flex;align-items:center;gap:10px;justify-content:center;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#f0c832" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+                <span style="color:#f0c832;font-weight:700;font-size:14px;">Bookmark your dashboard!</span>
+            </div>
+            <p style="color:var(--text-secondary);font-size:13px;margin:8px 0 0;line-height:1.5;">Your dashboard is your home base for content, announcements, and account info. Bookmark it so you can always come back.</p>
+        </div>
+        <p style="color:var(--text-muted);font-size:13px;" id="redirect-countdown">Opening your dashboard and TradeLink in <span id="countdown-number">5</span>s...</p>
         <div class="redirect-spinner"></div>
     </div>
 
@@ -824,6 +832,12 @@
 
                 currentProfile = profile;
                 var status = (profile.status || '').toLowerCase();
+
+                // If trial onboarding already completed, go straight to dashboard
+                if (status === 'free_trial' && profile.onboarding_completed) {
+                    window.location.href = '/';
+                    return;
+                }
 
                 // Auth guard: only free_trial users allowed
                 if (status !== 'free_trial') {
@@ -1161,15 +1175,22 @@
                 document.getElementById('course-flow').style.display = 'none';
                 document.getElementById('redirect-screen').classList.add('active');
 
-                // Redirect to TradeLink after 3 seconds
-                setTimeout(function() {
-                    if (tradelinkUrl) {
-                        window.location.href = tradelinkUrl;
-                    } else {
-                        // Fallback: go to dashboard
+                // Countdown from 5, then redirect current tab to dashboard and open TradeLink in new tab
+                var seconds = 5;
+                var countdownEl = document.getElementById('countdown-number');
+                var countdownInterval = setInterval(function() {
+                    seconds--;
+                    if (countdownEl) countdownEl.textContent = seconds;
+                    if (seconds <= 0) {
+                        clearInterval(countdownInterval);
+                        // Open TradeLink in a new tab
+                        if (tradelinkUrl) {
+                            window.open(tradelinkUrl, '_blank');
+                        }
+                        // Navigate current tab to the customer dashboard
                         window.location.href = '/';
                     }
-                }, 3000);
+                }, 1000);
             }, 1000);
         }
 
