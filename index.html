@@ -669,8 +669,25 @@
                 <p class="welcome-subtitle" id="welcomeSubtitle">Your Profit Insider member portal</p>
             </div>
 
+            <!-- Free Trial: TradeLink Hero Card -->
+            <div class="welcome-banner" id="tradelinkCard" style="display:none; border-color: rgba(168, 85, 247, 0.3);">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                    <div style="width:44px;height:44px;background:rgba(168,85,247,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                    </div>
+                    <div>
+                        <h2 style="font-family:'Gilroy ExtraBold','Manrope',sans-serif;font-size:22px;font-weight:800;color:#a855f7;">Set Up Your TradeLink Account</h2>
+                        <p style="color:var(--text-secondary);font-size:13px;margin-top:2px;">Complete your free trial setup by creating your TradeLink account.</p>
+                    </div>
+                </div>
+                <a id="tradelinkBtn" href="#" target="_blank" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#a855f7,#9333ea);color:#fff;text-decoration:none;border-radius:10px;font-weight:700;font-size:14px;transition:transform 0.2s ease,box-shadow 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(168,85,247,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+                    Open TradeLink
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;display:inline;vertical-align:middle;margin-left:6px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+            </div>
+
             <!-- Quick Actions -->
-            <div class="quick-actions">
+            <div class="quick-actions" id="quickActions">
                 <a href="/portal/performance.html" class="action-card">
                     <div class="action-card-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
@@ -814,7 +831,11 @@
                     window.location.href = '/onboarding';
                     return;
                 }
-                if (!['member', 'verified_member', 'active'].includes(userStatus)) {
+                if (userStatus === 'free_trial' && !profile.onboarding_completed) {
+                    window.location.href = '/trial/';
+                    return;
+                }
+                if (!['member', 'verified_member', 'active', 'free_trial'].includes(userStatus)) {
                     window.location.href = '/onboarding';
                     return;
                 }
@@ -850,7 +871,24 @@
             }
             document.getElementById('welcomeSubtitle').textContent = timeGreeting;
 
-            window.injectClientSidebar('dashboard', 'logo.png');
+            window.injectClientSidebar('dashboard', 'logo.png', currentProfile.status);
+
+            // Free trial: show TradeLink card, hide premium quick actions
+            if (currentProfile.status === 'free_trial') {
+                const tradelinkCard = document.getElementById('tradelinkCard');
+                tradelinkCard.style.display = '';
+                // Load TradeLink URL from config
+                window.getFreeTrialConfig().then(function(config) {
+                    if (config && config.tradelink_url) {
+                        document.getElementById('tradelinkBtn').href = config.tradelink_url;
+                    }
+                });
+                // Hide performance and support quick action cards (first and third)
+                const actionCards = document.querySelectorAll('.quick-actions .action-card');
+                if (actionCards[0]) actionCards[0].style.display = 'none'; // Performance
+                if (actionCards[2]) actionCards[2].style.display = 'none'; // Support
+            }
+
             document.getElementById('mainContent').style.display = '';
             document.getElementById('loadingScreen').classList.add('hidden');
         }

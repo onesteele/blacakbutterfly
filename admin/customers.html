@@ -606,6 +606,11 @@
             color: var(--error);
         }
 
+        .status-badge.free_trial {
+            background: rgba(168, 85, 247, 0.15);
+            color: #a855f7;
+        }
+
         .status-dot {
             width: 6px;
             height: 6px;
@@ -1257,6 +1262,7 @@
                 <select class="filter-select" id="status-filter">
                     <option value="all">All Statuses</option>
                     <option value="onboarding">Onboarding</option>
+                    <option value="free_trial">Free Trial</option>
                     <option value="member">Member</option>
                     <option value="verified_member">Verified Member</option>
                     <option value="active">Active</option>
@@ -1372,6 +1378,7 @@
                 <label>New Status</label>
                 <select id="cs-status">
                     <option value="pending_verification">Pending Verification</option>
+                    <option value="free_trial">Free Trial</option>
                     <option value="onboarding">Onboarding</option>
                     <option value="member">Member</option>
                     <option value="verified_member">Verified Member</option>

@@ -707,13 +707,13 @@
 
                 // Check user status for access
                 const userStatus = (profile.status || 'onboarding').toLowerCase();
-                if (!['member', 'verified_member', 'active'].includes(userStatus)) {
+                if (!['member', 'verified_member', 'active', 'free_trial'].includes(userStatus)) {
                     window.location.href = '/onboarding';
                     return;
                 }
 
                 // Inject sidebar
-                window.injectClientSidebar('content', '../logo.png');
+                window.injectClientSidebar('content', '../logo.png', userStatus);
 
                 // Start auto-logout
                 resetAutoLogout();

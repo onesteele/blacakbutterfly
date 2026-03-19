@@ -971,13 +971,17 @@
 
                 // Check user status for access
                 const userStatus = (profile.status || 'onboarding').toLowerCase();
+                if (userStatus === 'free_trial') {
+                    window.location.href = '/';
+                    return;
+                }
                 if (!['member', 'verified_member', 'active'].includes(userStatus)) {
                     window.location.href = '/onboarding';
                     return;
                 }
 
                 const displayName = profile.full_name || profile.first_name || user.email;
-                window.injectClientSidebar('account', '../logo.png');
+                window.injectClientSidebar('account', '../logo.png', userStatus);
 
                 resetAutoLogout();
 

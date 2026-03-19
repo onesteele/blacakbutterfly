@@ -516,6 +516,11 @@
             color: var(--error);
         }
 
+        .status-badge.free_trial {
+            background: rgba(168, 85, 247, 0.15);
+            color: #a855f7;
+        }
+
         .status-dot {
             width: 6px;
             height: 6px;
@@ -573,6 +578,7 @@
         .status-dropdown-item .sdi-dot.churned { background: var(--error); }
         .status-dropdown-item .sdi-dot.at_risk { background: #f59e0b; }
         .status-dropdown-item .sdi-dot.dispute { background: var(--error); }
+        .status-dropdown-item .sdi-dot.free_trial { background: #a855f7; }
 
         /* Tags in profile header */
         .profile-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
@@ -1865,6 +1871,9 @@
                                         <div class="status-dropdown-item" onclick="changeStatus('onboarding')">
                                             <span class="sdi-dot onboarding"></span> Onboarding
                                         </div>
+                                        <div class="status-dropdown-item" onclick="changeStatus('free_trial')">
+                                            <span class="sdi-dot free_trial"></span> Free Trial
+                                        </div>
                                         <div class="status-dropdown-item" onclick="changeStatus('member')">
                                             <span class="sdi-dot member"></span> Member
                                         </div>
@@ -2280,7 +2289,7 @@
             const status = c.status || 'onboarding';
             const badge = document.getElementById('status-badge');
             badge.className = `status-badge ${status}`;
-            const statusLabels = { pending_verification: 'Pending Verification', onboarding: 'Onboarding', member: 'Member', verified_member: 'Verified Member', active: 'Active', inactive: 'Inactive', churned: 'Churned', at_risk: 'At Risk', dispute: 'Dispute' };
+            const statusLabels = { pending_verification: 'Pending Verification', onboarding: 'Onboarding', free_trial: 'Free Trial', member: 'Member', verified_member: 'Verified Member', active: 'Active', inactive: 'Inactive', churned: 'Churned', at_risk: 'At Risk', dispute: 'Dispute' };
             document.getElementById('status-label').textContent = statusLabels[status] || status;
 
             // Email button

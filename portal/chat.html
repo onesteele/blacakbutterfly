@@ -913,12 +913,16 @@
                 currentProfile = profile;
 
                 const userStatus = (profile.status || 'onboarding').toLowerCase();
+                if (userStatus === 'free_trial') {
+                    window.location.href = '/';
+                    return;
+                }
                 if (!['member', 'verified_member', 'active'].includes(userStatus)) {
                     window.location.href = '/onboarding';
                     return;
                 }
 
-                window.injectClientSidebar('messages', '../logo.png');
+                window.injectClientSidebar('messages', '../logo.png', userStatus);
                 resetAutoLogout();
 
                 if (typeof window.trackActivity === 'function') {

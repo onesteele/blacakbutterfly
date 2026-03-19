@@ -267,18 +267,22 @@ window._clientSidebarIcons = {
     account: '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
 };
 
-window.applyClientSidebar = function(activePage) {
+window.applyClientSidebar = function(activePage, userStatus) {
     const navEl = document.querySelector('.client-sidebar-nav');
     if (!navEl) return;
 
-    const items = [
-        { href: '/', icon: 'dashboard', label: 'Dashboard', id: 'dashboard' },
-        { href: '/portal/performance.html', icon: 'performance', label: 'Performance', id: 'performance' },
-        { href: '/portal/content.html', icon: 'content', label: 'Content', id: 'content' },
-        { href: '/portal/announcements.html', icon: 'announcements', label: 'Announcements', id: 'announcements' },
-        { href: '/portal/chat.html', icon: 'messages', label: 'Support', id: 'messages' },
-        { href: '/portal/account.html', icon: 'account', label: 'Account', id: 'account' },
+    const isFreeTrialUser = userStatus === 'free_trial';
+
+    const allItems = [
+        { href: '/', icon: 'dashboard', label: 'Dashboard', id: 'dashboard', freeTrial: true },
+        { href: '/portal/performance.html', icon: 'performance', label: 'Performance', id: 'performance', freeTrial: false },
+        { href: '/portal/content.html', icon: 'content', label: 'Content', id: 'content', freeTrial: true },
+        { href: '/portal/announcements.html', icon: 'announcements', label: 'Announcements', id: 'announcements', freeTrial: true },
+        { href: '/portal/chat.html', icon: 'messages', label: 'Support', id: 'messages', freeTrial: false },
+        { href: '/portal/account.html', icon: 'account', label: 'Account', id: 'account', freeTrial: false },
     ];
+
+    const items = isFreeTrialUser ? allItems.filter(item => item.freeTrial) : allItems;
 
     let html = '';
     for (const item of items) {
@@ -1058,7 +1062,7 @@ window.toggleClientSidebar = function() {
     document.getElementById('cs-overlay').classList.toggle('open');
 };
 
-window.injectClientSidebar = function(activePage, logoPath) {
+window.injectClientSidebar = function(activePage, logoPath, userStatus) {
     // Inject CSS
     if (!document.getElementById('client-sidebar-css')) {
         const style = document.createElement('style');
@@ -1077,7 +1081,7 @@ window.injectClientSidebar = function(activePage, logoPath) {
     const sidebarContainer = document.getElementById('sidebar-container');
     if (sidebarContainer) {
         sidebarContainer.innerHTML = window.buildClientSidebarHTML(logoPath);
-        window.applyClientSidebar(activePage);
+        window.applyClientSidebar(activePage, userStatus);
     }
     // Inject notification UI elements
     if (!document.getElementById('notif-bell')) {
@@ -1174,6 +1178,39 @@ window.markOnboardingComplete = async function(userId) {
         return false;
     }
     return true;
+};
+
+// Mark trial onboarding as complete (keeps free_trial status, sets onboarding done)
+window.markTrialOnboardingComplete = async function(userId) {
+    const { error } = await window.supabaseClient
+        .from('users')
+        .update({
+            onboarding_completed: true,
+            onboarding_completed_at: new Date().toISOString()
+        })
+        .eq('id', userId);
+
+    if (error) {
+        console.error('Error marking trial onboarding complete:', error);
+        return false;
+    }
+    return true;
+};
+
+// Get free trial configuration from admin_settings
+window.getFreeTrialConfig = async function() {
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('admin_settings')
+            .select('value')
+            .eq('key', 'free_trial_config')
+            .single();
+        if (error) throw error;
+        return data?.value || null;
+    } catch (err) {
+        console.error('Error loading free trial config:', err);
+        return null;
+    }
 };
 
 // Update user status (also syncs onboarding_completed flag)
