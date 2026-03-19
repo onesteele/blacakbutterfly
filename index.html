@@ -1253,17 +1253,9 @@
             border-color: rgba(240, 200, 50, 0.3);
         }
 
-        .ft-pulse-card.profits {
-            border-top: 2px solid #22c55e;
-        }
-
-        .ft-pulse-card.members {
-            border-top: 2px solid var(--accent);
-        }
-
-        .ft-pulse-card.winrate {
-            border-top: 2px solid #3b82f6;
-        }
+        .ft-pulse-card.profits { }
+        .ft-pulse-card.members { }
+        .ft-pulse-card.winrate { }
 
         .ft-pulse-icon {
             width: 40px;
@@ -1787,7 +1779,7 @@
                             </div>
                             <div>
                                 <div class="ft-pulse-value" id="ftActiveMembersVal">0</div>
-                                <div class="ft-pulse-label">Active Members Trading Now</div>
+                                <div class="ft-pulse-label">Active Members on Dashboard</div>
                             </div>
                         </div>
                         <div class="ft-pulse-card winrate">
@@ -2457,19 +2449,15 @@
             // Win rate — static
             if (winrateEl) winrateEl.textContent = '79.73%';
 
-            // ── Live Profits: seeded by day, grows hourly, resets at midnight ──
+            // ── Live Profits: starts ~$7k at midnight, reaches ~$240k by end of day ──
             if (profitsEl) {
                 var now = new Date();
-                var dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-                // Deterministic seed per day
-                var daySeed = (dayOfYear * 7919 + now.getFullYear() * 1301) % 10000;
-                var baseProfit = 4200 + (daySeed % 3800); // $4,200 - $8,000 base
                 var hourProgress = now.getHours() + (now.getMinutes() / 60);
-                // Profits grow from ~$800 at midnight to base amount by EOD
-                var dayMultiplier = Math.min(hourProgress / 16, 1); // peaks around 4PM
-                var currentProfit = Math.floor(800 + (baseProfit - 800) * dayMultiplier);
-                // Add some minute-level variance
-                currentProfit += Math.floor((now.getMinutes() * 17 + now.getSeconds() * 3) % 200);
+                // Curve from $7,000 at 0:00 to $240,000 at 23:59
+                var dayMultiplier = Math.min(hourProgress / 24, 1);
+                var currentProfit = Math.floor(7000 + (240000 - 7000) * dayMultiplier);
+                // Add minute-level variance so it doesn't look perfectly smooth
+                currentProfit += Math.floor((now.getMinutes() * 37 + now.getSeconds() * 11) % 800);
 
                 profitsEl.textContent = '$' + currentProfit.toLocaleString();
 
@@ -2477,7 +2465,7 @@
                 function tickProfits() {
                     var delay = Math.floor(Math.random() * 25001) + 15000;
                     setTimeout(function() {
-                        var bump = Math.floor(Math.random() * 120) + 30; // $30 - $150
+                        var bump = Math.floor(Math.random() * 400) + 100; // $100 - $500
                         currentProfit += bump;
                         if (profitsEl) profitsEl.textContent = '$' + currentProfit.toLocaleString();
                         tickProfits();
@@ -2529,7 +2517,39 @@
                 '6 members unlocked full access this week',
                 'Devin from Tampa just secured a $950 payout',
                 'Mia from San Diego hit +$530 in her first session',
-                'Another trial member just unlocked full access today'
+                'Another trial member just unlocked full access today',
+                'Ethan from Boston passed 3 Apex accounts this week',
+                'Leah from Seattle locked in +$1,320 on MNQ before noon',
+                'Nate from Las Vegas secured a $5k payout today',
+                'Olivia from Detroit just unlocked her full membership',
+                'Brandon from Austin hit +$860 in 2 trades this morning',
+                'Sophia from Minneapolis passed her eval on the first try',
+                'Chris from Jacksonville pulled +$1,480 on MES today',
+                '8 trial members unlocked full access in the last 24 hours',
+                'Dylan from Raleigh secured a $3,200 payout this week',
+                'Haley from San Antonio hit +$670 in her second session',
+                'Jake from Columbus passed 5 accounts with QuantBot today',
+                'Rachel from Indianapolis just got full access',
+                'Travis from Memphis locked in +$990 this morning',
+                'Amber from Kansas City secured a $1,800 payout today',
+                'Ryan from Salt Lake City passed his Apex eval in 48 hours',
+                'Nicole from Orlando pulled +$1,150 on MNQ today',
+                'Mason from Pittsburgh just unlocked his full membership',
+                'Taylor from Virginia Beach hit +$780 before market close',
+                'Luke from Sacramento passed 7 eval accounts this month',
+                'Whitney from Scottsdale secured a $4,500 payout',
+                'Kevin from New Orleans locked in +$560 in one session',
+                'Hannah from Milwaukee just upgraded from free trial',
+                'Andrew from Louisville hit +$1,650 using the algorithm',
+                'Jasmine from Oklahoma City passed her first eval today',
+                'Zach from Cincinnati secured a $2,800 payout this week',
+                'Kelsey from Boise pulled +$430 on MES this morning',
+                '11 new members got full access this week',
+                'Victor from Albuquerque passed 4 accounts today',
+                'Natalie from Omaha locked in +$1,070 before lunch',
+                'Patrick from Cleveland secured a $6k payout with Apex',
+                'Samantha from Tucson just unlocked her full membership',
+                'Andre from Baltimore hit +$920 in his first week'
             ];
 
             // Shuffle messages for variety
