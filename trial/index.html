@@ -846,8 +846,9 @@
                     if (['member', 'verified_member', 'active'].includes(status)) {
                         // Already a member, go to dashboard
                         showError('Already a Member', 'Your account is already active. Redirecting to the dashboard.', '/');
+                    } else if (status === 'free_trial_expired') {
+                        showError('Trial Expired', 'Your free trial has ended. Visit your dashboard to upgrade to a full membership.', '/');
                     } else if (status === 'pending_verification' || status === 'onboarding') {
-                        // Needs standard onboarding
                         showError('Standard Onboarding Required', 'Your account requires the standard onboarding flow.', '/onboarding/');
                     } else {
                         showError('Access Denied', 'This page is only available for free trial users.', '/');

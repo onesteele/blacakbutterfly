@@ -971,7 +971,7 @@
 
                 // Check user status for access
                 const userStatus = (profile.status || 'onboarding').toLowerCase();
-                if (userStatus === 'free_trial') {
+                if (userStatus === 'free_trial' || userStatus === 'free_trial_expired') {
                     window.location.href = '/';
                     return;
                 }

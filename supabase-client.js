@@ -271,7 +271,7 @@ window.applyClientSidebar = function(activePage, userStatus) {
     const navEl = document.querySelector('.client-sidebar-nav');
     if (!navEl) return;
 
-    const isFreeTrialUser = userStatus === 'free_trial';
+    const isFreeTrialUser = userStatus === 'free_trial' || userStatus === 'free_trial_expired';
 
     const allItems = [
         { href: '/', icon: 'dashboard', label: 'Dashboard', id: 'dashboard', freeTrial: true },

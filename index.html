@@ -878,6 +878,222 @@
             height: 16px;
         }
 
+        /* ── Free Trial EXPIRED Dashboard ── */
+        .fte-hero {
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: 20px;
+            padding: 48px 48px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .fte-hero::after {
+            content: '';
+            position: absolute;
+            top: -40%; left: 50%;
+            transform: translateX(-50%);
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .fte-expired-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: 100px;
+            color: #f87171;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .fte-expired-badge svg {
+            width: 16px; height: 16px;
+        }
+
+        .fte-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .fte-subtitle {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.7;
+            max-width: 600px;
+            margin: 0 auto 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .fte-cta-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .fte-purchase-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 36px;
+            background: linear-gradient(135deg, var(--accent), #e6b800);
+            color: #000;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 16px;
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            letter-spacing: 0.3px;
+        }
+
+        .fte-purchase-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(240, 200, 50, 0.3);
+        }
+
+        .fte-purchase-btn svg {
+            width: 18px; height: 18px;
+        }
+
+        .fte-secondary-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .fte-secondary-btn:hover {
+            transform: translateY(-2px);
+            background: rgba(59, 130, 246, 0.15);
+        }
+
+        .fte-secondary-btn svg {
+            width: 16px; height: 16px;
+        }
+
+        /* Stats row */
+        .fte-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .fte-stat-card {
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .fte-stat-value {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .fte-stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* Content section for expired users */
+        .fte-content-section {
+            margin-bottom: 32px;
+        }
+
+        .fte-content-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .fte-video-card {
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: transform 0.2s ease, border-color 0.3s ease;
+        }
+
+        .fte-video-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(240, 200, 50, 0.3);
+        }
+
+        .fte-video-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--success);
+            background: rgba(34, 197, 94, 0.1);
+            padding: 3px 10px;
+            border-radius: 100px;
+            width: fit-content;
+        }
+
+        .fte-video-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .fte-video-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
         /* ── Responsive ── */
         @media (max-width: 1024px) {
             .dashboard-grid {
@@ -890,6 +1106,14 @@
 
             .ft-terminal {
                 width: 100%;
+            }
+
+            .fte-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .fte-content-grid {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -1004,7 +1228,7 @@
                             <p class="ft-hero-subtitle">Your algorithm is being calibrated. Explore your trial dashboard below.</p>
                             <div class="ft-trial-badge" id="ftTrialBadge">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                <span id="ftTrialDays">14 days remaining in your free trial</span>
+                                <span id="ftTrialDays">7 days remaining in your free trial</span>
                             </div>
                             <a id="ftTradelinkBtn" href="https://www.tradelink.live/login?callbackUrl=/trial/8A97B0EA" target="_blank" class="ft-tradelink-btn">
                                 Open TradeLink
@@ -1039,6 +1263,49 @@
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                     </div>
                 </a>
+            </div>
+
+            <!-- Free Trial EXPIRED Dashboard -->
+            <div id="expiredTrialDashboard" style="display:none;">
+                <!-- Expired Hero -->
+                <div class="fte-hero">
+                    <div class="fte-expired-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        Your 7-day free trial has ended
+                    </div>
+                    <h1 class="fte-title" id="fteTitle">Don't Miss Out on the Algorithm</h1>
+                    <p class="fte-subtitle">Your free trial has expired, but the algorithm keeps running. Members are seeing real results every day. Upgrade now to keep your access and start trading live.</p>
+                    <div class="fte-cta-group">
+                        <a href="/onboarding/" class="fte-purchase-btn" id="ftePurchaseBtn">
+                            Become a Member
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </a>
+                        <a href="https://www.tradelink.live/login?callbackUrl=/trial/8A97B0EA" target="_blank" class="fte-secondary-btn">
+                            Open TradeLink
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Success Stories / Content Section -->
+                <div class="fte-content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                            Latest Videos & Content
+                        </h2>
+                        <a href="/portal/content.html" class="section-link">
+                            View all
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </a>
+                    </div>
+                    <div class="fte-content-grid" id="fteContentGrid">
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                            <p>Content loading...</p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Quick Actions -->
@@ -1190,7 +1457,19 @@
                     window.location.href = '/trial/';
                     return;
                 }
-                if (!['member', 'verified_member', 'active', 'free_trial'].includes(userStatus)) {
+                // Auto-expire free trial after 7 days
+                if (userStatus === 'free_trial' && profile.created_at) {
+                    var trialElapsed = Math.floor((new Date() - new Date(profile.created_at)) / (1000 * 60 * 60 * 24));
+                    if (trialElapsed >= 7) {
+                        await window.supabaseClient
+                            .from('users')
+                            .update({ status: 'free_trial_expired' })
+                            .eq('id', currentUser.id);
+                        profile.status = 'free_trial_expired';
+                    }
+                }
+                var userStatus = (profile.status || 'onboarding').toLowerCase();
+                if (!['member', 'verified_member', 'active', 'free_trial', 'free_trial_expired'].includes(userStatus)) {
                     window.location.href = '/onboarding';
                     return;
                 }
@@ -1242,8 +1521,8 @@
                 // Set welcome title
                 document.getElementById('ftWelcomeTitle').textContent = 'Welcome back, ' + firstName + '!';
 
-                // Calculate trial days remaining (14-day trial from created_at)
-                var trialDays = 14;
+                // Calculate trial days remaining (7-day trial from created_at)
+                var trialDays = 7;
                 if (currentProfile.created_at) {
                     var createdDate = new Date(currentProfile.created_at);
                     var now = new Date();
@@ -1263,8 +1542,66 @@
                 startTerminalAnimation();
             }
 
+            // Free trial EXPIRED: locked-out dashboard with purchase CTA + content
+            if (currentProfile.status === 'free_trial_expired') {
+                // Hide normal welcome banner and quick actions
+                document.querySelector('.welcome-banner').style.display = 'none';
+                document.getElementById('quickActions').style.display = 'none';
+                // Hide the normal dashboard grid and announcements for expired users
+                var dashGrid = document.querySelector('.dashboard-grid');
+                if (dashGrid) dashGrid.style.display = 'none';
+                var annSection = document.getElementById('announcementsSection');
+                if (annSection) annSection.style.display = 'none';
+
+                // Show expired dashboard
+                document.getElementById('expiredTrialDashboard').style.display = '';
+
+                // Track that the expired user visited the dashboard
+                if (window.trackActivity) {
+                    window.trackActivity(currentUser.id, 'expired_dashboard_visit', { timestamp: new Date().toISOString() });
+                }
+
+                // Load recent content for the expired grid
+                loadExpiredContent();
+            }
+
             document.getElementById('mainContent').style.display = '';
             document.getElementById('loadingScreen').classList.add('hidden');
+        }
+
+        // ── Load content for expired trial users ──
+        async function loadExpiredContent() {
+            try {
+                var { data, error } = await window.supabaseClient
+                    .from('content_posts')
+                    .select('*')
+                    .eq('is_published', true)
+                    .order('created_at', { ascending: false })
+                    .limit(6);
+
+                if (error) throw error;
+                if (!data || data.length === 0) return;
+
+                var grid = document.getElementById('fteContentGrid');
+                if (!grid) return;
+
+                grid.innerHTML = data.map(function(post) {
+                    var cat = (post.category || 'General').toLowerCase();
+                    var badgeLabel = cat === 'strategy' ? 'Strategy' : cat === 'tutorial' ? 'Tutorial' : cat === 'update' ? 'Update' : 'General';
+                    var desc = post.description || '';
+                    var date = new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                    return '<a href="/portal/content.html" class="fte-video-card">' +
+                        '<div style="display:flex;align-items:center;justify-content:space-between;">' +
+                            '<div class="fte-video-badge">' + badgeLabel + '</div>' +
+                            '<span style="font-size:11px;color:var(--text-muted);">' + date + '</span>' +
+                        '</div>' +
+                        '<div class="fte-video-title">' + (post.title || 'Untitled') + '</div>' +
+                        (desc ? '<div class="fte-video-desc">' + desc + '</div>' : '') +
+                    '</a>';
+                }).join('');
+            } catch (err) {
+                console.error('Error loading expired content:', err);
+            }
         }
 
         // ── Terminal animation for free trial ──

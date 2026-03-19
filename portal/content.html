@@ -707,7 +707,7 @@
 
                 // Check user status for access
                 const userStatus = (profile.status || 'onboarding').toLowerCase();
-                if (!['member', 'verified_member', 'active', 'free_trial'].includes(userStatus)) {
+                if (!['member', 'verified_member', 'active', 'free_trial', 'free_trial_expired'].includes(userStatus)) {
                     window.location.href = '/onboarding';
                     return;
                 }
