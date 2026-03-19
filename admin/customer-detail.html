@@ -2170,13 +2170,16 @@
                     This will convert <strong id="convert-name" style="color:var(--text-primary);"></strong> from a free trial user to a full member. They will be placed into the standard onboarding course flow (verification is already complete). A <strong style="color:#4ade80;">free_trial_conversion</strong> tag will be added automatically.
                 </p>
                 <div style="margin-bottom:16px;">
-                    <label style="display:block;font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;">Payment Plan</label>
+                    <label style="display:block;font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;">Payment Method</label>
                     <select id="convert-plan" style="width:100%;padding:10px 14px;background:#1a1a1a;border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-family:'Manrope',sans-serif;font-size:14px;">
-                        <option value="">Select a plan...</option>
-                        <option value="full_payment">Full Payment</option>
-                        <option value="2_payments">2 Payments</option>
-                        <option value="3_payments">3 Payments</option>
-                        <option value="4_payments">4 Payments</option>
+                        <option value="">Select payment method...</option>
+                        <option value="cash">Cash</option>
+                        <option value="inhouse_splitpay">In-House SplitPay</option>
+                        <option value="split_it">Split-It</option>
+                        <option value="klarna">Klarna</option>
+                        <option value="affirm">Affirm</option>
+                        <option value="afterpay">Afterpay</option>
+                        <option value="winnible">Winnible</option>
                     </select>
                 </div>
                 <div style="margin-bottom:16px;">
@@ -2184,7 +2187,7 @@
                     <input type="number" id="convert-total" placeholder="0.00" min="0" step="0.01" style="width:100%;padding:10px 14px;background:#1a1a1a;border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-family:'Manrope',sans-serif;font-size:14px;box-sizing:border-box;">
                 </div>
                 <div style="margin-bottom:20px;">
-                    <label style="display:block;font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;">Down Payment Collected ($)</label>
+                    <label style="display:block;font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;">Cash Collected ($)</label>
                     <input type="number" id="convert-down" placeholder="0.00" min="0" step="0.01" style="width:100%;padding:10px 14px;background:#1a1a1a;border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-family:'Manrope',sans-serif;font-size:14px;box-sizing:border-box;">
                 </div>
                 <div style="display:flex;gap:12px;justify-content:flex-end;">
