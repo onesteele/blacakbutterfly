@@ -654,6 +654,17 @@
             box-shadow: 0 4px 16px rgba(37, 211, 102, 0.15);
         }
 
+        .action-btn.convert-member {
+            background: rgba(34, 197, 94, 0.12);
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+        }
+
+        .action-btn.convert-member:hover {
+            background: rgba(34, 197, 94, 0.25);
+            border-color: #22c55e;
+        }
+
         .action-btn.danger {
             background: rgba(239, 68, 68, 0.12);
             border-color: rgba(239, 68, 68, 0.3);
@@ -1952,6 +1963,12 @@
                             </svg>
                             Trigger Workflow
                         </button>
+                        <button class="action-btn convert-member" id="convert-btn" style="display:none;" onclick="openConvertModal()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                            </svg>
+                            Convert to Member
+                        </button>
                         <button class="action-btn danger" onclick="openDeleteConfirm()">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -2137,7 +2154,74 @@
         </div>
     </div>
 
-    <!-- Supabase -->
+    <!-- Convert to Member Modal -->
+    <div class="modal-overlay" id="convert-modal">
+        <div class="modal-content" style="max-width:480px;">
+            <div class="modal-header">
+                <span class="modal-title">Convert Free Trial to Member</span>
+                <button class="modal-close" onclick="closeConvertModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" style="padding:20px 24px;">
+                <p style="color:var(--text-secondary);font-size:13px;line-height:1.6;margin-bottom:20px;">
+                    This will convert <strong id="convert-name" style="color:var(--text-primary);"></strong> from a free trial user to a full member. They will be placed into the standard onboarding course flow (verification is already complete). A <strong style="color:#4ade80;">free_trial_conversion</strong> tag will be added automatically.
+                </p>
+                <div style="margin-bottom:16px;">
+                    <label style="display:block;font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;">Payment Plan</label>
+                    <select id="convert-plan" style="width:100%;padding:10px 14px;background:#1a1a1a;border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-family:'Manrope',sans-serif;font-size:14px;">
+                        <option value="">Select a plan...</option>
+                        <option value="full_payment">Full Payment</option>
+                        <option value="2_payments">2 Payments</option>
+                        <option value="3_payments">3 Payments</option>
+                        <option value="4_payments">4 Payments</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:16px;">
+                    <label style="display:block;font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;">Total Amount Closed ($)</label>
+                    <input type="number" id="convert-total" placeholder="0.00" min="0" step="0.01" style="width:100%;padding:10px 14px;background:#1a1a1a;border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-family:'Manrope',sans-serif;font-size:14px;box-sizing:border-box;">
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="display:block;font-size:13px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;">Down Payment Collected ($)</label>
+                    <input type="number" id="convert-down" placeholder="0.00" min="0" step="0.01" style="width:100%;padding:10px 14px;background:#1a1a1a;border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-family:'Manrope',sans-serif;font-size:14px;box-sizing:border-box;">
+                </div>
+                <div style="display:flex;gap:12px;justify-content:flex-end;">
+                    <button onclick="closeConvertModal()" style="padding:10px 20px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);font-family:'Manrope',sans-serif;font-size:13px;font-weight:600;cursor:pointer;">Cancel</button>
+                    <button id="convert-submit-btn" onclick="submitConversion()" style="padding:10px 24px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;border-radius:8px;color:#fff;font-family:'Gilroy ExtraBold','Manrope',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:transform 0.2s ease,box-shadow 0.2s ease;" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 4px 16px rgba(34,197,94,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">Convert to Member</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onboarding Link Modal (post-conversion) -->
+    <div class="modal-overlay" id="convert-link-modal">
+        <div class="modal-content" style="max-width:480px;">
+            <div class="modal-header">
+                <span class="modal-title">Conversion Complete</span>
+                <button class="modal-close" onclick="closeConvertLinkModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body" style="padding:20px 24px;text-align:center;">
+                <div style="width:56px;height:56px;background:rgba(34,197,94,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#22c55e" stroke-width="2" style="width:28px;height:28px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 style="color:var(--text-primary);font-family:'Gilroy ExtraBold','Manrope',sans-serif;font-size:18px;margin-bottom:8px;" id="convert-link-name">Customer Converted!</h3>
+                <p style="color:var(--text-secondary);font-size:13px;margin-bottom:20px;">Share this onboarding link so they can complete the course videos:</p>
+                <div style="display:flex;gap:8px;">
+                    <input type="text" id="convert-link-url" readonly style="flex:1;padding:10px 14px;background:#1a1a1a;border:1px solid var(--border);border-radius:8px;color:var(--accent);font-family:monospace;font-size:13px;">
+                    <button onclick="copyConvertLink()" id="convert-copy-btn" style="padding:10px 20px;background:var(--accent);border:none;border-radius:8px;color:#000;font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">Copy Link</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Delete Confirmation Modal -->
     <div class="confirm-overlay" id="delete-confirm">
         <div class="confirm-card">
@@ -2317,12 +2401,18 @@
 
             // Tags
             renderProfileTags();
+
+            // Show convert button only for free trial / expired users
+            var convertBtn = document.getElementById('convert-btn');
+            if (convertBtn) {
+                convertBtn.style.display = (status === 'free_trial' || status === 'free_trial_expired') ? '' : 'none';
+            }
         }
 
         // ============================================================
         // TAGS MANAGEMENT
         // ============================================================
-        const PROFILE_TAGS = ['at_risk', 'refund_requested', 'dispute', 'churn_risk', 'vip', 'high_value'];
+        const PROFILE_TAGS = ['at_risk', 'refund_requested', 'dispute', 'churn_risk', 'vip', 'high_value', 'free_trial_conversion'];
         const PROFILE_TAG_LABELS = { at_risk: 'At Risk', refund_requested: 'Refund', dispute: 'Dispute', churn_risk: 'Churn Risk', vip: 'VIP', high_value: 'High Value' };
         let profileTagDDOpen = false;
 
@@ -2457,6 +2547,122 @@
             if (wrapper && !wrapper.contains(e.target)) {
                 document.getElementById('status-dropdown').classList.remove('show');
             }
+        });
+
+        // ============================================================
+        // FREE TRIAL CONVERSION
+        // ============================================================
+        function openConvertModal() {
+            if (!customerData) return;
+            document.getElementById('convert-name').textContent = customerData.full_name || customerData.email || 'this customer';
+            document.getElementById('convert-plan').value = '';
+            document.getElementById('convert-total').value = '';
+            document.getElementById('convert-down').value = '';
+            document.getElementById('convert-modal').classList.add('show');
+        }
+
+        function closeConvertModal() {
+            document.getElementById('convert-modal').classList.remove('show');
+        }
+
+        function closeConvertLinkModal() {
+            document.getElementById('convert-link-modal').classList.remove('show');
+        }
+
+        function copyConvertLink() {
+            var urlInput = document.getElementById('convert-link-url');
+            navigator.clipboard.writeText(urlInput.value).then(function() {
+                var btn = document.getElementById('convert-copy-btn');
+                btn.textContent = 'Copied!';
+                setTimeout(function() { btn.textContent = 'Copy Link'; }, 2000);
+            });
+        }
+
+        async function submitConversion() {
+            var plan = document.getElementById('convert-plan').value;
+            var total = parseFloat(document.getElementById('convert-total').value) || 0;
+            var down = parseFloat(document.getElementById('convert-down').value) || 0;
+
+            if (!plan) {
+                alert('Please select a payment plan.');
+                return;
+            }
+            if (total <= 0) {
+                alert('Please enter the total amount closed.');
+                return;
+            }
+
+            var btn = document.getElementById('convert-submit-btn');
+            btn.disabled = true;
+            btn.textContent = 'Converting...';
+
+            try {
+                // 1. Update user profile: status → onboarding, add payment info, set onboarding_completed to false
+                var updateData = {
+                    status: 'onboarding',
+                    payment_plan: plan,
+                    payment_total: total,
+                    payment_down: down,
+                    onboarding_completed: false
+                };
+                var { error: updateError } = await window.supabaseClient
+                    .from('users')
+                    .update(updateData)
+                    .eq('id', customerId);
+
+                if (updateError) throw updateError;
+
+                // 2. Auto-add "free_trial_conversion" tag
+                var tags = Array.isArray(customerData.tags) ? [...customerData.tags] : [];
+                if (!tags.includes('free_trial_conversion')) {
+                    tags.push('free_trial_conversion');
+                    await window.supabaseClient
+                        .from('users')
+                        .update({ tags: tags })
+                        .eq('id', customerId);
+                    customerData.tags = tags;
+                }
+
+                // 3. Log activity
+                if (window.trackActivity) {
+                    window.trackActivity('free_trial_conversion', '/admin/customer-detail.html', {
+                        customer_id: customerId,
+                        payment_plan: plan,
+                        payment_total: total,
+                        payment_down: down,
+                        converted_by: adminProfile?.email || 'admin'
+                    });
+                }
+
+                // 4. Update local data and re-render
+                customerData.status = 'onboarding';
+                customerData.payment_plan = plan;
+                customerData.payment_total = total;
+                customerData.payment_down = down;
+                renderProfileHeader();
+
+                // 5. Close convert modal, show onboarding link modal
+                closeConvertModal();
+                var name = customerData.full_name || 'Customer';
+                document.getElementById('convert-link-name').textContent = name + ' Converted!';
+                document.getElementById('convert-link-url').value = window.location.origin + '/onboarding/';
+                document.getElementById('convert-link-modal').classList.add('show');
+
+            } catch (error) {
+                console.error('Conversion error:', error);
+                alert('Error converting customer: ' + (error.message || 'Please try again.'));
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Convert to Member';
+            }
+        }
+
+        // Close convert modals on overlay click
+        document.getElementById('convert-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeConvertModal();
+        });
+        document.getElementById('convert-link-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeConvertLinkModal();
         });
 
         // ============================================================

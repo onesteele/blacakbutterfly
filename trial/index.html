@@ -731,7 +731,7 @@
             </div>
             <p style="color:var(--text-secondary);font-size:13px;margin:8px 0 0;line-height:1.5;">Your dashboard is your home base for content, announcements, and account info. Bookmark it so you can always come back.</p>
         </div>
-        <p style="color:var(--text-muted);font-size:13px;" id="redirect-countdown">Opening your dashboard and TradeLink in <span id="countdown-number">5</span>s...</p>
+        <p style="color:var(--text-muted);font-size:13px;" id="redirect-countdown">Opening your dashboard and TradeLink in <span id="countdown-number">9</span>s...</p>
         <div class="redirect-spinner"></div>
     </div>
 
@@ -1176,8 +1176,8 @@
                 document.getElementById('course-flow').style.display = 'none';
                 document.getElementById('redirect-screen').classList.add('active');
 
-                // Countdown from 5, then redirect current tab to dashboard and open TradeLink in new tab
-                var seconds = 5;
+                // Countdown from 9, then redirect current tab to dashboard and open TradeLink in new tab
+                var seconds = 9;
                 var countdownEl = document.getElementById('countdown-number');
                 var countdownInterval = setInterval(function() {
                     seconds--;

@@ -1659,6 +1659,10 @@
                     window.location.href = '/trial/';
                     return;
                 }
+                if (status === 'free_trial_expired') {
+                    window.location.href = '/';
+                    return;
+                }
 
                 currentProfile = profile;
 
