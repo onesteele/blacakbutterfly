@@ -68,9 +68,9 @@
         .orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
+            /* filter blur removed for performance */
             opacity: 0.3;
-            animation: floatOrb 20s ease-in-out infinite;
+            /* animation: floatOrb */ animation: none 20s ease-in-out infinite;
         }
 
         .orb-1 {
@@ -260,7 +260,7 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
+            /* backdrop-filter removed for performance */
             z-index: 90;
         }
 
@@ -285,7 +285,7 @@
             padding: 20px 32px;
             border-bottom: 1px solid var(--border);
             background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(10px);
+            /* backdrop-filter removed for performance */
             position: sticky;
             top: 0;
             z-index: 50;
@@ -407,7 +407,7 @@
            ============================================================ */
         .content-card {
             background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
+            /* backdrop-filter removed for performance */
             border: 1px solid var(--border);
             border-radius: 16px;
             overflow: hidden;
@@ -609,7 +609,7 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(6px);
+            /* backdrop-filter removed for performance */
             z-index: 500;
             align-items: center;
             justify-content: center;

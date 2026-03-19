@@ -64,9 +64,9 @@
         .orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
+            /* filter blur removed for performance */
             opacity: 0.3;
-            animation: floatOrb 20s ease-in-out infinite;
+            /* animation: floatOrb */ animation: none 20s ease-in-out infinite;
         }
 
         .orb-1 {
@@ -360,8 +360,8 @@
             padding: 14px 24px;
             border-bottom: 1px solid var(--border);
             background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* backdrop-filter removed for performance */
+            -webkit-/* backdrop-filter removed for performance */
             display: flex;
             align-items: center;
             gap: 14px;
@@ -616,8 +616,8 @@
             padding: 12px 24px 20px;
             border-top: 1px solid var(--border);
             background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* backdrop-filter removed for performance */
+            -webkit-/* backdrop-filter removed for performance */
         }
 
         .chat-input-wrapper {

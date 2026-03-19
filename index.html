@@ -41,60 +41,21 @@
             overflow-x: hidden;
         }
 
-        /* ── Background animation ── */
+        /* ── Background ── */
         .bg-animation {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
+            display: none;
         }
 
         .dot-pattern {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background-image: radial-gradient(rgba(240, 200, 50, 0.18) 1px, transparent 1px);
+            background-image: radial-gradient(rgba(240, 200, 50, 0.12) 1px, transparent 1px);
             background-size: 24px 24px;
             pointer-events: none;
-            z-index: 1;
-        }
-
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.3;
-            animation: floatOrb 20s ease-in-out infinite;
-        }
-
-        .orb-1 {
-            width: 400px; height: 400px;
-            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
-            top: -100px; right: -100px;
-        }
-
-        .orb-2 {
-            width: 300px; height: 300px;
-            background: radial-gradient(circle, rgba(240, 200, 50, 0.25) 0%, transparent 70%);
-            bottom: -80px; left: -80px;
-            animation-delay: -10s;
-            animation-duration: 25s;
-        }
-
-        .orb-3 {
-            width: 250px; height: 250px;
-            background: radial-gradient(circle, rgba(240, 200, 50, 0.15) 0%, transparent 70%);
-            top: 40%; left: 50%;
-            animation-delay: -5s;
-            animation-duration: 30s;
-        }
-
-        @keyframes floatOrb {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(-30px, 30px) scale(1.05); }
-            66% { transform: translate(20px, -20px) scale(0.97); }
+            z-index: 0;
+            transform: translateZ(0);
+            will-change: auto;
         }
 
         /* ── Loading screen ── */
@@ -149,8 +110,7 @@
         /* ── Welcome banner ── */
         .welcome-banner {
             background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* backdrop-filter removed for scroll performance */
             border: 1px solid rgba(42, 42, 42, 0.7);
             border-radius: 20px;
             padding: 48px 48px;
@@ -200,8 +160,7 @@
 
         .action-card {
             background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* backdrop-filter removed for scroll performance */
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 28px;
@@ -336,8 +295,7 @@
 
         .pinned-card {
             background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* backdrop-filter removed for scroll performance */
             border: 1px solid rgba(240, 200, 50, 0.2);
             border-radius: 16px;
             padding: 24px 28px;
@@ -402,8 +360,7 @@
 
         .content-card {
             background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* backdrop-filter removed for scroll performance */
             border: 1px solid var(--border);
             border-radius: 16px;
             overflow: hidden;
@@ -512,8 +469,7 @@
 
         .announcement-item {
             background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* backdrop-filter removed for scroll performance */
             border: 1px solid var(--border);
             border-radius: 14px;
             padding: 22px 28px;
@@ -588,8 +544,7 @@
         /* ── Free Trial Dashboard ── */
         .ft-hero {
             background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* backdrop-filter removed for scroll performance */
             border: 1px solid rgba(42, 42, 42, 0.7);
             border-radius: 20px;
             padding: 48px 48px;
@@ -786,8 +741,7 @@
         /* Content highlight card */
         .ft-content-highlight {
             background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* backdrop-filter removed for scroll performance */
             border: 1px solid rgba(240, 200, 50, 0.25);
             border-radius: 20px;
             padding: 36px 40px;
@@ -889,8 +843,7 @@
         /* ── Free Trial EXPIRED Dashboard ── */
         .fte-hero {
             background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* backdrop-filter removed for scroll performance */
             border: 1px solid rgba(239, 68, 68, 0.25);
             border-radius: 20px;
             padding: 48px 48px;
@@ -1017,7 +970,7 @@
 
         .fte-stat-card {
             background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
+            /* backdrop-filter removed for performance */
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 24px;
@@ -1053,7 +1006,7 @@
 
         .fte-video-card {
             background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
+            /* backdrop-filter removed for performance */
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 24px;
@@ -1317,8 +1270,7 @@
         /* ── Today's Briefing Card ── */
         #ftBriefingCard {
             background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* backdrop-filter removed for scroll performance */
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 36px 40px;
@@ -2121,7 +2073,7 @@
                 initLoginStreak(currentUser.id, currentProfile.created_at);
                 initPulseStats();
                 loadTodaysBriefing();
-                initSocialProof();
+                initSocialProof(firstName);
             }
 
             // Free trial EXPIRED: locked-out dashboard with purchase CTA + content
@@ -2495,11 +2447,12 @@
         // ── Social Proof Ticker ──
         var socialProofTimer = null;
 
-        function initSocialProof() {
+        function initSocialProof(userName) {
             var textEl = document.getElementById('ftProofText');
             if (!textEl) return;
 
             var messages = [
+                (userName || 'You') + ' started their free trial — welcome aboard',
                 'Griffin passed an Apex evaluation account today',
                 'Sarah passed 12 accounts today with QuantBot',
                 'Cody secured an $8k payout with Apex today',
@@ -2552,11 +2505,14 @@
                 'Andre from Baltimore hit +$920 in his first week'
             ];
 
-            // Shuffle messages for variety
-            for (var i = messages.length - 1; i > 0; i--) {
+            // Keep personalized message first, shuffle the rest
+            var firstMsg = messages[0];
+            var rest = messages.slice(1);
+            for (var i = rest.length - 1; i > 0; i--) {
                 var j = Math.floor(Math.random() * (i + 1));
-                var tmp = messages[i]; messages[i] = messages[j]; messages[j] = tmp;
+                var tmp = rest[i]; rest[i] = rest[j]; rest[j] = tmp;
             }
+            messages = [firstMsg].concat(rest);
 
             var idx = 0;
             textEl.textContent = messages[idx];

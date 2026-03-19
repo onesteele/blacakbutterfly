@@ -66,9 +66,9 @@
         .orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
+            /* filter blur removed for performance */
             opacity: 0.5;
-            animation: floatOrb 20s ease-in-out infinite;
+            /* animation: floatOrb */ animation: none 20s ease-in-out infinite;
         }
 
         .orb-1 {
@@ -138,7 +138,7 @@
 
         .auth-card {
             background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
+            /* backdrop-filter removed for performance */
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 40px;

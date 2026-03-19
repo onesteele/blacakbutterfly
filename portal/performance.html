@@ -64,9 +64,9 @@
         .orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
+            /* filter blur removed for performance */
             opacity: 0.3;
-            animation: floatOrb 20s ease-in-out infinite;
+            /* animation: floatOrb */ animation: none 20s ease-in-out infinite;
         }
 
         .orb-1 {
@@ -128,8 +128,8 @@
 
         .stat-card {
             background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* backdrop-filter removed for performance */
+            -webkit-/* backdrop-filter removed for performance */
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 26px 24px;
@@ -192,8 +192,8 @@
         /* ========== Chart Section ========== */
         .chart-section {
             background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* backdrop-filter removed for performance */
+            -webkit-/* backdrop-filter removed for performance */
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 30px;
@@ -298,8 +298,8 @@
 
         .info-card {
             background: rgba(18, 18, 18, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            /* backdrop-filter removed for performance */
+            -webkit-/* backdrop-filter removed for performance */
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 30px;

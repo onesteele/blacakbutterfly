@@ -64,9 +64,9 @@
         .orb {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
+            /* filter blur removed for performance */
             opacity: 0.5;
-            animation: floatOrb 20s ease-in-out infinite;
+            /* animation: floatOrb */ animation: none 20s ease-in-out infinite;
         }
 
         .orb-1 {
@@ -104,7 +104,7 @@
             top: 0;
             z-index: 100;
             background: rgba(10, 10, 10, 0.85);
-            backdrop-filter: blur(20px);
+            /* backdrop-filter removed for performance */
             border-bottom: 1px solid var(--border);
             padding: 0 24px;
         }
@@ -256,7 +256,7 @@
 
         .settings-card {
             background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(10px);
+            /* backdrop-filter removed for performance */
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 28px;
@@ -547,14 +547,14 @@
             background: rgba(34, 197, 94, 0.15);
             border: 1px solid rgba(34, 197, 94, 0.3);
             color: #4ade80;
-            backdrop-filter: blur(10px);
+            /* backdrop-filter removed for performance */
         }
 
         .toast.error {
             background: rgba(239, 68, 68, 0.15);
             border: 1px solid rgba(239, 68, 68, 0.3);
             color: #f87171;
-            backdrop-filter: blur(10px);
+            /* backdrop-filter removed for performance */
         }
 
         .toast svg {
@@ -610,7 +610,7 @@
                 left: 0;
                 right: 0;
                 background: rgba(10, 10, 10, 0.95);
-                backdrop-filter: blur(20px);
+                /* backdrop-filter removed for performance */
                 flex-direction: column;
                 padding: 16px;
                 border-bottom: 1px solid var(--border);
