@@ -1903,7 +1903,7 @@
         }
 
         function showOnboardingLinkModal(customerName, isFreeTrial) {
-            const onboardingUrl = window.location.origin + (isFreeTrial ? '/trial/' : '/onboarding/');
+            const onboardingUrl = window.location.origin + '/onboarding/';
             document.getElementById('onboarding-link-name').textContent = customerName;
             document.getElementById('onboarding-link-url').value = onboardingUrl;
             document.getElementById('btn-copy-link').textContent = 'Copy Link';
@@ -1937,7 +1937,7 @@
             const paymentPlan = isFreeTrial ? '' : document.getElementById('cu-payment-plan').value;
             const paymentTotal = isFreeTrial ? 0 : (parseFloat(document.getElementById('cu-payment-total').value) || 0);
             const paymentDown = isFreeTrial ? 0 : (parseFloat(document.getElementById('cu-payment-down').value) || 0);
-            const initialStatus = isFreeTrial ? 'free_trial' : 'pending_verification';
+            const initialStatus = 'pending_verification';
 
             // Generate temporary password (user will set their own during verification)
             const tempPassword = 'TmpPw!' + crypto.randomUUID().slice(0, 12);
@@ -1956,7 +1956,8 @@
                             first_name: firstName,
                             last_name: lastName,
                             phone: phone,
-                            initial_status: initialStatus
+                            initial_status: initialStatus,
+                            is_free_trial: isFreeTrial
                         }
                     }
                 });

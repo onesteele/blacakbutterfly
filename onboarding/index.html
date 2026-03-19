@@ -2151,6 +2151,10 @@
                 // Use the public URL from the upload as avatar
                 var avatarUrl = verificationPhotoUrl || null;
 
+                // Determine post-verification status: free trial users go to free_trial, others to onboarding
+                var isFreeTrial = currentUser.user_metadata && currentUser.user_metadata.is_free_trial === true;
+                var postVerificationStatus = isFreeTrial ? 'free_trial' : 'onboarding';
+
                 var verificationData = {
                     contract_signed_at: new Date().toISOString(),
                     contract_signature: signature,
@@ -2158,7 +2162,7 @@
                     verification_photo_url: verificationPhotoPath || verificationPhotoUrl || null,
                     verification_completed_at: new Date().toISOString(),
                     avatar_url: avatarUrl,
-                    status: 'onboarding'
+                    status: postVerificationStatus
                 };
 
                 if (window.saveVerificationData) {
