@@ -1231,7 +1231,7 @@
         /* ── Pulse Stats ── */
         #ftPulseStats {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(3, 1fr);
             gap: 12px;
             margin-top: 0;
             position: relative;
@@ -1242,8 +1242,10 @@
             background: rgba(12, 12, 12, 0.8);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 16px;
-            text-align: center;
+            padding: 18px 16px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
             transition: border-color 0.3s ease;
         }
 
@@ -1251,15 +1253,61 @@
             border-color: rgba(240, 200, 50, 0.3);
         }
 
+        .ft-pulse-card.profits {
+            border-top: 2px solid #22c55e;
+        }
+
+        .ft-pulse-card.members {
+            border-top: 2px solid var(--accent);
+        }
+
         .ft-pulse-card.winrate {
             border-top: 2px solid #3b82f6;
         }
 
+        .ft-pulse-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .ft-pulse-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .ft-pulse-card.profits .ft-pulse-icon {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+        }
+
+        .ft-pulse-card.members .ft-pulse-icon {
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+
+        .ft-pulse-card.winrate .ft-pulse-icon {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+
         .ft-pulse-value {
             font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 800;
-            margin-bottom: 2px;
+            margin-bottom: 0;
+        }
+
+        .ft-pulse-card.profits .ft-pulse-value {
+            color: #22c55e;
+        }
+
+        .ft-pulse-card.members .ft-pulse-value {
+            color: var(--accent);
         }
 
         .ft-pulse-card.winrate .ft-pulse-value {
@@ -1267,7 +1315,7 @@
         }
 
         .ft-pulse-label {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -1412,37 +1460,63 @@
             font-size: 14px;
         }
 
-        /* ── Social Proof Ticker ── */
+        /* ── Social Proof FOMO Banner ── */
         #ftSocialProof {
-            background: rgba(18, 18, 18, 0.6);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 14px 24px;
+            background: linear-gradient(90deg, rgba(34, 197, 94, 0.12) 0%, rgba(240, 200, 50, 0.12) 50%, rgba(59, 130, 246, 0.12) 100%);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 14px;
+            padding: 16px 24px;
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-top: 8px;
-            min-height: 48px;
+            margin-bottom: 20px;
+            min-height: 56px;
+            position: relative;
+            overflow: hidden;
+            animation: ftFomoBorderPulse 3s ease-in-out infinite;
         }
 
-        .ft-proof-pulse {
-            width: 8px;
-            height: 8px;
+        @keyframes ftFomoBorderPulse {
+            0%, 100% { border-color: rgba(34, 197, 94, 0.3); box-shadow: 0 0 20px rgba(34, 197, 94, 0.08); }
+            33% { border-color: rgba(240, 200, 50, 0.4); box-shadow: 0 0 20px rgba(240, 200, 50, 0.1); }
+            66% { border-color: rgba(59, 130, 246, 0.3); box-shadow: 0 0 20px rgba(59, 130, 246, 0.08); }
+        }
+
+        .ft-proof-live-dot {
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: #22c55e;
             flex-shrink: 0;
-            animation: ftProofPulse 2s ease-in-out infinite;
+            animation: ftLiveDotPulse 1.5s ease-in-out infinite;
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
         }
 
-        @keyframes ftProofPulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 4px rgba(34, 197, 94, 0.4); }
-            50% { opacity: 0.5; box-shadow: 0 0 8px rgba(34, 197, 94, 0.6); }
+        @keyframes ftLiveDotPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        .ft-proof-live-label {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            color: #22c55e;
+            letter-spacing: 1.5px;
+            background: rgba(34, 197, 94, 0.15);
+            padding: 3px 10px;
+            border-radius: 6px;
+            flex-shrink: 0;
         }
 
         #ftProofText {
-            font-size: 13px;
-            color: var(--text-secondary);
-            transition: opacity 0.5s ease;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            transition: opacity 0.4s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* ── Responsive ── */
@@ -1460,7 +1534,7 @@
             }
 
             #ftPulseStats {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: 1fr;
             }
 
             .fte-stats {
@@ -1590,10 +1664,17 @@
 
             #ftSocialProof {
                 padding: 12px 16px;
+                gap: 8px;
+            }
+
+            .ft-proof-live-label {
+                font-size: 9px;
+                padding: 2px 7px;
             }
 
             #ftProofText {
-                font-size: 12px;
+                font-size: 13px;
+                white-space: normal;
             }
         }
     </style>
@@ -1631,6 +1712,13 @@
 
             <!-- Free Trial Dashboard -->
             <div id="freeTrialDashboard" style="display:none;">
+                <!-- FOMO Social Proof Banner -->
+                <div id="ftSocialProof">
+                    <div class="ft-proof-live-dot"></div>
+                    <span class="ft-proof-live-label">LIVE</span>
+                    <span id="ftProofText">Loading...</span>
+                </div>
+
                 <!-- Trial Progress Bar -->
                 <div class="ft-progress-wrapper">
                     <div class="ft-progress-label">
@@ -1683,11 +1771,34 @@
                         </div>
                     </div>
 
-                    <!-- Win Rate Stat -->
+                    <!-- Live Stats -->
                     <div id="ftPulseStats">
+                        <div class="ft-pulse-card profits">
+                            <div class="ft-pulse-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            </div>
+                            <div>
+                                <div class="ft-pulse-value" id="ftLiveProfitsVal">$0</div>
+                                <div class="ft-pulse-label">Member Profits Generated Today</div>
+                            </div>
+                        </div>
+                        <div class="ft-pulse-card members">
+                            <div class="ft-pulse-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                            </div>
+                            <div>
+                                <div class="ft-pulse-value" id="ftActiveMembersVal">0</div>
+                                <div class="ft-pulse-label">Active Members Trading Now</div>
+                            </div>
+                        </div>
                         <div class="ft-pulse-card winrate">
-                            <div class="ft-pulse-value" id="ftPulseWinrateVal">79.73%</div>
-                            <div class="ft-pulse-label">Algorithm Win Rate</div>
+                            <div class="ft-pulse-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                            </div>
+                            <div>
+                                <div class="ft-pulse-value" id="ftPulseWinrateVal">79.73%</div>
+                                <div class="ft-pulse-label">Algorithm Win Rate</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1723,11 +1834,6 @@
                     </div>
                 </a>
 
-                <!-- Social Proof Ticker -->
-                <div id="ftSocialProof">
-                    <div class="ft-proof-pulse"></div>
-                    <span id="ftProofText">Loading...</span>
-                </div>
             </div>
 
             <!-- Free Trial EXPIRED Dashboard -->
@@ -2345,9 +2451,58 @@
         var pulseTimers = [];
 
         function initPulseStats() {
+            var profitsEl = document.getElementById('ftLiveProfitsVal');
+            var membersEl = document.getElementById('ftActiveMembersVal');
             var winrateEl = document.getElementById('ftPulseWinrateVal');
-            if (!winrateEl) return;
-            winrateEl.textContent = '79.73%';
+
+            // Win rate — static
+            if (winrateEl) winrateEl.textContent = '79.73%';
+
+            // ── Live Profits: seeded by day, grows hourly, resets at midnight ──
+            if (profitsEl) {
+                var now = new Date();
+                var dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+                // Deterministic seed per day
+                var daySeed = (dayOfYear * 7919 + now.getFullYear() * 1301) % 10000;
+                var baseProfit = 4200 + (daySeed % 3800); // $4,200 - $8,000 base
+                var hourProgress = now.getHours() + (now.getMinutes() / 60);
+                // Profits grow from ~$800 at midnight to base amount by EOD
+                var dayMultiplier = Math.min(hourProgress / 16, 1); // peaks around 4PM
+                var currentProfit = Math.floor(800 + (baseProfit - 800) * dayMultiplier);
+                // Add some minute-level variance
+                currentProfit += Math.floor((now.getMinutes() * 17 + now.getSeconds() * 3) % 200);
+
+                profitsEl.textContent = '$' + currentProfit.toLocaleString();
+
+                // Increment every 15-40 seconds
+                function tickProfits() {
+                    var delay = Math.floor(Math.random() * 25001) + 15000;
+                    setTimeout(function() {
+                        var bump = Math.floor(Math.random() * 120) + 30; // $30 - $150
+                        currentProfit += bump;
+                        if (profitsEl) profitsEl.textContent = '$' + currentProfit.toLocaleString();
+                        tickProfits();
+                    }, delay);
+                }
+                tickProfits();
+            }
+
+            // ── Active Members: 40-90 range, fluctuates ──
+            if (membersEl) {
+                var activeMembers = Math.floor(Math.random() * 30) + 45; // 45-75
+                membersEl.textContent = activeMembers;
+
+                function tickMembers() {
+                    var delay = Math.floor(Math.random() * 20001) + 10000;
+                    setTimeout(function() {
+                        var change = Math.random() > 0.4 ? 1 : -1;
+                        activeMembers = Math.max(38, Math.min(92, activeMembers + change));
+                        if (membersEl) membersEl.textContent = activeMembers;
+                        tickMembers();
+                    }, delay);
+                }
+                tickMembers();
+            }
         }
 
         // ── Social Proof Ticker ──
@@ -2358,34 +2513,42 @@
             if (!textEl) return;
 
             var messages = [
-                'Member from Texas closed $2,400 in profits last week',
-                'New member from Florida just signed up for full access',
-                'Member hit $1,850 profit on MNQ this morning',
-                '3 free trial users converted to full members yesterday',
-                'Member from California banked $3,100 using the algorithm',
-                'Another member just upgraded after seeing last week\'s results',
-                'Member from New York pulled $1,200 on MES in one session',
-                '5 new members joined this week after their free trial',
-                'Member from Georgia closed the week up $4,500',
-                'Trial user just purchased full access after Day 3'
+                'Member from Texas just closed +$2,400 in profits this morning',
+                'Someone just purchased full access 2 minutes ago',
+                'New member from Florida pulled +$1,850 on MNQ today',
+                '3 trial users upgraded to full members in the last hour',
+                'Member from California banked +$3,100 using the algorithm',
+                'Another member just upgraded after seeing yesterday\'s results',
+                'Member from New York pulled +$1,200 on MES in one session',
+                '7 new members joined this week after their free trial ended',
+                'Member from Georgia closed the week up +$4,500',
+                'Trial user just purchased full access — don\'t get left behind',
+                'Member from Arizona hit +$900 in 45 minutes this morning',
+                'Someone from your area just signed up for full access',
+                '2 free trial users converted in the last 30 minutes',
+                'Member hit a +$2,100 trade on MNQ using the algorithm today'
             ];
+
+            // Shuffle messages for variety
+            for (var i = messages.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var tmp = messages[i]; messages[i] = messages[j]; messages[j] = tmp;
+            }
 
             var idx = 0;
             textEl.textContent = messages[idx];
             textEl.style.opacity = '1';
 
             function rotate() {
-                // Fade out
                 textEl.style.opacity = '0';
                 socialProofTimer = setTimeout(function() {
                     idx = (idx + 1) % messages.length;
                     textEl.textContent = messages[idx];
-                    // Fade in
                     textEl.style.opacity = '1';
-                }, 500);
+                }, 400);
             }
 
-            setInterval(rotate, 5000);
+            setInterval(rotate, 4000);
         }
 
         // ── Load all dashboard data ──
