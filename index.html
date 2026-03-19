@@ -1448,7 +1448,7 @@
                     return;
                 }
 
-                const userStatus = (profile.status || 'onboarding').toLowerCase();
+                let userStatus = (profile.status || 'onboarding').toLowerCase();
                 if (userStatus === 'onboarding') {
                     window.location.href = '/onboarding';
                     return;
@@ -1468,7 +1468,7 @@
                         profile.status = 'free_trial_expired';
                     }
                 }
-                var userStatus = (profile.status || 'onboarding').toLowerCase();
+                userStatus = (profile.status || 'onboarding').toLowerCase();
                 if (!['member', 'verified_member', 'active', 'free_trial', 'free_trial_expired'].includes(userStatus)) {
                     window.location.href = '/onboarding';
                     return;
@@ -1477,6 +1477,11 @@
                 currentProfile = profile;
                 var previousLastLogin = profile.last_login || null;
                 window.updateLastLogin(currentUser.id);
+
+                // Log login activity
+                if (window.trackActivity) {
+                    window.trackActivity('login', '/', { status: profile.status });
+                }
 
                 renderDashboard();
                 loadDashboardData(previousLastLogin);
