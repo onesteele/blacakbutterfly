@@ -1231,7 +1231,7 @@
         /* ── Pulse Stats ── */
         #ftPulseStats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 1fr;
             gap: 12px;
             margin-top: 0;
             position: relative;
@@ -1251,14 +1251,6 @@
             border-color: rgba(240, 200, 50, 0.3);
         }
 
-        .ft-pulse-card.trades {
-            border-top: 2px solid var(--accent);
-        }
-
-        .ft-pulse-card.signals {
-            border-top: 2px solid #22c55e;
-        }
-
         .ft-pulse-card.winrate {
             border-top: 2px solid #3b82f6;
         }
@@ -1268,14 +1260,6 @@
             font-size: 24px;
             font-weight: 800;
             margin-bottom: 2px;
-        }
-
-        .ft-pulse-card.trades .ft-pulse-value {
-            color: var(--accent);
-        }
-
-        .ft-pulse-card.signals .ft-pulse-value {
-            color: #22c55e;
         }
 
         .ft-pulse-card.winrate .ft-pulse-value {
@@ -1699,19 +1683,11 @@
                         </div>
                     </div>
 
-                    <!-- Live Algorithm Pulse Stats -->
+                    <!-- Win Rate Stat -->
                     <div id="ftPulseStats">
-                        <div class="ft-pulse-card trades">
-                            <div class="ft-pulse-value" id="ftPulseTradesVal">0</div>
-                            <div class="ft-pulse-label">Trades Scanned</div>
-                        </div>
-                        <div class="ft-pulse-card signals">
-                            <div class="ft-pulse-value" id="ftPulseSignalsVal">0</div>
-                            <div class="ft-pulse-label">Signals Today</div>
-                        </div>
                         <div class="ft-pulse-card winrate">
-                            <div class="ft-pulse-value" id="ftPulseWinrateVal">0%</div>
-                            <div class="ft-pulse-label">Win Rate</div>
+                            <div class="ft-pulse-value" id="ftPulseWinrateVal">79.73%</div>
+                            <div class="ft-pulse-label">Algorithm Win Rate</div>
                         </div>
                     </div>
                 </div>
@@ -2369,65 +2345,9 @@
         var pulseTimers = [];
 
         function initPulseStats() {
-            var tradesEl = document.getElementById('ftPulseTradesVal');
-            var signalsEl = document.getElementById('ftPulseSignalsVal');
             var winrateEl = document.getElementById('ftPulseWinrateVal');
-            if (!tradesEl || !signalsEl || !winrateEl) return;
-
-            // Clear any existing timers
-            pulseTimers.forEach(function(t) { clearInterval(t); clearTimeout(t); });
-            pulseTimers = [];
-
-            // Initial values
-            var trades = Math.floor(Math.random() * 601) + 1200; // 1200-1800
-            var signals = Math.floor(Math.random() * 6) + 3; // 3-8
-            var winrate = (Math.random() * 12 + 72); // 72-84
-            winrate = Math.round(winrate * 10) / 10;
-
-            tradesEl.textContent = trades.toLocaleString();
-            signalsEl.textContent = signals;
-            winrateEl.textContent = winrate.toFixed(1) + '%';
-
-            // Trades: increment 1-3 every 2-5 seconds
-            function scheduleTrades() {
-                var delay = Math.floor(Math.random() * 3001) + 2000;
-                var timer = setTimeout(function() {
-                    var add = Math.floor(Math.random() * 3) + 1;
-                    trades += add;
-                    if (tradesEl) tradesEl.textContent = trades.toLocaleString();
-                    scheduleTrades();
-                }, delay);
-                pulseTimers.push(timer);
-            }
-            scheduleTrades();
-
-            // Signals: add 1 every 30-60 seconds
-            function scheduleSignals() {
-                var delay = Math.floor(Math.random() * 30001) + 30000;
-                var timer = setTimeout(function() {
-                    signals += 1;
-                    if (signalsEl) signalsEl.textContent = signals;
-                    scheduleSignals();
-                }, delay);
-                pulseTimers.push(timer);
-            }
-            scheduleSignals();
-
-            // Win rate: twitch ±0.1% every 8-15 seconds
-            function scheduleWinrate() {
-                var delay = Math.floor(Math.random() * 7001) + 8000;
-                var timer = setTimeout(function() {
-                    var twitch = (Math.random() > 0.5 ? 0.1 : -0.1);
-                    winrate = Math.round((winrate + twitch) * 10) / 10;
-                    // Keep within 72-84 range
-                    if (winrate < 72) winrate = 72;
-                    if (winrate > 84) winrate = 84;
-                    if (winrateEl) winrateEl.textContent = winrate.toFixed(1) + '%';
-                    scheduleWinrate();
-                }, delay);
-                pulseTimers.push(timer);
-            }
-            scheduleWinrate();
+            if (!winrateEl) return;
+            winrateEl.textContent = '79.73%';
         }
 
         // ── Social Proof Ticker ──
@@ -2438,11 +2358,16 @@
             if (!textEl) return;
 
             var messages = [
-                '12 new members joined this week',
                 'Member from Texas closed $2,400 in profits last week',
-                'Algorithm detected 47 trading signals today',
-                '94% of members recommend the algorithm',
-                'New strategy video drops every morning at 9 AM'
+                'New member from Florida just signed up for full access',
+                'Member hit $1,850 profit on MNQ this morning',
+                '3 free trial users converted to full members yesterday',
+                'Member from California banked $3,100 using the algorithm',
+                'Another member just upgraded after seeing last week\'s results',
+                'Member from New York pulled $1,200 on MES in one session',
+                '5 new members joined this week after their free trial',
+                'Member from Georgia closed the week up $4,500',
+                'Trial user just purchased full access after Day 3'
             ];
 
             var idx = 0;
