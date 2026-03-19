@@ -159,14 +159,6 @@
             overflow: hidden;
         }
 
-        .welcome-banner::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-light), var(--accent));
-        }
-
         .welcome-banner::after {
             content: '';
             position: absolute;
@@ -593,10 +585,311 @@
             font-size: 14px;
         }
 
+        /* ── Free Trial Dashboard ── */
+        .ft-hero {
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(42, 42, 42, 0.7);
+            border-radius: 20px;
+            padding: 48px 48px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ft-hero::after {
+            content: '';
+            position: absolute;
+            top: -40%; right: -5%;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .ft-hero-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 32px;
+            margin-bottom: 32px;
+        }
+
+        .ft-hero-left {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .ft-hero-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--accent) 50%, #e6b800 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ft-hero-subtitle {
+            color: var(--text-secondary);
+            font-size: 15px;
+            position: relative;
+            z-index: 1;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        .ft-trial-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 100px;
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #60a5fa;
+            margin-bottom: 20px;
+        }
+
+        .ft-trial-badge svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .ft-tradelink-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ft-tradelink-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+
+        .ft-tradelink-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Terminal animation */
+        .ft-terminal {
+            background: #0c0c0c;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            overflow: hidden;
+            width: 380px;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ft-terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 16px;
+            background: #161616;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .ft-terminal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .ft-terminal-dot.red { background: #ef4444; }
+        .ft-terminal-dot.yellow { background: #f0c832; }
+        .ft-terminal-dot.green { background: #22c55e; }
+
+        .ft-terminal-label {
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-left: 8px;
+        }
+
+        .ft-terminal-body {
+            padding: 20px;
+            min-height: 180px;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .ft-terminal-line {
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .ft-terminal-line .prompt {
+            color: #22c55e;
+        }
+
+        .ft-terminal-line .text {
+            color: #4ade80;
+        }
+
+        .ft-terminal-line.completed .text {
+            color: var(--text-muted);
+        }
+
+        .ft-terminal-line.active .text {
+            color: #4ade80;
+        }
+
+        .ft-terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: #4ade80;
+            vertical-align: text-bottom;
+            animation: ftBlink 1s step-end infinite;
+        }
+
+        @keyframes ftBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .ft-terminal-line.status-ready .text {
+            color: #22c55e;
+            font-weight: 700;
+        }
+
+        /* Content highlight card */
+        .ft-content-highlight {
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(240, 200, 50, 0.25);
+            border-radius: 20px;
+            padding: 36px 40px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 32px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s ease, border-color 0.3s ease;
+        }
+
+        .ft-content-highlight:hover {
+            transform: translateY(-2px);
+            border-color: rgba(240, 200, 50, 0.45);
+        }
+
+        .ft-content-highlight::after {
+            content: '';
+            position: absolute;
+            top: -40%; right: -10%;
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(240, 200, 50, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .ft-content-info {
+            flex: 1;
+            min-width: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ft-content-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--accent);
+            background: var(--accent-dim);
+            padding: 4px 12px;
+            border-radius: 100px;
+            margin-bottom: 14px;
+        }
+
+        .ft-content-eyebrow svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .ft-content-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .ft-content-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-width: 500px;
+        }
+
+        .ft-content-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 32px;
+            background: var(--accent-dim);
+            border: 1px solid rgba(240, 200, 50, 0.3);
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ft-content-cta:hover {
+            transform: translateY(-2px);
+            background: rgba(240, 200, 50, 0.2);
+            border-color: rgba(240, 200, 50, 0.5);
+        }
+
+        .ft-content-cta svg {
+            width: 16px;
+            height: 16px;
+        }
+
         /* ── Responsive ── */
         @media (max-width: 1024px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .ft-hero-top {
+                flex-direction: column;
+            }
+
+            .ft-terminal {
+                width: 100%;
             }
         }
 
@@ -635,6 +928,38 @@
             .announcement-item-date {
                 margin-top: 0;
             }
+
+            .ft-hero {
+                padding: 32px 24px;
+                border-radius: 16px;
+            }
+
+            .ft-hero-title {
+                font-size: 24px;
+            }
+
+            .ft-hero-top {
+                flex-direction: column;
+            }
+
+            .ft-terminal {
+                width: 100%;
+            }
+
+            .ft-content-highlight {
+                flex-direction: column;
+                padding: 28px 24px;
+                border-radius: 16px;
+                text-align: center;
+            }
+
+            .ft-content-desc {
+                max-width: 100%;
+            }
+
+            .ft-content-eyebrow {
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -669,20 +994,50 @@
                 <p class="welcome-subtitle" id="welcomeSubtitle">Your Profit Insider member portal</p>
             </div>
 
-            <!-- Free Trial: TradeLink Hero Card -->
-            <div class="welcome-banner" id="tradelinkCard" style="display:none; border-color: rgba(168, 85, 247, 0.3);">
-                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-                    <div style="width:44px;height:44px;background:rgba(168,85,247,0.15);border-radius:12px;display:flex;align-items:center;justify-content:center;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:24px;height:24px;"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-                    </div>
-                    <div>
-                        <h2 style="font-family:'Gilroy ExtraBold','Manrope',sans-serif;font-size:22px;font-weight:800;color:#a855f7;">Set Up Your TradeLink Account</h2>
-                        <p style="color:var(--text-secondary);font-size:13px;margin-top:2px;">Complete your free trial setup by creating your TradeLink account.</p>
+            <!-- Free Trial Dashboard -->
+            <div id="freeTrialDashboard" style="display:none;">
+                <!-- Algorithm Hype Hero -->
+                <div class="ft-hero">
+                    <div class="ft-hero-top">
+                        <div class="ft-hero-left">
+                            <h1 class="ft-hero-title" id="ftWelcomeTitle">Welcome back!</h1>
+                            <p class="ft-hero-subtitle">Your algorithm is being calibrated. Explore your trial dashboard below.</p>
+                            <div class="ft-trial-badge" id="ftTrialBadge">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                <span id="ftTrialDays">14 days remaining in your free trial</span>
+                            </div>
+                            <a id="ftTradelinkBtn" href="https://www.tradelink.live/login?callbackUrl=/trial/8A97B0EA" target="_blank" class="ft-tradelink-btn">
+                                Open TradeLink
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                            </a>
+                        </div>
+                        <div class="ft-terminal" id="ftTerminal">
+                            <div class="ft-terminal-header">
+                                <div class="ft-terminal-dot red"></div>
+                                <div class="ft-terminal-dot yellow"></div>
+                                <div class="ft-terminal-dot green"></div>
+                                <span class="ft-terminal-label">algo_scanner.sh</span>
+                            </div>
+                            <div class="ft-terminal-body" id="ftTerminalBody">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <a id="tradelinkBtn" href="#" target="_blank" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#a855f7,#9333ea);color:#fff;text-decoration:none;border-radius:10px;font-weight:700;font-size:14px;transition:transform 0.2s ease,box-shadow 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(168,85,247,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
-                    Open TradeLink
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;display:inline;vertical-align:middle;margin-left:6px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+
+                <!-- Content Library Highlight -->
+                <a href="/portal/content.html" class="ft-content-highlight" style="text-decoration:none; color:inherit;">
+                    <div class="ft-content-info">
+                        <div class="ft-content-eyebrow">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                            Fresh Content
+                        </div>
+                        <div class="ft-content-title">New Videos Added Daily</div>
+                        <div class="ft-content-desc" id="ftContentDesc">Explore the full content library with exclusive trading strategies, market analysis, and algorithm breakdowns.</div>
+                    </div>
+                    <div class="ft-content-cta">
+                        Browse Library
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    </div>
                 </a>
             </div>
 
@@ -873,24 +1228,124 @@
 
             window.injectClientSidebar('dashboard', 'logo.png', currentProfile.status);
 
-            // Free trial: show TradeLink card, hide premium quick actions
+            // Free trial: show new free trial dashboard, hide normal welcome banner and quick actions
             if (currentProfile.status === 'free_trial') {
-                const tradelinkCard = document.getElementById('tradelinkCard');
-                tradelinkCard.style.display = '';
-                // Load TradeLink URL from config
+                // Hide normal welcome banner
+                document.querySelector('.welcome-banner').style.display = 'none';
+                // Hide quick actions entirely for free trial
+                document.getElementById('quickActions').style.display = 'none';
+
+                // Show free trial dashboard
+                var ftDashboard = document.getElementById('freeTrialDashboard');
+                ftDashboard.style.display = '';
+
+                // Set welcome title
+                document.getElementById('ftWelcomeTitle').textContent = 'Welcome back, ' + firstName + '!';
+
+                // Calculate trial days remaining (14-day trial from created_at)
+                var trialDays = 14;
+                if (currentProfile.created_at) {
+                    var createdDate = new Date(currentProfile.created_at);
+                    var now = new Date();
+                    var elapsed = Math.floor((now - createdDate) / (1000 * 60 * 60 * 24));
+                    var remaining = Math.max(0, trialDays - elapsed);
+                    document.getElementById('ftTrialDays').textContent = remaining + ' day' + (remaining !== 1 ? 's' : '') + ' remaining in your free trial';
+                }
+
+                // Set TradeLink URL (default already set in HTML, override from config if available)
                 window.getFreeTrialConfig().then(function(config) {
                     if (config && config.tradelink_url) {
-                        document.getElementById('tradelinkBtn').href = config.tradelink_url;
+                        document.getElementById('ftTradelinkBtn').href = config.tradelink_url;
                     }
                 });
-                // Hide performance and support quick action cards (first and third)
-                const actionCards = document.querySelectorAll('.quick-actions .action-card');
-                if (actionCards[0]) actionCards[0].style.display = 'none'; // Performance
-                if (actionCards[2]) actionCards[2].style.display = 'none'; // Support
+
+                // Start terminal animation
+                startTerminalAnimation();
             }
 
             document.getElementById('mainContent').style.display = '';
             document.getElementById('loadingScreen').classList.add('hidden');
+        }
+
+        // ── Terminal animation for free trial ──
+        var terminalAnimationTimer = null;
+
+        function startTerminalAnimation() {
+            var messages = [
+                { text: 'Scanning MNQ futures...', delay: 60 },
+                { text: 'Analyzing MES contracts...', delay: 60 },
+                { text: 'Monitoring NQ price action...', delay: 60 },
+                { text: 'Evaluating ES volatility...', delay: 60 },
+                { text: 'Calibrating entry signals...', delay: 60 },
+                { text: 'Algorithm ready.', delay: 80, isReady: true }
+            ];
+
+            var body = document.getElementById('ftTerminalBody');
+            if (!body) return;
+
+            function runCycle() {
+                body.innerHTML = '';
+                var msgIndex = 0;
+
+                function typeNextMessage() {
+                    if (msgIndex >= messages.length) {
+                        // Pause then restart
+                        terminalAnimationTimer = setTimeout(function() {
+                            runCycle();
+                        }, 3000);
+                        return;
+                    }
+
+                    var msg = messages[msgIndex];
+                    var lineEl = document.createElement('div');
+                    lineEl.className = 'ft-terminal-line active';
+                    if (msg.isReady) lineEl.className += ' status-ready';
+
+                    var promptSpan = document.createElement('span');
+                    promptSpan.className = 'prompt';
+                    promptSpan.textContent = '> ';
+
+                    var textSpan = document.createElement('span');
+                    textSpan.className = 'text';
+                    textSpan.textContent = '';
+
+                    var cursorSpan = document.createElement('span');
+                    cursorSpan.className = 'ft-terminal-cursor';
+
+                    lineEl.appendChild(promptSpan);
+                    lineEl.appendChild(textSpan);
+                    lineEl.appendChild(cursorSpan);
+                    body.appendChild(lineEl);
+
+                    // Scroll to bottom
+                    body.scrollTop = body.scrollHeight;
+
+                    var charIndex = 0;
+                    var fullText = msg.text;
+
+                    function typeChar() {
+                        if (charIndex < fullText.length) {
+                            textSpan.textContent = fullText.substring(0, charIndex + 1);
+                            charIndex++;
+                            terminalAnimationTimer = setTimeout(typeChar, msg.delay);
+                        } else {
+                            // Typing done for this line
+                            cursorSpan.remove();
+                            lineEl.classList.remove('active');
+                            lineEl.classList.add('completed');
+                            if (msg.isReady) lineEl.classList.add('status-ready');
+                            msgIndex++;
+                            terminalAnimationTimer = setTimeout(typeNextMessage, 400);
+                        }
+                    }
+
+                    typeChar();
+                }
+
+                typeNextMessage();
+            }
+
+            runCycle();
         }
 
         // ── Load all dashboard data ──

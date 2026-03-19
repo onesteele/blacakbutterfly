@@ -1180,6 +1180,11 @@
                     <input type="text" class="form-input" id="content-video-url" placeholder="https://www.loom.com/share/... or https://youtu.be/...">
                 </div>
 
+                <div class="form-group">
+                    <label for="content-thumbnail-url">Thumbnail URL <span style="color:var(--text-muted);font-weight:400;">(optional)</span></label>
+                    <input type="text" class="form-input" id="content-thumbnail-url" placeholder="https://example.com/thumbnail.jpg">
+                </div>
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="content-category">Category</label>
@@ -1449,6 +1454,7 @@
             document.getElementById('content-title').value = '';
             document.getElementById('content-description').value = '';
             document.getElementById('content-video-url').value = '';
+            document.getElementById('content-thumbnail-url').value = '';
             document.getElementById('content-category').value = 'General';
             document.getElementById('content-sort-order').value = '0';
             document.getElementById('content-published').checked = false;
@@ -1467,6 +1473,7 @@
             document.getElementById('content-title').value = item.title || '';
             document.getElementById('content-description').value = item.description || '';
             document.getElementById('content-video-url').value = item.video_url || '';
+            document.getElementById('content-thumbnail-url').value = item.thumbnail_url || '';
             document.getElementById('content-category').value = item.category || 'General';
             document.getElementById('content-sort-order').value = item.sort_order || 0;
             document.getElementById('content-published').checked = item.is_published || false;
@@ -1497,6 +1504,7 @@
             const title = document.getElementById('content-title').value.trim();
             const description = document.getElementById('content-description').value.trim();
             const videoUrl = document.getElementById('content-video-url').value.trim();
+            const thumbnailUrl = document.getElementById('content-thumbnail-url').value.trim();
             const category = document.getElementById('content-category').value;
             const sortOrder = parseInt(document.getElementById('content-sort-order').value) || 0;
             const isPublished = document.getElementById('content-published').checked;
@@ -1510,6 +1518,7 @@
                 title,
                 description,
                 video_url: videoUrl || null,
+                thumbnail_url: thumbnailUrl || null,
                 category,
                 sort_order: sortOrder,
                 is_published: isPublished

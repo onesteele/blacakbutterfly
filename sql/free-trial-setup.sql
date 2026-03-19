@@ -13,7 +13,7 @@ VALUES (
             { "title": "Setting Up TradeLink", "url": "", "duration": "150", "checkboxes": ["I am ready to set up my TradeLink account"] },
             { "title": "Getting Started with Algorithms", "url": "", "duration": "120", "checkboxes": ["I understand the basics of algorithmic trading"] }
         ],
-        "tradelink_url": "https://tradelink.com/signup"
+        "tradelink_url": "https://www.tradelink.live/login?callbackUrl=/trial/8A97B0EA"
     }'::jsonb,
     NOW()
 )
