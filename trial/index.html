@@ -928,6 +928,17 @@
 
                 var description = video.description || 'Watch this lesson and complete the checklist below to continue.';
 
+                // Video 2 blue button (configurable from admin settings)
+                var video2ButtonHtml = '';
+                if (step === 2 && trialConfig.video2_button_url) {
+                    var btnText = escapeHtml(trialConfig.video2_button_text || 'Open Link');
+                    var btnUrl = escapeHtml(trialConfig.video2_button_url);
+                    video2ButtonHtml = '<div style="text-align:center;margin:16px 0 8px;">' +
+                        '<a href="' + btnUrl + '" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:10px 28px;background:#3b82f6;color:#fff;font-size:14px;font-weight:600;border-radius:8px;text-decoration:none;transition:background 0.2s;"' +
+                        ' onmouseover="this.style.background=\'#2563eb\'" onmouseout="this.style.background=\'#3b82f6\'">' +
+                        btnText + '</a></div>';
+                }
+
                 html += '<div class="lesson-screen" id="lesson-' + step + '" data-step="' + step + '" data-duration="' + duration + '">' +
                     '<div class="lesson-icon">' + iconSvg + '</div>' +
                     '<h2 class="lesson-title">' + escapeHtml(video.title) + '</h2>' +
@@ -941,6 +952,7 @@
                             '</div>' +
                         '</div>' +
                     '</div>' +
+                    video2ButtonHtml +
                     '<div class="quiz-section" id="course-quiz-' + step + '">' +
                         '<div class="quiz-title">' +
                             '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' +

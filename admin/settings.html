@@ -1950,6 +1950,19 @@
                         <input type="url" class="form-input" id="ft-tradelink-url" placeholder="https://tradelink.com/signup">
                     </div>
 
+                    <div style="margin-top: 24px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:12px; padding:16px;">
+                        <label style="font-weight:700; font-size:15px; margin-bottom:12px; display:block;">Video 2 Button</label>
+                        <p style="color:var(--text-muted); font-size:12px; margin-bottom:12px;">Optional button displayed below video #2 in the trial onboarding flow. Opens in a new tab.</p>
+                        <div class="form-group" style="margin-bottom:10px;">
+                            <label style="font-size:12px;">Button Label</label>
+                            <input type="text" class="form-input" id="ft-video2-btn-text" placeholder="e.g. Open TradeLink">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label style="font-size:12px;">Button URL</label>
+                            <input type="url" class="form-input" id="ft-video2-btn-url" placeholder="https://example.com">
+                        </div>
+                    </div>
+
                     <div style="margin-top: 24px;">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
                             <label style="margin:0; font-weight: 700; font-size: 15px;">Trial Videos</label>
@@ -3006,6 +3019,8 @@
                     freeTrialConfig = data.value;
                 }
                 document.getElementById('ft-tradelink-url').value = freeTrialConfig.tradelink_url || '';
+                document.getElementById('ft-video2-btn-text').value = freeTrialConfig.video2_button_text || '';
+                document.getElementById('ft-video2-btn-url').value = freeTrialConfig.video2_button_url || '';
                 renderTrialVideos();
             } catch (err) {
                 console.error('Error loading free trial config:', err);
@@ -3064,6 +3079,8 @@
 
             try {
                 freeTrialConfig.tradelink_url = document.getElementById('ft-tradelink-url').value.trim();
+                freeTrialConfig.video2_button_text = document.getElementById('ft-video2-btn-text').value.trim();
+                freeTrialConfig.video2_button_url = document.getElementById('ft-video2-btn-url').value.trim();
 
                 const { error } = await window.supabaseClient
                     .from('admin_settings')
