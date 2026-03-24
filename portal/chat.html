@@ -1081,8 +1081,13 @@
             </div>
 
             <div class="ticket-field">
-                <label for="ticketDescription">Describe your issue</label>
+                <label for="ticketDescription">Describe your issue <span style="color:var(--error);">*</span></label>
                 <textarea id="ticketDescription" placeholder="Please provide as much detail as possible about the issue you're experiencing..."></textarea>
+            </div>
+
+            <div class="ticket-field">
+                <label for="ticketAttempted">What have you tried so far to resolve this? <span style="color:var(--error);">*</span></label>
+                <textarea id="ticketAttempted" placeholder="Describe any steps you've already taken to troubleshoot this issue (e.g., restarted, reconnected, checked settings, etc.)..."></textarea>
             </div>
 
             <div class="ticket-modal-actions">
@@ -1301,6 +1306,7 @@
         function openTicketModal() {
             selectedCategory = null;
             document.getElementById('ticketDescription').value = '';
+            document.getElementById('ticketAttempted').value = '';
             document.getElementById('btnSubmitTicket').disabled = true;
 
             // Load categories from config
@@ -1343,9 +1349,14 @@
 
             const btn = document.getElementById('btnSubmitTicket');
             const description = document.getElementById('ticketDescription').value.trim();
+            const attempted = document.getElementById('ticketAttempted').value.trim();
 
             if (!description) {
                 showToast('Please describe your issue before submitting.', 'error');
+                return;
+            }
+            if (!attempted) {
+                showToast('Please describe what you have already tried to fix this issue.', 'error');
                 return;
             }
 
@@ -1354,6 +1365,7 @@
 
             try {
                 const categoryLabel = getCategoryLabel(selectedCategory.id) || selectedCategory.id;
+                const fullDescription = description + '\n\n---\n**What I have tried:** ' + attempted;
 
                 // Create the ticket
                 const { data: newConv, error: convError } = await window.supabaseClient
@@ -1365,7 +1377,7 @@
                         category: selectedCategory.id,
                         priority: selectedCategory.priority || 'medium',
                         title: categoryLabel + ': ' + description.substring(0, 60),
-                        description: description,
+                        description: fullDescription,
                         last_message_at: new Date().toISOString(),
                         last_message_preview: description.substring(0, 100),
                         admin_unread_count: 1,
@@ -1376,15 +1388,15 @@
 
                 if (convError) throw convError;
 
-                // Insert description as first message
+                // Insert issue description as first message
                 await window.supabaseClient
                     .from('chat_messages')
                     .insert({
                         conversation_id: newConv.id,
                         sender_id: currentUser.id,
                         sender_type: 'customer',
-                        content: description,
-                        message: description,
+                        content: '**Issue:** ' + description + '\n\n**What I have tried:** ' + attempted,
+                        message: '**Issue:** ' + description + '\n\n**What I have tried:** ' + attempted,
                         message_type: 'text'
                     });
 
@@ -1444,7 +1456,7 @@
             const ticketLabel = conv.ticket_number ? `Ticket #${conv.ticket_number}` : teamDisplayName;
             document.getElementById('chatTeamName').textContent = ticketLabel;
 
-            // Status banner
+            // Status banner — resolved and closed tickets are read-only
             const canReply = ['open', 'in_progress'].includes(selectedConvStatus);
             const banner = document.getElementById('resolvedBanner');
             const bannerText = document.getElementById('statusBannerText');
@@ -1452,12 +1464,13 @@
                 banner.style.display = 'none';
             } else if (selectedConvStatus === 'closed') {
                 banner.style.display = '';
-                bannerText.textContent = 'This ticket has been closed. Submit a new ticket if you need further help.';
+                bannerText.textContent = 'This ticket has been closed. If you need further help, please submit a new ticket.';
             } else {
                 banner.style.display = '';
-                bannerText.textContent = 'This ticket has been resolved. Send a message to reopen it.';
+                bannerText.textContent = 'This ticket has been resolved. If the issue persists, please submit a new ticket.';
             }
-            document.getElementById('chatInputArea').style.display = selectedConvStatus === 'closed' ? 'none' : '';
+            // Hide input for any non-active ticket
+            document.getElementById('chatInputArea').style.display = canReply ? '' : 'none';
 
             // Switch views
             document.getElementById('supportHub').style.display = 'none';
@@ -1619,12 +1632,13 @@
                             banner.style.display = 'none';
                         } else if (selectedConvStatus === 'closed') {
                             banner.style.display = '';
-                            bannerText.textContent = 'This ticket has been closed. Submit a new ticket if you need further help.';
+                            bannerText.textContent = 'This ticket has been closed. If you need further help, please submit a new ticket.';
                         } else {
                             banner.style.display = '';
-                            bannerText.textContent = 'This ticket has been resolved. Send a message to reopen it.';
+                            bannerText.textContent = 'This ticket has been resolved. If the issue persists, please submit a new ticket.';
                         }
-                        document.getElementById('chatInputArea').style.display = selectedConvStatus === 'closed' ? 'none' : '';
+                        // Hide input for resolved/closed — no reopening
+                        document.getElementById('chatInputArea').style.display = canReply ? '' : 'none';
                         if (payload.new.user_unread_count > 0) {
                             window.supabaseClient.from('chat_conversations').update({ user_unread_count: 0 }).eq('id', selectedConvId);
                         }
@@ -1714,15 +1728,12 @@
             input.disabled = true;
 
             try {
-                // Reopen if resolved
-                if (selectedConvStatus === 'resolved') {
-                    await window.supabaseClient
-                        .from('chat_conversations')
-                        .update({ status: 'open', resolved_at: null })
-                        .eq('id', selectedConvId);
-                    selectedConvStatus = 'open';
-                    document.getElementById('resolvedBanner').style.display = 'none';
-                    document.getElementById('chatInputArea').style.display = '';
+                // Block sending if ticket is resolved or closed
+                if (['resolved', 'closed'].includes(selectedConvStatus)) {
+                    showToast('This ticket is closed. Please submit a new ticket if you need help.', 'error');
+                    input.disabled = false;
+                    btn.disabled = true;
+                    return;
                 }
 
                 const { data: newMsg, error: msgError } = await window.supabaseClient
