@@ -728,20 +728,31 @@
     <div class="modal-overlay" id="form-builder-modal" style="display:none;">
         <div class="modal-card" style="max-width:560px;max-height:85vh;overflow-y:auto;">
             <div class="modal-header">
-                <h3>Create Questionnaire Form</h3>
+                <h3>Send Questionnaire</h3>
                 <button class="modal-close" onclick="closeFormBuilder()">&times;</button>
             </div>
             <div class="modal-body" style="padding:20px;">
-                <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Build a form to send to the customer. They will see the questions in the chat and can respond to each one.</p>
-                <div class="form-group" style="margin-bottom:16px;">
-                    <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px;">Form Title</label>
-                    <input type="text" class="form-input" id="form-title" placeholder="e.g. Troubleshooting Questionnaire" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-family:inherit;font-size:14px;">
+                <!-- Template selector -->
+                <div id="form-template-picker" style="margin-bottom:20px;">
+                    <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px;">Choose a Template</label>
+                    <select id="form-template-select" onchange="loadFormTemplate(this.value)" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-family:inherit;font-size:14px;">
+                        <option value="">-- Select a saved template --</option>
+                    </select>
+                    <p style="font-size:11px;color:var(--text-muted);margin-top:6px;">Or build a custom form below.</p>
                 </div>
-                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-                    <label style="font-weight:700;font-size:14px;">Questions</label>
-                    <button onclick="addFormQuestion()" style="padding:4px 12px;font-size:12px;font-weight:600;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);cursor:pointer;font-family:inherit;">+ Add Question</button>
+
+                <div style="border-top:1px solid var(--border);padding-top:16px;">
+                    <div class="form-group" style="margin-bottom:16px;">
+                        <label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px;">Form Title</label>
+                        <input type="text" class="form-input" id="form-title" placeholder="e.g. Troubleshooting Questionnaire" style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-family:inherit;font-size:14px;">
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                        <label style="font-weight:700;font-size:14px;">Questions</label>
+                        <button onclick="addFormQuestion()" style="padding:4px 12px;font-size:12px;font-weight:600;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--text-secondary);cursor:pointer;font-family:inherit;">+ Add Question</button>
+                    </div>
+                    <div id="form-questions-list"></div>
                 </div>
-                <div id="form-questions-list"></div>
+
                 <div style="margin-top:20px;display:flex;gap:10px;justify-content:flex-end;">
                     <button onclick="closeFormBuilder()" style="padding:10px 20px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--text-secondary);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>
                     <button onclick="sendFormToCustomer()" id="btn-send-form-submit" style="padding:10px 20px;background:var(--accent);border:none;border-radius:10px;color:#000;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;">Send to Customer</button>
@@ -885,7 +896,13 @@
         function subscribeToConversations() {
             conversationsSubscription = window.supabaseClient
                 .channel('admin-conversations')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_conversations' }, () => loadConversations())
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'chat_conversations' }, (payload) => {
+                    // Auto-send questionnaire for new tickets matching a template
+                    if (payload.eventType === 'INSERT' && payload.new && payload.new.status === 'open') {
+                        checkAutoSendTemplate(payload.new);
+                    }
+                    loadConversations();
+                })
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, (payload) => {
                     if (selectedConversationId && payload.new.conversation_id === selectedConversationId && payload.new.sender_id !== adminUser.id) {
                         appendMessage(payload.new);
@@ -893,6 +910,47 @@
                     loadConversations();
                 })
                 .subscribe();
+        }
+
+        async function checkAutoSendTemplate(conv) {
+            try {
+                if (!savedTemplates || savedTemplates.length === 0) await loadFormTemplates();
+                const category = conv.category || '';
+                const template = savedTemplates.find(t => t.auto_send === 'on_create' && t.linked_category === category);
+                if (!template || !template.questions || template.questions.length === 0) return;
+
+                const validQuestions = template.questions.filter(q => q.text && q.text.trim());
+                if (validQuestions.length === 0) return;
+
+                let formContent = '📋 **' + (template.name || 'Questionnaire') + '**\n\nPlease respond to the following questions:\n\n';
+                validQuestions.forEach((q, i) => {
+                    formContent += (i + 1) + '. ' + q.text;
+                    if (q.type === 'yesno') formContent += ' (Yes/No)';
+                    else if (q.type === 'select' && q.options) formContent += ' (' + q.options + ')';
+                    formContent += '\n';
+                });
+                formContent += '\nPlease reply with your answers numbered (e.g., 1. answer, 2. answer).';
+
+                await window.supabaseClient.from('chat_messages').insert({
+                    conversation_id: conv.id,
+                    sender_id: adminUser.id,
+                    sender_type: 'admin',
+                    content: formContent,
+                    message: formContent,
+                    message_type: 'text',
+                    display_name_override: 'Support Team'
+                });
+
+                await window.supabaseClient.from('chat_conversations').update({
+                    last_message_at: new Date().toISOString(),
+                    last_message_preview: '📋 ' + (template.name || 'Questionnaire'),
+                    user_unread_count: 1
+                }).eq('id', conv.id);
+
+                console.log('Auto-sent questionnaire "' + template.name + '" to ticket #' + (conv.ticket_number || conv.id));
+            } catch (err) {
+                console.error('Auto-send template error:', err);
+            }
         }
 
         /* FILTERS */
@@ -1723,6 +1781,20 @@
            QUESTIONNAIRE FORM BUILDER
            ============================================================ */
         let formQuestions = [];
+        let savedTemplates = [];
+
+        // Load templates from ticket config
+        async function loadFormTemplates() {
+            try {
+                const config = await window.getTicketConfig();
+                savedTemplates = (config && config.templates) || [];
+            } catch (e) {
+                savedTemplates = [];
+            }
+        }
+
+        // Load templates on init
+        loadFormTemplates();
 
         function openFormBuilder() {
             if (!selectedConversationId) {
@@ -1731,8 +1803,37 @@
             }
             formQuestions = [{ text: '', type: 'text' }];
             document.getElementById('form-title').value = '';
+
+            // Populate template dropdown
+            const select = document.getElementById('form-template-select');
+            const ticketCategory = selectedConversation?.category || '';
+
+            // Filter: show templates linked to this ticket's category first, then all others
+            const relevant = savedTemplates.filter(t => t.linked_category === ticketCategory);
+            const others = savedTemplates.filter(t => !t.linked_category || t.linked_category !== ticketCategory);
+            const ordered = [...relevant, ...others];
+
+            select.innerHTML = '<option value="">-- Select a saved template --</option>';
+            ordered.forEach((t, i) => {
+                const origIndex = savedTemplates.indexOf(t);
+                const badge = t.linked_category === ticketCategory && ticketCategory ? ' (recommended)' : '';
+                select.innerHTML += `<option value="${origIndex}">${escapeHtml(t.name || 'Template ' + (origIndex + 1))}${badge}</option>`;
+            });
+
             renderFormQuestions();
             document.getElementById('form-builder-modal').style.display = 'flex';
+        }
+
+        function loadFormTemplate(indexStr) {
+            if (indexStr === '') return;
+            const idx = parseInt(indexStr);
+            const template = savedTemplates[idx];
+            if (!template) return;
+
+            document.getElementById('form-title').value = template.name || '';
+            formQuestions = (template.questions || []).map(q => ({ ...q }));
+            if (formQuestions.length === 0) formQuestions = [{ text: '', type: 'text' }];
+            renderFormQuestions();
         }
 
         function closeFormBuilder() {
