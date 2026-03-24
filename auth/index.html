@@ -624,7 +624,7 @@
             try {
                 // Send password reset email
                 const { error: resetError } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
-                    redirectTo: 'https://algosetup.profit-insiders.com/accountrecovery'
+                    redirectTo: 'https://dash.profit-insiders.com/accountrecovery'
                 });
 
                 if (resetError) throw resetError;

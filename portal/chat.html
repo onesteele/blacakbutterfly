@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profit Insider - Support</title>
+    <title>Profit Insider - Support Tickets</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -293,6 +293,15 @@
             box-shadow: 0 0 6px rgba(245, 158, 11, 0.4);
         }
 
+        .conv-card-dot.in_progress {
+            background: #3b82f6;
+            box-shadow: 0 0 6px rgba(59, 130, 246, 0.4);
+        }
+
+        .conv-card-dot.closed {
+            background: var(--text-muted);
+        }
+
         .conv-card-status-badge {
             font-size: 10px;
             font-weight: 700;
@@ -307,6 +316,204 @@
             background: rgba(245, 158, 11, 0.15);
             color: #f59e0b;
         }
+
+        .conv-card-status-badge.in_progress {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+
+        .conv-card-status-badge.closed {
+            background: rgba(107, 114, 128, 0.15);
+            color: #6b7280;
+        }
+
+        .conv-card-category {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .conv-card-ticket-num {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-right: 6px;
+        }
+
+        .priority-badge {
+            display: inline-block;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 1px 5px;
+            border-radius: 3px;
+            margin-left: 4px;
+        }
+
+        .priority-badge.urgent { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .priority-badge.high { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .priority-badge.medium { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .priority-badge.low { background: rgba(107, 114, 128, 0.15); color: #6b7280; }
+
+        /* ========== Ticket Creation Modal ========== */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .ticket-modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 480px;
+            max-width: 92vw;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 32px;
+        }
+
+        .ticket-modal::-webkit-scrollbar { width: 5px; }
+        .ticket-modal::-webkit-scrollbar-track { background: transparent; }
+        .ticket-modal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        .ticket-modal h2 {
+            font-family: 'Gilroy ExtraBold', sans-serif;
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
+
+        .ticket-modal .modal-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .category-option {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .category-option:hover {
+            border-color: rgba(240, 200, 50, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .category-option.selected {
+            border-color: var(--accent);
+            background: var(--accent-dim);
+            box-shadow: 0 0 0 3px rgba(240, 200, 50, 0.1);
+        }
+
+        .category-option-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .category-option-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .ticket-field {
+            margin-bottom: 20px;
+        }
+
+        .ticket-field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .ticket-field textarea {
+            width: 100%;
+            min-height: 100px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            color: var(--text-primary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .ticket-field textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(240, 200, 50, 0.08);
+        }
+
+        .ticket-field textarea::placeholder { color: var(--text-muted); }
+
+        .ticket-modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-modal-cancel {
+            padding: 10px 20px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-modal-cancel:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-primary); }
+
+        .btn-modal-submit {
+            padding: 10px 24px;
+            background: var(--accent);
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-modal-submit:hover:not(:disabled) { background: var(--accent-light); transform: translateY(-1px); }
+        .btn-modal-submit:disabled { opacity: 0.4; cursor: not-allowed; }
 
         .conv-card-time {
             font-size: 11px;
@@ -771,13 +978,13 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
                     </svg>
                 </div>
-                <h1>How can we help?</h1>
-                <p>Our team is here to assist you</p>
-                <button class="btn-start-conv" id="btnStartConv" onclick="startConversation()">
+                <h1>Technical Support</h1>
+                <p>Submit a ticket and our team will help you resolve your issue</p>
+                <button class="btn-start-conv" id="btnStartConv" onclick="openTicketModal()">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z" />
                     </svg>
-                    Start a Conversation
+                    Submit a Ticket
                 </button>
             </div>
 
@@ -811,12 +1018,12 @@
                 </div>
             </div>
 
-            <!-- Resolved banner -->
+            <!-- Status banner -->
             <div class="resolved-banner" id="resolvedBanner" style="display: none;">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span>This conversation has been resolved. Send a message to reopen it.</span>
+                <span id="statusBannerText">This ticket has been resolved. Send a message to reopen it.</span>
             </div>
 
             <!-- Messages -->
@@ -863,6 +1070,28 @@
         </div>
     </div>
 
+    <!-- Ticket Creation Modal -->
+    <div class="modal-overlay" id="ticketModal">
+        <div class="ticket-modal">
+            <h2>Submit a Support Ticket</h2>
+            <p class="modal-subtitle" id="ticketModalWelcome">Please select the category that best describes your issue so we can help you as quickly as possible.</p>
+
+            <div class="category-grid" id="categoryGrid">
+                <!-- Categories loaded dynamically from config -->
+            </div>
+
+            <div class="ticket-field">
+                <label for="ticketDescription">Describe your issue</label>
+                <textarea id="ticketDescription" placeholder="Please provide as much detail as possible about the issue you're experiencing..."></textarea>
+            </div>
+
+            <div class="ticket-modal-actions">
+                <button class="btn-modal-cancel" onclick="closeTicketModal()">Cancel</button>
+                <button class="btn-modal-submit" id="btnSubmitTicket" onclick="submitTicket()" disabled>Submit Ticket</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast -->
     <div class="toast" id="toast"></div>
 
@@ -886,6 +1115,9 @@
         let messagesSubscription = null;
         let pollingInterval = null;
         let lastMessageTimestamp = null;
+
+        let ticketConfig = null;
+        let selectedCategory = null;
 
         // ============================================================
         // AUTO-LOGOUT
@@ -935,6 +1167,11 @@
                     teamDisplayName = aiConfig.ai_display_name || 'Support Team';
                 } catch (e) { /* use default */ }
 
+                // Load ticket configuration
+                try {
+                    ticketConfig = await window.getTicketConfig();
+                } catch (e) { console.log('Could not load ticket config'); }
+
                 document.getElementById('supportWrapper').style.display = '';
                 await loadConversations();
 
@@ -975,23 +1212,23 @@
             const area = document.getElementById('convHistory');
 
             if (allConversations.length === 0) {
-                area.innerHTML = '<div class="conv-empty">No conversations yet. Start a new one above!</div>';
+                area.innerHTML = '<div class="conv-empty">No tickets yet. Submit a new ticket above!</div>';
                 return;
             }
 
-            const active = allConversations.filter(c => (c.status || 'open') === 'open');
-            const resolved = allConversations.filter(c => (c.status || 'open') !== 'open');
+            const active = allConversations.filter(c => ['open', 'in_progress'].includes(c.status || 'open'));
+            const closed = allConversations.filter(c => ['resolved', 'closed'].includes(c.status || 'open'));
 
             let html = '';
 
             if (active.length > 0) {
-                html += '<div class="conv-section-label">Active</div>';
+                html += '<div class="conv-section-label">Open Tickets</div>';
                 active.forEach(c => { html += renderConvCard(c, true); });
             }
 
-            if (resolved.length > 0) {
-                html += `<div class="conv-section-label ${active.length > 0 ? 'past' : ''}">Past Conversations</div>`;
-                resolved.forEach(c => { html += renderConvCard(c, false); });
+            if (closed.length > 0) {
+                html += `<div class="conv-section-label ${active.length > 0 ? 'past' : ''}">Resolved Tickets</div>`;
+                closed.forEach(c => { html += renderConvCard(c, false); });
             }
 
             area.innerHTML = html;
@@ -1003,26 +1240,45 @@
                 ? formatRelativeTime(conv.last_message_at || conv.created_at)
                 : formatDate(conv.resolved_at || conv.updated_at || conv.created_at);
 
-            const isEscalated = conv.is_escalated === true;
-            const dotClass = isEscalated ? 'escalated' : (isActive ? 'active' : 'resolved');
-            const statusBadge = isEscalated ? '<span class="conv-card-status-badge escalated">Escalated</span>' : '';
+            const status = conv.status || 'open';
+            let dotClass = 'active';
+            let statusBadge = '';
+            if (status === 'in_progress') {
+                dotClass = 'in_progress';
+                statusBadge = '<span class="conv-card-status-badge in_progress">In Progress</span>';
+            } else if (status === 'resolved') {
+                dotClass = 'resolved';
+                statusBadge = '<span class="conv-card-status-badge" style="background:rgba(34,197,94,0.15);color:#22c55e;">Resolved</span>';
+            } else if (status === 'closed') {
+                dotClass = 'closed';
+                statusBadge = '<span class="conv-card-status-badge closed">Closed</span>';
+            } else if (conv.is_escalated) {
+                dotClass = 'escalated';
+                statusBadge = '<span class="conv-card-status-badge escalated">Escalated</span>';
+            }
+
+            const ticketNum = conv.ticket_number ? `<span class="conv-card-ticket-num">#${conv.ticket_number}</span>` : '';
+            const priorityBadge = conv.priority && conv.priority !== 'medium' ? `<span class="priority-badge ${conv.priority}">${conv.priority}</span>` : '';
+            const categoryLabel = getCategoryLabel(conv.category);
+            const categoryHtml = categoryLabel ? `<div class="conv-card-category">${escapeHtml(categoryLabel)}</div>` : '';
 
             return `
                 <div class="conv-card" onclick="openChatView('${conv.id}')">
                     <div class="conv-card-avatar">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z" />
                         </svg>
                     </div>
                     <div class="conv-card-body">
                         <div class="conv-card-top">
                             <span class="conv-card-name">
                                 <span class="conv-card-dot ${dotClass}"></span>
-                                ${escapeHtml(teamDisplayName)}${statusBadge}
+                                ${ticketNum}${escapeHtml(conv.title || 'Support Request')}${statusBadge}${priorityBadge}
                             </span>
                             <span class="conv-card-time">${timeStr}</span>
                         </div>
                         <div class="conv-card-preview">${preview}</div>
+                        ${categoryHtml}
                     </div>
                     <svg class="conv-card-arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -1030,30 +1286,89 @@
                 </div>`;
         }
 
+        function getCategoryLabel(categoryId) {
+            if (!categoryId || categoryId === 'general' || categoryId === 'ai') return '';
+            if (ticketConfig && ticketConfig.categories) {
+                const cat = ticketConfig.categories.find(c => c.id === categoryId);
+                if (cat) return cat.label;
+            }
+            return categoryId.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
         // ============================================================
-        // START A CONVERSATION
+        // TICKET CREATION MODAL
         // ============================================================
-        async function startConversation() {
-            const btn = document.getElementById('btnStartConv');
+        function openTicketModal() {
+            selectedCategory = null;
+            document.getElementById('ticketDescription').value = '';
+            document.getElementById('btnSubmitTicket').disabled = true;
+
+            // Load categories from config
+            const grid = document.getElementById('categoryGrid');
+            const categories = (ticketConfig && ticketConfig.categories) || [
+                { id: 'account_setup', label: 'Account Setup', description: 'Help with setting up your trading account', priority: 'high' },
+                { id: 'broker_connection', label: 'Broker Connection', description: 'Issues connecting your broker', priority: 'high' },
+                { id: 'algorithm_config', label: 'Algorithm Configuration', description: 'Help configuring algorithm parameters', priority: 'medium' },
+                { id: 'platform_bug', label: 'Platform Bug', description: 'Something is not working correctly', priority: 'high' },
+                { id: 'other', label: 'Other Technical Issue', description: 'Any other technical issue', priority: 'medium' }
+            ];
+
+            const welcomeMsg = (ticketConfig && ticketConfig.welcome_message) || 'Please select the category that best describes your issue so we can help you as quickly as possible.';
+            document.getElementById('ticketModalWelcome').textContent = welcomeMsg;
+
+            grid.innerHTML = categories.map(cat => `
+                <div class="category-option" data-cat-id="${cat.id}" data-cat-priority="${cat.priority || 'medium'}" onclick="selectCategory(this, '${cat.id}', '${cat.priority || 'medium'}')">
+                    <div class="category-option-label">${escapeHtml(cat.label)}</div>
+                    <div class="category-option-desc">${escapeHtml(cat.description || '')}</div>
+                </div>
+            `).join('');
+
+            document.getElementById('ticketModal').classList.add('show');
+        }
+
+        function closeTicketModal() {
+            document.getElementById('ticketModal').classList.remove('show');
+            selectedCategory = null;
+        }
+
+        function selectCategory(el, catId, catPriority) {
+            document.querySelectorAll('.category-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedCategory = { id: catId, priority: catPriority };
+            document.getElementById('btnSubmitTicket').disabled = false;
+        }
+
+        async function submitTicket() {
+            if (!selectedCategory) return;
+
+            const btn = document.getElementById('btnSubmitTicket');
+            const description = document.getElementById('ticketDescription').value.trim();
+
+            if (!description) {
+                showToast('Please describe your issue before submitting.', 'error');
+                return;
+            }
+
             btn.disabled = true;
-            btn.textContent = 'Connecting...';
+            btn.textContent = 'Submitting...';
 
             try {
-                const aiConfig = await window.getAIChatConfig();
-                const greetingText = aiConfig.greeting_message || 'Hi! How can I help you today?';
-                const displayName = aiConfig.ai_display_name || 'Support Team';
+                const categoryLabel = getCategoryLabel(selectedCategory.id) || selectedCategory.id;
 
-                // Create conversation
+                // Create the ticket
                 const { data: newConv, error: convError } = await window.supabaseClient
                     .from('chat_conversations')
                     .insert({
                         user_id: currentUser.id,
                         status: 'open',
-                        handler_type: 'ai',
-                        category: 'ai',
-                        title: 'Support Request',
+                        handler_type: 'human',
+                        category: selectedCategory.id,
+                        priority: selectedCategory.priority || 'medium',
+                        title: categoryLabel + ': ' + description.substring(0, 60),
+                        description: description,
                         last_message_at: new Date().toISOString(),
-                        last_message_preview: greetingText.substring(0, 100),
+                        last_message_preview: description.substring(0, 100),
+                        admin_unread_count: 1,
                         user_unread_count: 0
                     })
                     .select()
@@ -1061,32 +1376,55 @@
 
                 if (convError) throw convError;
 
-                // Insert greeting from "team"
+                // Insert description as first message
+                await window.supabaseClient
+                    .from('chat_messages')
+                    .insert({
+                        conversation_id: newConv.id,
+                        sender_id: currentUser.id,
+                        sender_type: 'customer',
+                        content: description,
+                        message: description,
+                        message_type: 'text'
+                    });
+
+                // Insert auto-reply as system message
+                const autoReply = (ticketConfig && ticketConfig.auto_reply_message) || 'Thank you for submitting your ticket. Our support team has been notified and will respond as soon as possible.';
                 await window.supabaseClient
                     .from('chat_messages')
                     .insert({
                         conversation_id: newConv.id,
                         sender_id: currentUser.id,
                         sender_type: 'admin',
-                        content: greetingText,
-                        message: greetingText,
+                        content: autoReply,
+                        message: autoReply,
                         is_ai_message: true,
-                        display_name_override: displayName
+                        display_name_override: teamDisplayName,
+                        message_type: 'system'
                     });
 
+                // Send confirmation email
+                if (window.sendTicketCreatedEmail && currentProfile) {
+                    const custName = ((currentProfile.first_name || '') + ' ' + (currentProfile.last_name || '')).trim();
+                    window.sendTicketCreatedEmail(
+                        currentProfile.email || currentUser.email,
+                        custName,
+                        newConv.ticket_number || '---',
+                        categoryLabel
+                    ).catch(e => console.log('Email send failed:', e));
+                }
+
+                closeTicketModal();
                 allConversations.unshift(newConv);
+                showToast('Ticket submitted successfully!', 'success');
                 await openChatView(newConv.id);
 
             } catch (err) {
-                console.error('Error starting conversation:', err);
-                showToast('Failed to start conversation. Please try again.', 'error');
+                console.error('Error creating ticket:', err);
+                showToast('Failed to create ticket. Please try again.', 'error');
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 20.25c4.97 0 9-3.694 9-8.25s-4.03-8.25-9-8.25S3 7.444 3 12c0 2.104.859 4.023 2.273 5.48.432.447.74 1.04.586 1.641a4.483 4.483 0 01-.923 1.785A5.969 5.969 0 006 21c1.282 0 2.47-.402 3.445-1.087.81.22 1.668.337 2.555.337z" />
-                    </svg>
-                    Start a Conversation`;
+                btn.textContent = 'Submit Ticket';
             }
         }
 
@@ -1102,13 +1440,24 @@
             currentView = 'chat';
             lastMessageTimestamp = null;
 
-            // Set team name in header
-            document.getElementById('chatTeamName').textContent = teamDisplayName;
+            // Set ticket info in header
+            const ticketLabel = conv.ticket_number ? `Ticket #${conv.ticket_number}` : teamDisplayName;
+            document.getElementById('chatTeamName').textContent = ticketLabel;
 
-            // Resolved state
-            const isOpen = selectedConvStatus === 'open';
-            document.getElementById('resolvedBanner').style.display = isOpen ? 'none' : '';
-            document.getElementById('chatInputArea').style.display = isOpen ? '' : 'none';
+            // Status banner
+            const canReply = ['open', 'in_progress'].includes(selectedConvStatus);
+            const banner = document.getElementById('resolvedBanner');
+            const bannerText = document.getElementById('statusBannerText');
+            if (canReply) {
+                banner.style.display = 'none';
+            } else if (selectedConvStatus === 'closed') {
+                banner.style.display = '';
+                bannerText.textContent = 'This ticket has been closed. Submit a new ticket if you need further help.';
+            } else {
+                banner.style.display = '';
+                bannerText.textContent = 'This ticket has been resolved. Send a message to reopen it.';
+            }
+            document.getElementById('chatInputArea').style.display = selectedConvStatus === 'closed' ? 'none' : '';
 
             // Switch views
             document.getElementById('supportHub').style.display = 'none';
@@ -1263,9 +1612,19 @@
                 }, (payload) => {
                     if (payload.new) {
                         selectedConvStatus = payload.new.status || 'open';
-                        const isOpen = selectedConvStatus === 'open';
-                        document.getElementById('resolvedBanner').style.display = isOpen ? 'none' : '';
-                        document.getElementById('chatInputArea').style.display = isOpen ? '' : 'none';
+                        const canReply = ['open', 'in_progress'].includes(selectedConvStatus);
+                        const banner = document.getElementById('resolvedBanner');
+                        const bannerText = document.getElementById('statusBannerText');
+                        if (canReply) {
+                            banner.style.display = 'none';
+                        } else if (selectedConvStatus === 'closed') {
+                            banner.style.display = '';
+                            bannerText.textContent = 'This ticket has been closed. Submit a new ticket if you need further help.';
+                        } else {
+                            banner.style.display = '';
+                            bannerText.textContent = 'This ticket has been resolved. Send a message to reopen it.';
+                        }
+                        document.getElementById('chatInputArea').style.display = selectedConvStatus === 'closed' ? 'none' : '';
                         if (payload.new.user_unread_count > 0) {
                             window.supabaseClient.from('chat_conversations').update({ user_unread_count: 0 }).eq('id', selectedConvId);
                         }

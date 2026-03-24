@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profit Insider - Conversations</title>
+    <title>Profit Insider - Support Tickets</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -536,9 +536,10 @@
                     </div>
                     <div class="conv-filter-tabs">
                         <button class="conv-filter-tab active" data-filter="all" onclick="setFilter('all')">All</button>
-                        <button class="conv-filter-tab" data-filter="ai" onclick="setFilter('ai')">AI <span class="tab-count" id="count-ai">0</span></button>
                         <button class="conv-filter-tab" data-filter="open" onclick="setFilter('open')">Open <span class="tab-count" id="count-open">0</span></button>
+                        <button class="conv-filter-tab" data-filter="in_progress" onclick="setFilter('in_progress')">Active <span class="tab-count" id="count-in_progress">0</span></button>
                         <button class="conv-filter-tab" data-filter="escalated" onclick="setFilter('escalated')">Esc <span class="tab-count" id="count-escalated">0</span></button>
+                        <button class="conv-filter-tab" data-filter="resolved" onclick="setFilter('resolved')">Done <span class="tab-count" id="count-resolved">0</span></button>
                     </div>
                 </div>
                 <div class="select-all-row" id="select-all-row">
@@ -644,6 +645,19 @@
                     <div class="ctx-avatar" id="ctx-avatar">--</div>
                     <div class="ctx-name" id="ctx-name">Customer Name</div>
                     <div class="ctx-email" id="ctx-email">email@example.com</div>
+                </div>
+                <div class="ctx-section" id="ctx-ticket-info" style="display:none;">
+                    <div class="ctx-section-title">Ticket Info</div>
+                    <div id="ctx-ticket-fields" style="font-size:13px;color:var(--text-secondary);line-height:2;"></div>
+                    <div style="margin-top:10px;">
+                        <label style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:4px;">Priority</label>
+                        <select id="ctx-priority-select" onchange="updateTicketPriority(this.value)" style="width:100%;padding:8px 10px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:13px;font-family:inherit;">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="ctx-section" id="ctx-contact">
                     <div class="ctx-section-title">Contact</div>
@@ -861,34 +875,38 @@
 
         function getCategory(conv) {
             if (typeof window.getConversationCategory === 'function') return window.getConversationCategory(conv);
+            if (conv.status === 'closed') return 'closed';
             if (conv.status === 'resolved') return 'resolved';
             if (conv.is_escalated) return 'escalated';
-            if (conv.handler_type === 'ai') return 'ai';
+            if (conv.status === 'in_progress') return 'in_progress';
             return 'open';
         }
 
         function applyFilters() {
-            // Count categories
-            let countAI = 0, countOpen = 0, countEsc = 0;
+            let countOpen = 0, countInProgress = 0, countEsc = 0, countResolved = 0;
             allConversations.forEach(c => {
                 const cat = getCategory(c);
-                if (cat === 'ai') countAI++;
-                else if (cat === 'open') countOpen++;
+                if (cat === 'open') countOpen++;
+                else if (cat === 'in_progress') countInProgress++;
                 else if (cat === 'escalated') countEsc++;
+                else if (cat === 'resolved' || cat === 'closed') countResolved++;
             });
-            document.getElementById('count-ai').textContent = countAI;
             document.getElementById('count-open').textContent = countOpen;
+            document.getElementById('count-in_progress').textContent = countInProgress;
             document.getElementById('count-escalated').textContent = countEsc;
+            document.getElementById('count-resolved').textContent = countResolved;
 
             filteredConversations = allConversations.filter(conv => {
                 const cat = getCategory(conv);
-                if (currentFilter === 'ai' && cat !== 'ai') return false;
                 if (currentFilter === 'open' && cat !== 'open') return false;
+                if (currentFilter === 'in_progress' && cat !== 'in_progress') return false;
                 if (currentFilter === 'escalated' && cat !== 'escalated') return false;
+                if (currentFilter === 'resolved' && cat !== 'resolved' && cat !== 'closed') return false;
                 if (searchQuery) {
                     const name = getCustomerName(conv).toLowerCase();
                     const title = (conv.title || '').toLowerCase();
-                    if (!name.includes(searchQuery) && !title.includes(searchQuery)) return false;
+                    const ticketNum = String(conv.ticket_number || '');
+                    if (!name.includes(searchQuery) && !title.includes(searchQuery) && !ticketNum.includes(searchQuery)) return false;
                 }
                 return true;
             });
@@ -928,20 +946,33 @@
                 const timeStr = conv.last_message_at ? window.formatRelativeTime(conv.last_message_at) : window.formatRelativeTime(conv.created_at);
                 const hasUnread = conv.admin_unread_count > 0;
 
+                // Priority badge
+                const priority = conv.priority || 'medium';
+                let priorityHtml = '';
+                if (priority === 'urgent') priorityHtml = '<span style="font-size:9px;font-weight:700;text-transform:uppercase;padding:1px 4px;border-radius:3px;background:rgba(239,68,68,0.15);color:#ef4444;margin-left:4px;">Urgent</span>';
+                else if (priority === 'high') priorityHtml = '<span style="font-size:9px;font-weight:700;text-transform:uppercase;padding:1px 4px;border-radius:3px;background:rgba(245,158,11,0.15);color:#f59e0b;margin-left:4px;">High</span>';
+
+                // Ticket number
+                const ticketNum = conv.ticket_number ? `<span style="font-size:10px;font-weight:600;color:var(--accent);margin-right:4px;">#${conv.ticket_number}</span>` : '';
+
+                // Status label
+                const statusLabels = { open: 'Open', in_progress: 'In Progress', escalated: 'Escalated', resolved: 'Resolved', closed: 'Closed' };
+                const statusLabel = statusLabels[cat] || cat.charAt(0).toUpperCase() + cat.slice(1);
+
                 // Handler badge
                 let badgeClass = 'human', badgeSvg = '<path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />';
-                if (cat === 'ai') { badgeClass = 'ai'; badgeSvg = '<path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />'; }
+                if (conv.handler_type === 'ai') { badgeClass = 'ai'; badgeSvg = '<path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />'; }
                 else if (cat === 'escalated') { badgeClass = 'escalated'; badgeSvg = '<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01" />'; }
 
                 return `<div class="conv-item ${isActive ? 'active' : ''}" onclick="${selectMode ? "event.stopPropagation(); toggleConvSelection('" + conv.id + "', this.querySelector('.conv-item-checkbox'))" : "selectConversation('" + conv.id + "')"}">
                     <div class="conv-item-checkbox${selectedForDelete.has(conv.id) ? ' checked' : ''}" onclick="event.stopPropagation(); toggleConvSelection('${conv.id}', this)"></div>
                     <div class="conv-item-avatar">${initials}<div class="handler-badge ${badgeClass}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">${badgeSvg}</svg></div></div>
                     <div class="conv-item-body">
-                        <div class="conv-item-top"><span class="conv-item-name">${escapeHtml(name)}</span><span class="conv-item-time">${timeStr}</span></div>
+                        <div class="conv-item-top"><span class="conv-item-name">${ticketNum}${escapeHtml(name)}${priorityHtml}</span><span class="conv-item-time">${timeStr}</span></div>
                         <div class="conv-item-preview">${preview}</div>
                         <div class="conv-item-bottom">
                             ${hasUnread ? '<span class="conv-item-unread"></span>' : ''}
-                            <span class="conv-item-status ${cat}">${cat === 'ai' ? 'AI' : cat.charAt(0).toUpperCase() + cat.slice(1)}</span>
+                            <span class="conv-item-status ${cat}">${statusLabel}</span>
                         </div>
                     </div>
                 </div>`;
@@ -1002,14 +1033,25 @@
             const cat = getCategory(conv);
             const badge = document.getElementById('chat-status-badge');
             const btn = document.getElementById('btn-status-toggle');
-            const isOpen = conv.status === 'open';
+            const status = conv.status || 'open';
 
+            const statusLabels = { open: 'Open', in_progress: 'In Progress', escalated: 'Escalated', resolved: 'Resolved', closed: 'Closed' };
             badge.className = 'status-badge ' + cat;
-            badge.textContent = cat === 'ai' ? 'AI' : cat.charAt(0).toUpperCase() + cat.slice(1);
+            badge.textContent = statusLabels[cat] || cat;
 
-            if (isOpen) {
+            // Show ticket number if available
+            const nameEl = document.getElementById('chat-customer-name');
+            if (conv.ticket_number && nameEl) {
+                const custName = getCustomerName(conv);
+                nameEl.innerHTML = `<span style="color:var(--accent);font-weight:700;margin-right:6px;">#${conv.ticket_number}</span>${escapeHtml(custName)}`;
+            }
+
+            if (status === 'open' || status === 'in_progress') {
                 btn.className = 'btn-status-toggle resolve';
                 btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg><span>Resolve</span>';
+            } else if (status === 'resolved') {
+                btn.className = 'btn-status-toggle reopen';
+                btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg><span>Close</span>';
             } else {
                 btn.className = 'btn-status-toggle reopen';
                 btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg><span>Reopen</span>';
@@ -1149,23 +1191,41 @@
                 const { data: newMsg, error: msgErr } = await window.supabaseClient.from('chat_messages').insert(payload).select().single();
                 if (msgErr) throw msgErr;
 
-                // When admin sends a message, take over from AI
+                // Update conversation: take over from AI if needed, set in_progress
+                const convUpdate = {
+                    last_message_at: new Date().toISOString(),
+                    last_message_preview: text.substring(0, 100),
+                    user_unread_count: (selectedConversation?.user_unread_count || 0) + 1
+                };
+
+                // Auto-set to in_progress when admin first replies to an open ticket
+                if (selectedConversation && selectedConversation.status === 'open') {
+                    convUpdate.status = 'in_progress';
+                    convUpdate.assigned_admin_id = adminUser.id;
+                    selectedConversation.status = 'in_progress';
+                }
+
                 if (selectedConversation && selectedConversation.handler_type === 'ai') {
-                    await window.supabaseClient.from('chat_conversations').update({
-                        handler_type: 'human', assigned_admin_id: adminUser.id, category: 'open',
-                        last_message_at: new Date().toISOString(), last_message_preview: text.substring(0, 100),
-                        user_unread_count: (selectedConversation.user_unread_count || 0) + 1
-                    }).eq('id', selectedConversationId);
+                    convUpdate.handler_type = 'human';
+                    convUpdate.assigned_admin_id = adminUser.id;
+                    convUpdate.category = 'in_progress';
                     selectedConversation.handler_type = 'human';
-                    selectedConversation.category = 'open';
-                    updateBanners(selectedConversation);
-                    updateAIToggle(selectedConversation);
-                    updateStatusUI(selectedConversation);
-                } else {
-                    await window.supabaseClient.from('chat_conversations').update({
-                        last_message_at: new Date().toISOString(), last_message_preview: text.substring(0, 100),
-                        user_unread_count: (selectedConversation?.user_unread_count || 0) + 1
-                    }).eq('id', selectedConversationId);
+                    selectedConversation.category = 'in_progress';
+                }
+
+                await window.supabaseClient.from('chat_conversations').update(convUpdate).eq('id', selectedConversationId);
+                updateBanners(selectedConversation);
+                updateAIToggle(selectedConversation);
+                updateStatusUI(selectedConversation);
+                applyFilters();
+
+                // Send email notification to customer via Resend
+                if (window.sendTicketReplyEmail && selectedConversation?.user) {
+                    const custEmail = selectedConversation.user.email;
+                    const custName = ((selectedConversation.user.first_name || '') + ' ' + (selectedConversation.user.last_name || '')).trim();
+                    const ticketNum = selectedConversation.ticket_number || '---';
+                    window.sendTicketReplyEmail(custEmail, custName, ticketNum, text.substring(0, 200))
+                        .catch(e => console.log('Email notification failed:', e));
                 }
 
                 input.value = ''; input.style.height = 'auto';
@@ -1182,22 +1242,38 @@
         /* TOGGLE STATUS */
         async function toggleConversationStatus() {
             if (!selectedConversation) return;
-            const newStatus = selectedConversation.status === 'open' ? 'resolved' : 'open';
+            const currentStatus = selectedConversation.status || 'open';
+            let newStatus;
+            // Cycle: open/in_progress → resolved → closed, closed → open
+            if (currentStatus === 'open' || currentStatus === 'in_progress') newStatus = 'resolved';
+            else if (currentStatus === 'resolved') newStatus = 'closed';
+            else newStatus = 'open';
+
             try {
-                const updateData = { status: newStatus, resolved_at: newStatus === 'resolved' ? new Date().toISOString() : null };
-                if (newStatus === 'resolved') updateData.category = 'resolved';
-                else updateData.category = selectedConversation.handler_type === 'ai' ? 'ai' : 'open';
+                const updateData = { status: newStatus };
+                if (newStatus === 'resolved') {
+                    updateData.resolved_at = new Date().toISOString();
+                    updateData.category = 'resolved';
+                } else if (newStatus === 'closed') {
+                    updateData.closed_at = new Date().toISOString();
+                    updateData.closed_by = adminUser.id;
+                    updateData.category = 'resolved';
+                } else {
+                    updateData.resolved_at = null;
+                    updateData.closed_at = null;
+                    updateData.category = 'open';
+                }
 
                 const { error } = await window.supabaseClient.from('chat_conversations').update(updateData).eq('id', selectedConversationId);
                 if (error) throw error;
-                selectedConversation.status = newStatus;
-                selectedConversation.category = updateData.category;
+                Object.assign(selectedConversation, updateData);
                 const idx = allConversations.findIndex(c => c.id === selectedConversationId);
-                if (idx !== -1) { allConversations[idx].status = newStatus; allConversations[idx].category = updateData.category; }
+                if (idx !== -1) Object.assign(allConversations[idx], updateData);
                 updateStatusUI(selectedConversation);
                 updateBanners(selectedConversation);
                 applyFilters();
-                showToast(newStatus === 'resolved' ? 'Conversation resolved.' : 'Conversation reopened.', 'success');
+                const labels = { resolved: 'Ticket resolved.', closed: 'Ticket closed.', open: 'Ticket reopened.' };
+                showToast(labels[newStatus] || 'Status updated.', 'success');
             } catch (error) { console.error('Error updating status:', error); showToast('Failed to update status.', 'error'); }
         }
 
@@ -1249,6 +1325,25 @@
             btn.classList.toggle('active', contextPanelOpen);
         }
 
+        async function updateTicketPriority(newPriority) {
+            if (!selectedConversation || !selectedConversationId) return;
+            try {
+                const { error } = await window.supabaseClient
+                    .from('chat_conversations')
+                    .update({ priority: newPriority })
+                    .eq('id', selectedConversationId);
+                if (error) throw error;
+                selectedConversation.priority = newPriority;
+                const idx = allConversations.findIndex(c => c.id === selectedConversationId);
+                if (idx !== -1) allConversations[idx].priority = newPriority;
+                applyFilters();
+                showToast('Priority updated to ' + newPriority + '.', 'success');
+            } catch (err) {
+                console.error('Error updating priority:', err);
+                showToast('Failed to update priority.', 'error');
+            }
+        }
+
         function loadCustomerContext(conv) {
             if (!conv || !conv.user) return;
             const u = conv.user;
@@ -1256,6 +1351,24 @@
             document.getElementById('ctx-name').textContent = getCustomerName(conv);
             document.getElementById('ctx-email').textContent = u.email || 'N/A';
             document.getElementById('ctx-view-profile').href = `/admin/customer-detail.html?id=${u.id}`;
+
+            // Ticket info section
+            const ticketSection = document.getElementById('ctx-ticket-info');
+            const ticketFields = document.getElementById('ctx-ticket-fields');
+            if (conv.ticket_number || conv.category) {
+                ticketSection.style.display = '';
+                const catLabel = (conv.category || 'general').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                let info = '';
+                if (conv.ticket_number) info += `<div><strong>Ticket:</strong> #${conv.ticket_number}</div>`;
+                info += `<div><strong>Category:</strong> ${escapeHtml(catLabel)}</div>`;
+                info += `<div><strong>Status:</strong> ${(conv.status || 'open').replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</div>`;
+                if (conv.created_at) info += `<div><strong>Created:</strong> ${new Date(conv.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>`;
+                if (conv.description) info += `<div style="margin-top:8px;padding:8px 10px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text-muted);line-height:1.5;">${escapeHtml(conv.description)}</div>`;
+                ticketFields.innerHTML = info;
+                document.getElementById('ctx-priority-select').value = conv.priority || 'medium';
+            } else {
+                ticketSection.style.display = 'none';
+            }
 
             // Contact fields
             const fields = [];

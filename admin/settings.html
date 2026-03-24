@@ -1420,7 +1420,10 @@
                 <button class="settings-tab" onclick="switchTab('export')" data-tab="export">Export</button>
                 <button class="settings-tab" onclick="switchTab('onboarding')" data-tab="onboarding">Onboarding</button>
                 <button class="settings-tab" onclick="switchTab('permissions')" data-tab="permissions">Permissions</button>
+                <button class="settings-tab" onclick="switchTab('onboardingvideos')" data-tab="onboardingvideos">Onboarding Videos</button>
                 <button class="settings-tab" onclick="switchTab('freetrial')" data-tab="freetrial">Free Trial</button>
+                <button class="settings-tab" onclick="switchTab('ticketconfig')" data-tab="ticketconfig">Support Tickets</button>
+                <button class="settings-tab" onclick="switchTab('emailconfig')" data-tab="emailconfig">Email (Resend)</button>
             </div>
 
             <!-- Tab 1: Profile -->
@@ -1935,6 +1938,28 @@
                 </div>
             </div><!-- end tab-permissions -->
 
+            <div class="tab-content" id="tab-onboardingvideos">
+                <div class="settings-card">
+                    <div class="card-header">
+                        <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></div>
+                        <div>
+                            <h3>Onboarding Videos</h3>
+                            <p>Configure the videos shown during client onboarding. Changes take effect immediately.</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                            <label style="margin:0; font-weight: 700; font-size: 15px;">Videos</label>
+                            <button class="btn btn-secondary" onclick="addOnboardingVideo()" style="padding: 6px 14px; font-size: 12px;">+ Add Video</button>
+                        </div>
+                        <div id="ob-videos-list"></div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="saveOnboardingVideosConfig()" id="save-ob-btn" style="margin-top: 24px;">Save Onboarding Videos</button>
+                </div>
+            </div>
+
             <div class="tab-content" id="tab-freetrial">
                 <div class="settings-card">
                     <div class="card-header">
@@ -1972,6 +1997,82 @@
                     </div>
 
                     <button class="btn btn-primary" onclick="saveFreeTrialConfig()" id="save-ft-btn" style="margin-top: 24px;">Save Free Trial Settings</button>
+                </div>
+            </div>
+
+            <!-- Tab: Support Ticket Configuration -->
+            <div class="tab-content" id="tab-ticketconfig">
+                <div class="settings-card">
+                    <div class="card-header">
+                        <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-5.25h5.25M7.5 15h3M3.375 5.25c-.621 0-1.125.504-1.125 1.125v3.026a2.999 2.999 0 010 5.198v3.026c0 .621.504 1.125 1.125 1.125h17.25c.621 0 1.125-.504 1.125-1.125v-3.026a2.999 2.999 0 010-5.198V6.375c0-.621-.504-1.125-1.125-1.125H3.375z"/></svg></div>
+                        <div>
+                            <h3>Support Ticket Configuration</h3>
+                            <p>Configure the categories, prompts, and auto-replies shown when customers submit tickets.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Welcome Message</label>
+                        <textarea class="form-input" id="tc-welcome-msg" rows="3" placeholder="Message shown when customer opens the ticket creation form"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Auto-Reply Message</label>
+                        <textarea class="form-input" id="tc-auto-reply" rows="3" placeholder="Automatic confirmation message sent after ticket is submitted"></textarea>
+                    </div>
+
+                    <div style="margin-top: 24px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                            <label style="margin:0; font-weight: 700; font-size: 15px;">Ticket Categories</label>
+                            <button class="btn btn-secondary" onclick="addTicketCategory()" style="padding: 6px 14px; font-size: 12px;">+ Add Category</button>
+                        </div>
+                        <div id="tc-categories-list"></div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="saveTicketConfig()" id="save-tc-btn" style="margin-top: 24px;">Save Ticket Configuration</button>
+                </div>
+            </div>
+
+            <!-- Tab: Email (Resend) Configuration -->
+            <div class="tab-content" id="tab-emailconfig">
+                <div class="settings-card">
+                    <div class="card-header">
+                        <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg></div>
+                        <div>
+                            <h3>Email Notifications (Resend)</h3>
+                            <p>Configure Resend to send email notifications when tickets are responded to.</p>
+                        </div>
+                    </div>
+
+                    <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:14px 16px;margin-bottom:20px;font-size:13px;color:rgba(147,197,253,1);line-height:1.6;">
+                        Get your API key at <a href="https://resend.com" target="_blank" style="color:var(--accent);text-decoration:underline;">resend.com</a>. You'll need to verify a domain to send from your own email address.
+                    </div>
+
+                    <div class="form-group">
+                        <label>Resend API Key</label>
+                        <input type="password" class="form-input" id="rc-api-key" placeholder="re_xxxxxxxxxxxx">
+                    </div>
+
+                    <div style="display:flex;gap:12px;">
+                        <div class="form-group" style="flex:1;">
+                            <label>From Name</label>
+                            <input type="text" class="form-input" id="rc-from-name" placeholder="Profit Insider Support">
+                        </div>
+                        <div class="form-group" style="flex:1;">
+                            <label>From Email</label>
+                            <input type="email" class="form-input" id="rc-from-email" placeholder="support@profit-insiders.com">
+                        </div>
+                    </div>
+
+                    <div style="margin-top:16px;display:flex;align-items:center;gap:12px;">
+                        <label style="margin:0;font-weight:600;font-size:14px;">Enable Email Notifications</label>
+                        <button class="ai-toggle" id="rc-enabled-toggle" onclick="toggleResendEnabled()" style="position:relative;width:44px;height:24px;border-radius:12px;border:none;cursor:pointer;transition:all 0.2s ease;"></button>
+                    </div>
+
+                    <div style="margin-top:24px;display:flex;gap:12px;">
+                        <button class="btn btn-primary" onclick="saveResendConfig()" id="save-rc-btn">Save Email Settings</button>
+                        <button class="btn btn-secondary" onclick="testResendEmail()" id="test-rc-btn">Send Test Email</button>
+                    </div>
                 </div>
             </div>
 
@@ -2071,7 +2172,10 @@
                     loadChatDisplayName(),
                     loadOnboardingSettings(),
                     loadPermissionsUI(),
-                    loadFreeTrialConfig()
+                    loadFreeTrialConfig(),
+                    loadOnboardingVideosConfig(),
+                    loadTicketConfig(),
+                    loadResendConfig()
                 ]);
 
             } catch (error) {
@@ -3097,6 +3201,309 @@
             } finally {
                 btn.disabled = false;
                 btn.style.opacity = '1';
+            }
+        }
+        /* ============================================================
+           ONBOARDING VIDEOS SETTINGS
+           ============================================================ */
+        let onboardingVideosConfig = { videos: [] };
+
+        async function loadOnboardingVideosConfig() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .select('value')
+                    .eq('key', 'onboarding_config')
+                    .single();
+                if (error && error.code !== 'PGRST116') throw error;
+                if (data && data.value) {
+                    onboardingVideosConfig = data.value;
+                }
+                renderOnboardingVideos();
+            } catch (err) {
+                console.error('Error loading onboarding videos config:', err);
+            }
+        }
+
+        function renderOnboardingVideos() {
+            const container = document.getElementById('ob-videos-list');
+            const videos = onboardingVideosConfig.videos || [];
+            if (videos.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No videos configured. Click "+ Add Video" to begin.</p>';
+                return;
+            }
+            container.innerHTML = videos.map((v, i) => `
+                <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                        <span style="font-weight:700;font-size:14px;color:var(--accent);">Video ${i + 1}</span>
+                        <button onclick="removeOnboardingVideo(${i})" style="background:none;border:none;color:var(--error);cursor:pointer;font-size:13px;font-weight:600;">Remove</button>
+                    </div>
+                    <div class="form-group" style="margin-bottom:10px;">
+                        <label style="font-size:12px;">Title</label>
+                        <input type="text" class="form-input" value="${escapeHtml(v.title || '')}" onchange="onboardingVideosConfig.videos[${i}].title=this.value" placeholder="Lesson title">
+                    </div>
+                    <div class="form-group" style="margin-bottom:10px;">
+                        <label style="font-size:12px;">Description</label>
+                        <input type="text" class="form-input" value="${escapeHtml(v.description || '')}" onchange="onboardingVideosConfig.videos[${i}].description=this.value" placeholder="Brief description of this lesson">
+                    </div>
+                    <div class="form-group" style="margin-bottom:10px;">
+                        <label style="font-size:12px;">Loom Embed URL</label>
+                        <input type="url" class="form-input" value="${escapeHtml(v.url || '')}" onchange="onboardingVideosConfig.videos[${i}].url=this.value" placeholder="https://www.loom.com/embed/...">
+                    </div>
+                    <div style="display:flex;gap:12px;">
+                        <div class="form-group" style="margin-bottom:0;flex:1;">
+                            <label style="font-size:12px;">Duration (seconds)</label>
+                            <input type="number" class="form-input" value="${v.duration || '120'}" onchange="onboardingVideosConfig.videos[${i}].duration=this.value" placeholder="120">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top:10px;margin-bottom:0;">
+                        <label style="font-size:12px;">Checkboxes (one per line)</label>
+                        <textarea class="form-input" rows="2" onchange="onboardingVideosConfig.videos[${i}].checkboxes=this.value.split('\\n').filter(l=>l.trim())" placeholder="I understand this step">${(v.checkboxes || []).join('\n')}</textarea>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addOnboardingVideo() {
+            onboardingVideosConfig.videos.push({ title: '', description: '', url: '', duration: '120', checkboxes: [] });
+            renderOnboardingVideos();
+        }
+
+        function removeOnboardingVideo(index) {
+            onboardingVideosConfig.videos.splice(index, 1);
+            renderOnboardingVideos();
+        }
+
+        async function saveOnboardingVideosConfig() {
+            const btn = document.getElementById('save-ob-btn');
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+
+            try {
+                const { error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .upsert(
+                        { key: 'onboarding_config', value: onboardingVideosConfig, updated_at: new Date().toISOString() },
+                        { onConflict: 'key' }
+                    );
+
+                if (error) throw error;
+                showToast('Onboarding videos saved!', 'success');
+            } catch (err) {
+                console.error('Error saving onboarding videos config:', err);
+                showToast('Failed to save onboarding videos.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
+        }
+        /* ============================================================
+           TICKET CONFIGURATION
+           ============================================================ */
+        let ticketConfigData = { categories: [], welcome_message: '', auto_reply_message: '' };
+
+        async function loadTicketConfig() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .select('value')
+                    .eq('key', 'ticket_config')
+                    .single();
+                if (error && error.code !== 'PGRST116') throw error;
+                if (data && data.value) ticketConfigData = data.value;
+
+                document.getElementById('tc-welcome-msg').value = ticketConfigData.welcome_message || '';
+                document.getElementById('tc-auto-reply').value = ticketConfigData.auto_reply_message || '';
+                renderTicketCategories();
+            } catch (err) {
+                console.error('Error loading ticket config:', err);
+            }
+        }
+
+        function renderTicketCategories() {
+            const container = document.getElementById('tc-categories-list');
+            const cats = ticketConfigData.categories || [];
+            if (cats.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No categories configured. Click "+ Add Category" to begin.</p>';
+                return;
+            }
+            container.innerHTML = cats.map((c, i) => `
+                <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                        <span style="font-weight:700;font-size:14px;color:var(--accent);">Category ${i + 1}</span>
+                        <button onclick="removeTicketCategory(${i})" style="background:none;border:none;color:var(--error);cursor:pointer;font-size:13px;font-weight:600;">Remove</button>
+                    </div>
+                    <div style="display:flex;gap:12px;margin-bottom:10px;">
+                        <div class="form-group" style="flex:2;margin-bottom:0;">
+                            <label style="font-size:12px;">Label</label>
+                            <input type="text" class="form-input" value="${escapeHtml(c.label || '')}" onchange="ticketConfigData.categories[${i}].label=this.value" placeholder="e.g. Account Setup">
+                        </div>
+                        <div class="form-group" style="flex:1;margin-bottom:0;">
+                            <label style="font-size:12px;">ID (slug)</label>
+                            <input type="text" class="form-input" value="${escapeHtml(c.id || '')}" onchange="ticketConfigData.categories[${i}].id=this.value" placeholder="e.g. account_setup">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom:10px;">
+                        <label style="font-size:12px;">Description</label>
+                        <input type="text" class="form-input" value="${escapeHtml(c.description || '')}" onchange="ticketConfigData.categories[${i}].description=this.value" placeholder="Brief description shown to customer">
+                    </div>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label style="font-size:12px;">Default Priority</label>
+                        <select class="form-input" onchange="ticketConfigData.categories[${i}].priority=this.value" style="padding:8px 10px;">
+                            <option value="low" ${c.priority === 'low' ? 'selected' : ''}>Low</option>
+                            <option value="medium" ${c.priority === 'medium' || !c.priority ? 'selected' : ''}>Medium</option>
+                            <option value="high" ${c.priority === 'high' ? 'selected' : ''}>High</option>
+                            <option value="urgent" ${c.priority === 'urgent' ? 'selected' : ''}>Urgent</option>
+                        </select>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addTicketCategory() {
+            ticketConfigData.categories.push({ id: '', label: '', description: '', priority: 'medium' });
+            renderTicketCategories();
+        }
+
+        function removeTicketCategory(index) {
+            ticketConfigData.categories.splice(index, 1);
+            renderTicketCategories();
+        }
+
+        async function saveTicketConfig() {
+            const btn = document.getElementById('save-tc-btn');
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            try {
+                ticketConfigData.welcome_message = document.getElementById('tc-welcome-msg').value.trim();
+                ticketConfigData.auto_reply_message = document.getElementById('tc-auto-reply').value.trim();
+
+                const { error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .upsert(
+                        { key: 'ticket_config', value: ticketConfigData, updated_at: new Date().toISOString() },
+                        { onConflict: 'key' }
+                    );
+                if (error) throw error;
+                showToast('Ticket configuration saved!', 'success');
+            } catch (err) {
+                console.error('Error saving ticket config:', err);
+                showToast('Failed to save ticket configuration.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
+        }
+
+        /* ============================================================
+           RESEND EMAIL CONFIGURATION
+           ============================================================ */
+        let resendConfigData = { api_key: '', from_email: '', from_name: '', enabled: false };
+
+        async function loadResendConfig() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .select('value')
+                    .eq('key', 'resend_config')
+                    .single();
+                if (error && error.code !== 'PGRST116') throw error;
+                if (data && data.value) resendConfigData = data.value;
+
+                document.getElementById('rc-api-key').value = resendConfigData.api_key || '';
+                document.getElementById('rc-from-name').value = resendConfigData.from_name || '';
+                document.getElementById('rc-from-email').value = resendConfigData.from_email || '';
+                updateResendToggle();
+            } catch (err) {
+                console.error('Error loading resend config:', err);
+            }
+        }
+
+        function toggleResendEnabled() {
+            resendConfigData.enabled = !resendConfigData.enabled;
+            updateResendToggle();
+        }
+
+        function updateResendToggle() {
+            const toggle = document.getElementById('rc-enabled-toggle');
+            if (resendConfigData.enabled) {
+                toggle.style.background = 'var(--accent)';
+                toggle.innerHTML = '<span style="position:absolute;right:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#000;transition:all 0.2s;"></span>';
+            } else {
+                toggle.style.background = 'var(--border)';
+                toggle.innerHTML = '<span style="position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:all 0.2s;"></span>';
+            }
+        }
+
+        async function saveResendConfig() {
+            const btn = document.getElementById('save-rc-btn');
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            try {
+                resendConfigData.api_key = document.getElementById('rc-api-key').value.trim();
+                resendConfigData.from_name = document.getElementById('rc-from-name').value.trim();
+                resendConfigData.from_email = document.getElementById('rc-from-email').value.trim();
+
+                const { error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .upsert(
+                        { key: 'resend_config', value: resendConfigData, updated_at: new Date().toISOString() },
+                        { onConflict: 'key' }
+                    );
+                if (error) throw error;
+                showToast('Email settings saved!', 'success');
+            } catch (err) {
+                console.error('Error saving resend config:', err);
+                showToast('Failed to save email settings.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            }
+        }
+
+        async function testResendEmail() {
+            const btn = document.getElementById('test-rc-btn');
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+            try {
+                const apiKey = document.getElementById('rc-api-key').value.trim();
+                const fromName = document.getElementById('rc-from-name').value.trim() || 'Profit Insider Support';
+                const fromEmail = document.getElementById('rc-from-email').value.trim() || 'support@profit-insiders.com';
+
+                if (!apiKey) {
+                    showToast('Please enter a Resend API key first.', 'error');
+                    return;
+                }
+
+                const adminEmail = adminProfile?.email || (await window.getCurrentUser())?.email;
+                if (!adminEmail) {
+                    showToast('Could not determine admin email.', 'error');
+                    return;
+                }
+
+                const response = await fetch('https://api.resend.com/emails', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        from: fromName + ' <' + fromEmail + '>',
+                        to: [adminEmail],
+                        subject: 'Test Email from Profit Insider',
+                        html: '<div style="font-family:Arial,sans-serif;padding:20px;"><h2 style="color:#f0c832;">Email Configuration Working!</h2><p>This is a test email from your Profit Insider support ticket system.</p><p>If you received this, your Resend integration is configured correctly.</p></div>'
+                    })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    showToast('Test email sent to ' + adminEmail + '!', 'success');
+                } else {
+                    showToast('Resend error: ' + (result.message || 'Unknown error'), 'error');
+                }
+            } catch (err) {
+                console.error('Test email error:', err);
+                showToast('Failed to send test email.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Send Test Email';
             }
         }
     </script>

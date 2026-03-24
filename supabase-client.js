@@ -2275,3 +2275,226 @@ window.addEventListener('beforeunload', function() {
         window.supabaseClient.removeChannel(window._chatWidgetState.subscription);
     }
 });
+
+// ============================================================================
+// ONBOARDING CONFIG
+// ============================================================================
+
+// Get onboarding video configuration from admin_settings
+window.getOnboardingConfig = async function() {
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('admin_settings')
+            .select('value')
+            .eq('key', 'onboarding_config')
+            .single();
+        if (error) throw error;
+        return data?.value || null;
+    } catch (err) {
+        console.error('Error loading onboarding config:', err);
+        return null;
+    }
+};
+
+// ============================================================================
+// TICKET SYSTEM HELPERS
+// ============================================================================
+
+// Get ticket configuration (categories, welcome message, etc.)
+window.getTicketConfig = async function() {
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('admin_settings')
+            .select('value')
+            .eq('key', 'ticket_config')
+            .single();
+        if (error) throw error;
+        return data?.value || null;
+    } catch (err) {
+        console.error('Error loading ticket config:', err);
+        return null;
+    }
+};
+
+// Create a new support ticket
+window.createTicket = async function(userId, category, description, priority) {
+    try {
+        // Create conversation as ticket
+        const { data: conv, error: convError } = await window.supabaseClient
+            .from('chat_conversations')
+            .insert({
+                user_id: userId,
+                status: 'open',
+                category: category || 'general',
+                priority: priority || 'medium',
+                title: description ? description.substring(0, 100) : 'Support Request',
+                description: description || '',
+                handler_type: 'human',
+                last_message_at: new Date().toISOString(),
+                last_message_preview: description ? description.substring(0, 100) : 'New ticket',
+                admin_unread_count: 1
+            })
+            .select()
+            .single();
+
+        if (convError) throw convError;
+
+        // Add the description as the first message
+        if (description) {
+            const { error: msgError } = await window.supabaseClient
+                .from('chat_messages')
+                .insert({
+                    conversation_id: conv.id,
+                    sender_id: userId,
+                    sender_type: 'customer',
+                    content: description,
+                    message_type: 'text'
+                });
+            if (msgError) console.error('Error creating initial message:', msgError);
+        }
+
+        return conv;
+    } catch (err) {
+        console.error('Error creating ticket:', err);
+        return null;
+    }
+};
+
+// Update ticket status
+window.updateTicketStatus = async function(ticketId, status, closedBy) {
+    try {
+        const updateData = { status: status };
+        if (status === 'closed' || status === 'resolved') {
+            updateData.resolved_at = new Date().toISOString();
+            if (status === 'closed') {
+                updateData.closed_at = new Date().toISOString();
+                if (closedBy) updateData.closed_by = closedBy;
+            }
+        }
+        const { error } = await window.supabaseClient
+            .from('chat_conversations')
+            .update(updateData)
+            .eq('id', ticketId);
+        if (error) throw error;
+        return true;
+    } catch (err) {
+        console.error('Error updating ticket status:', err);
+        return false;
+    }
+};
+
+// Update ticket priority
+window.updateTicketPriority = async function(ticketId, priority) {
+    try {
+        const { error } = await window.supabaseClient
+            .from('chat_conversations')
+            .update({ priority: priority })
+            .eq('id', ticketId);
+        if (error) throw error;
+        return true;
+    } catch (err) {
+        console.error('Error updating ticket priority:', err);
+        return false;
+    }
+};
+
+// ============================================================================
+// RESEND EMAIL HELPERS
+// ============================================================================
+
+// Get Resend configuration
+window.getResendConfig = async function() {
+    try {
+        const { data, error } = await window.supabaseClient
+            .from('admin_settings')
+            .select('value')
+            .eq('key', 'resend_config')
+            .single();
+        if (error) throw error;
+        return data?.value || null;
+    } catch (err) {
+        console.error('Error loading resend config:', err);
+        return null;
+    }
+};
+
+// Send email via Resend API
+window.sendResendEmail = async function(to, subject, htmlBody) {
+    try {
+        const config = await window.getResendConfig();
+        if (!config || !config.api_key || !config.enabled) {
+            console.log('Resend not configured or disabled, skipping email');
+            return false;
+        }
+
+        const response = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + config.api_key,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                from: (config.from_name || 'Support') + ' <' + (config.from_email || 'support@profit-insiders.com') + '>',
+                to: [to],
+                subject: subject,
+                html: htmlBody
+            })
+        });
+
+        const result = await response.json();
+        if (!response.ok) {
+            console.error('Resend API error:', result);
+            return false;
+        }
+
+        return true;
+    } catch (err) {
+        console.error('Error sending email via Resend:', err);
+        return false;
+    }
+};
+
+// Send ticket reply notification email
+window.sendTicketReplyEmail = async function(customerEmail, customerName, ticketNumber, replyPreview) {
+    const subject = 'Ticket #' + ticketNumber + ' - New Reply from Support';
+    const html = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="font-family:Arial,sans-serif;background:#f5f5f5;padding:20px;">' +
+        '<div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">' +
+        '<div style="background:#0a0a0a;padding:24px 32px;text-align:center;">' +
+        '<h1 style="color:#f0c832;margin:0;font-size:22px;">Profit Insider Support</h1>' +
+        '</div>' +
+        '<div style="padding:32px;">' +
+        '<p style="color:#333;font-size:16px;margin-bottom:8px;">Hi ' + (customerName || 'there') + ',</p>' +
+        '<p style="color:#555;font-size:14px;line-height:1.6;">Our support team has replied to your ticket <strong>#' + ticketNumber + '</strong>:</p>' +
+        '<div style="background:#f9f9f9;border-left:4px solid #f0c832;padding:16px;margin:20px 0;border-radius:0 8px 8px 0;">' +
+        '<p style="color:#333;font-size:14px;margin:0;line-height:1.6;">' + (replyPreview || '').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>' +
+        '</div>' +
+        '<a href="https://dash.profit-insiders.com/portal/chat.html" style="display:inline-block;background:#f0c832;color:#0a0a0a;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px;margin-top:12px;">View Full Reply</a>' +
+        '<p style="color:#999;font-size:12px;margin-top:24px;">If you did not create this ticket, please ignore this email.</p>' +
+        '</div>' +
+        '</div></body></html>';
+
+    return await window.sendResendEmail(customerEmail, subject, html);
+};
+
+// Send ticket created confirmation email
+window.sendTicketCreatedEmail = async function(customerEmail, customerName, ticketNumber, category) {
+    const subject = 'Ticket #' + ticketNumber + ' - We received your request';
+    const html = '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="font-family:Arial,sans-serif;background:#f5f5f5;padding:20px;">' +
+        '<div style="max-width:600px;margin:0 auto;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1);">' +
+        '<div style="background:#0a0a0a;padding:24px 32px;text-align:center;">' +
+        '<h1 style="color:#f0c832;margin:0;font-size:22px;">Profit Insider Support</h1>' +
+        '</div>' +
+        '<div style="padding:32px;">' +
+        '<p style="color:#333;font-size:16px;margin-bottom:8px;">Hi ' + (customerName || 'there') + ',</p>' +
+        '<p style="color:#555;font-size:14px;line-height:1.6;">We have received your support request and created ticket <strong>#' + ticketNumber + '</strong>.</p>' +
+        '<div style="background:#f9f9f9;padding:16px;margin:20px 0;border-radius:8px;">' +
+        '<p style="color:#333;font-size:14px;margin:0;"><strong>Category:</strong> ' + (category || 'General') + '</p>' +
+        '<p style="color:#333;font-size:14px;margin:8px 0 0;"><strong>Status:</strong> Open</p>' +
+        '</div>' +
+        '<p style="color:#555;font-size:14px;line-height:1.6;">Our team will review your ticket and respond as soon as possible. You will receive an email when we reply.</p>' +
+        '<a href="https://dash.profit-insiders.com/portal/chat.html" style="display:inline-block;background:#f0c832;color:#0a0a0a;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:700;font-size:14px;margin-top:12px;">View Your Tickets</a>' +
+        '</div>' +
+        '</div></body></html>';
+
+    return await window.sendResendEmail(customerEmail, subject, html);
+};
