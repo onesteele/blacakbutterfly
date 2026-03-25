@@ -241,6 +241,11 @@ window.applySidebarRole = function(profile, activePage) {
         '</a>\n';
     }
 
+    // Add theme toggle at bottom of nav
+    html += '<div style="margin-top:auto;padding:12px 0;display:flex;justify-content:center;">' +
+        '<button class="theme-toggle-btn" onclick="window.toggleTheme()"></button>' +
+        '</div>';
+
     navEl.innerHTML = html;
 
     // Prefetch admin pages for instant navigation
@@ -327,15 +332,124 @@ window._navigateWithTransition = function(url) {
 };
 
 // ============================================================
-// THEME SYSTEM (dark mode only)
+// THEME SYSTEM (dark + light mode with toggle)
 // ============================================================
+(function() {
+    // Inject theme CSS overrides once
+    var style = document.createElement('style');
+    style.id = 'pi-theme-overrides';
+    style.textContent = `
+        /* Dark mode: make all secondary/muted text white for better readability */
+        [data-theme="dark"] {
+            --text-secondary: #ffffff;
+            --text-muted: #ffffff;
+        }
+
+        /* Light mode overrides */
+        [data-theme="light"] {
+            --bg-dark: #f5f5f7;
+            --bg-card: #ffffff;
+            --text-primary: #111111;
+            --text-secondary: #333333;
+            --text-muted: #555555;
+            --border: #e0e0e0;
+            --accent: #f0c832;
+            --accent-light: #f7d954;
+            --accent-dim: rgba(240, 200, 50, 0.12);
+            --accent-glow: rgba(240, 200, 50, 0.25);
+            --success: #16a34a;
+            --error: #dc2626;
+        }
+
+        /* Light mode specific element fixes */
+        [data-theme="light"] body {
+            background: #f5f5f7;
+        }
+
+        [data-theme="light"] .bg-animation,
+        [data-theme="light"] .dot-pattern,
+        [data-theme="light"] .orb {
+            display: none !important;
+        }
+
+        [data-theme="light"] .sidebar {
+            background: #ffffff;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        [data-theme="light"] .sidebar .nav-item:hover,
+        [data-theme="light"] .sidebar .nav-item.active {
+            background: rgba(240, 200, 50, 0.1);
+        }
+
+        [data-theme="light"] .top-bar {
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        [data-theme="light"] .msg-row.me .msg-bubble,
+        [data-theme="light"] .msg-row.admin .msg-bubble {
+            background: var(--accent);
+            color: #000;
+        }
+
+        [data-theme="light"] .msg-row.them .msg-bubble,
+        [data-theme="light"] .msg-row.customer .msg-bubble {
+            background: #f0f0f2;
+            color: #111;
+            border-color: #e0e0e0;
+        }
+
+        /* Theme toggle button in sidebar */
+        .theme-toggle-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0;
+        }
+        .theme-toggle-btn:hover {
+            background: var(--accent-dim);
+            color: var(--accent);
+            border-color: var(--accent);
+        }
+        .theme-toggle-btn svg { width: 18px; height: 18px; }
+    `;
+    document.head.appendChild(style);
+})();
+
 window.initTheme = function() {
-    document.documentElement.setAttribute('data-theme', 'dark');
-    localStorage.removeItem('pi-theme');
+    var saved = localStorage.getItem('pi-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', saved);
+    // Update toggle button icons after DOM is ready
+    setTimeout(function() { window._updateThemeIcons(); }, 100);
 };
 
-// No-op: kept for backwards compatibility with admin pages that still reference it
-window.toggleTheme = function() {};
+window.toggleTheme = function() {
+    var current = document.documentElement.getAttribute('data-theme') || 'dark';
+    var next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('pi-theme', next);
+    window._updateThemeIcons();
+};
+
+window._updateThemeIcons = function() {
+    var isDark = (document.documentElement.getAttribute('data-theme') || 'dark') === 'dark';
+    // Sun icon for dark mode (click to go light), moon icon for light mode (click to go dark)
+    var sunSvg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"/></svg>';
+    var moonSvg = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>';
+    document.querySelectorAll('.theme-toggle-btn').forEach(function(btn) {
+        btn.innerHTML = isDark ? sunSvg : moonSvg;
+        btn.title = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+    });
+};
 
 // Apply theme immediately on script load
 window.initTheme();
@@ -1047,6 +1161,7 @@ window.buildClientSidebarHTML = function(logoPath) {
         </div>
         <div class="client-sidebar-nav"></div>
         <div class="cs-bottom">
+            <button class="theme-toggle-btn" onclick="window.toggleTheme()" title="Toggle theme" style="margin:0 auto 8px;"></button>
             <button class="cs-signout" onclick="window.signOut()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
