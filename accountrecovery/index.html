@@ -421,57 +421,33 @@
 
         var recoverySessionReady = false;
 
-        // Step 1: Handle PKCE flow — URL contains ?code=xxx
-        (async function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const code = urlParams.get('code');
-            if (code) {
-                try {
-                    const { error } = await window.supabaseClient.auth.exchangeCodeForSession(code);
-                    if (error) {
-                        showError('This reset link is invalid or has expired. Please request a new one.');
-                        document.getElementById('reset-btn').disabled = true;
-                    } else {
-                        recoverySessionReady = true;
-                    }
-                } catch (e) {
-                    console.error('Code exchange error:', e);
-                    showError('This reset link is invalid or has expired. Please request a new one.');
-                    document.getElementById('reset-btn').disabled = true;
-                }
-                return;
-            }
+        // Disable submit until session is confirmed
+        document.getElementById('reset-btn').disabled = true;
 
-            // Step 2: Handle implicit flow — URL hash contains #access_token=...&type=recovery
-            // Supabase v2 auto-detects the hash; listen for PASSWORD_RECOVERY event
-            const hash = window.location.hash;
-            if (hash && hash.includes('type=recovery')) {
-                // Session will be set via onAuthStateChange below — wait for it
-                return;
-            }
-
-            // No token present — check if already logged in, redirect to onboarding
-            try {
-                const { data: { session } } = await window.supabaseClient.auth.getSession();
-                if (session) {
-                    window.location.href = '/onboarding';
-                } else {
-                    showError('No reset token found. Please request a new password reset link.');
-                    document.getElementById('reset-btn').disabled = true;
-                }
-            } catch (e) {
-                console.error('Session check error:', e);
-            }
-        })();
-
-        // Step 3: Listen for PASSWORD_RECOVERY event (implicit flow fallback)
+        // Implicit flow: Supabase auto-detects #access_token in URL and fires PASSWORD_RECOVERY
         window.supabaseClient.auth.onAuthStateChange((event, session) => {
             if (event === 'PASSWORD_RECOVERY') {
                 recoverySessionReady = true;
-                hideError();
                 document.getElementById('reset-btn').disabled = false;
+                hideError();
+            } else if (event === 'SIGNED_IN' && !recoverySessionReady) {
+                // Signed in normally (not a recovery) — redirect to dashboard
+                window.location.href = '/onboarding';
             }
         });
+
+        // Fallback: if no hash token detected after a short delay, show error
+        setTimeout(async function() {
+            if (!recoverySessionReady) {
+                const { data: { session } } = await window.supabaseClient.auth.getSession();
+                if (session) {
+                    // Has a session but not a recovery — redirect
+                    window.location.href = '/onboarding';
+                } else {
+                    showError('Invalid or expired reset link. Please request a new one.');
+                }
+            }
+        }, 2000);
 
         // Handle password reset form submission
         document.getElementById('reset-password-form').addEventListener('submit', async (e) => {
