@@ -353,51 +353,312 @@ window._navigateWithTransition = function(url) {
             --text-secondary: #333333;
             --text-muted: #555555;
             --border: #e0e0e0;
-            --accent: #f0c832;
-            --accent-light: #f7d954;
-            --accent-dim: rgba(240, 200, 50, 0.12);
-            --accent-glow: rgba(240, 200, 50, 0.25);
+            --accent: #d4a017;
+            --accent-light: #e6b422;
+            --accent-dim: rgba(212, 160, 23, 0.1);
+            --accent-glow: rgba(212, 160, 23, 0.2);
             --success: #16a34a;
             --error: #dc2626;
         }
 
-        /* Light mode specific element fixes */
+        /* ---- Light mode: global resets ---- */
         [data-theme="light"] body {
-            background: #f5f5f7;
+            background: #f5f5f7 !important;
+            color: #111111;
         }
 
         [data-theme="light"] .bg-animation,
         [data-theme="light"] .dot-pattern,
-        [data-theme="light"] .orb {
+        [data-theme="light"] .orb,
+        [data-theme="light"] .orb-1,
+        [data-theme="light"] .orb-2,
+        [data-theme="light"] .orb-3 {
             display: none !important;
         }
 
+        /* ---- Sidebar ---- */
         [data-theme="light"] .sidebar {
-            background: #ffffff;
+            background: #ffffff !important;
             border-right: 1px solid #e0e0e0;
         }
-
+        [data-theme="light"] .sidebar .nav-item { color: #333; }
         [data-theme="light"] .sidebar .nav-item:hover,
         [data-theme="light"] .sidebar .nav-item.active {
-            background: rgba(240, 200, 50, 0.1);
+            background: rgba(212, 160, 23, 0.1);
+            color: #111;
         }
+        [data-theme="light"] .sidebar .nav-item .nav-icon { color: #555; }
+        [data-theme="light"] .sidebar .nav-item.active .nav-icon { color: var(--accent); }
 
+        /* Client sidebar */
+        [data-theme="light"] #client-sidebar,
+        [data-theme="light"] .client-sidebar {
+            background: #ffffff !important;
+            border-right: 1px solid #e0e0e0;
+        }
+        [data-theme="light"] .cs-nav-item { color: #333 !important; }
+        [data-theme="light"] .cs-nav-item:hover,
+        [data-theme="light"] .cs-nav-item.active { background: rgba(212, 160, 23, 0.1) !important; color: #111 !important; }
+        [data-theme="light"] .cs-signout { color: #555 !important; }
+        [data-theme="light"] .cs-signout:hover { color: var(--error) !important; }
+
+        /* ---- Top bar ---- */
         [data-theme="light"] .top-bar {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95) !important;
             border-bottom: 1px solid #e0e0e0;
         }
-
-        [data-theme="light"] .msg-row.me .msg-bubble,
-        [data-theme="light"] .msg-row.admin .msg-bubble {
-            background: var(--accent);
-            color: #000;
+        [data-theme="light"] .hamburger-btn {
+            background: #ffffff !important;
+            color: #333 !important;
+            border: 1px solid #e0e0e0;
         }
 
+        /* ---- Cards and containers ---- */
+        [data-theme="light"] .settings-card,
+        [data-theme="light"] .content-card,
+        [data-theme="light"] .stat-card,
+        [data-theme="light"] .table-card,
+        [data-theme="light"] .booking-card,
+        [data-theme="light"] .v-card {
+            background: #ffffff !important;
+            border-color: #e0e0e0 !important;
+        }
+        [data-theme="light"] .card-header {
+            background: #fafafa !important;
+            border-color: #e0e0e0 !important;
+        }
+        [data-theme="light"] .card-body { background: #ffffff !important; }
+
+        /* ---- Dashboard body ---- */
+        [data-theme="light"] .dashboard-body,
+        [data-theme="light"] .page-body {
+            background: transparent;
+        }
+
+        /* ---- Forms ---- */
+        [data-theme="light"] .form-input,
+        [data-theme="light"] .form-textarea,
+        [data-theme="light"] textarea.form-input,
+        [data-theme="light"] select.form-input,
+        [data-theme="light"] input.form-input {
+            background: #ffffff !important;
+            color: #111 !important;
+            border-color: #d0d0d0 !important;
+        }
+        [data-theme="light"] .form-input:focus,
+        [data-theme="light"] .form-textarea:focus {
+            border-color: var(--accent) !important;
+            box-shadow: 0 0 0 3px rgba(212, 160, 23, 0.1) !important;
+        }
+        [data-theme="light"] .form-input::placeholder,
+        [data-theme="light"] textarea::placeholder,
+        [data-theme="light"] input::placeholder {
+            color: #999 !important;
+        }
+        [data-theme="light"] .form-label,
+        [data-theme="light"] label {
+            color: #333 !important;
+        }
+
+        /* ---- Buttons ---- */
+        [data-theme="light"] .btn-secondary,
+        [data-theme="light"] .btn.btn-secondary {
+            background: #f0f0f2 !important;
+            color: #333 !important;
+            border-color: #d0d0d0 !important;
+        }
+        [data-theme="light"] .btn-secondary:hover { background: #e5e5e7 !important; }
+
+        /* ---- Modals ---- */
+        [data-theme="light"] .modal-overlay { background: rgba(0, 0, 0, 0.4) !important; }
+        [data-theme="light"] .modal-card,
+        [data-theme="light"] .modal-content,
+        [data-theme="light"] .ticket-modal,
+        [data-theme="light"] .q-modal,
+        [data-theme="light"] .confirm-dialog {
+            background: #ffffff !important;
+            border-color: #e0e0e0 !important;
+            color: #111 !important;
+        }
+        [data-theme="light"] .modal-header {
+            background: #fafafa !important;
+            border-color: #e0e0e0 !important;
+        }
+        [data-theme="light"] .modal-body { background: #ffffff !important; }
+
+        /* ---- Chat ---- */
+        [data-theme="light"] .chat-header,
+        [data-theme="light"] .chat-input-area {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border-color: #e0e0e0 !important;
+        }
+        [data-theme="light"] .chat-input,
+        [data-theme="light"] .chat-input-wrapper,
+        [data-theme="light"] #chat-input {
+            background: #f5f5f7 !important;
+            color: #111 !important;
+            border-color: #d0d0d0 !important;
+        }
+        [data-theme="light"] .msg-row.me .msg-bubble,
+        [data-theme="light"] .msg-row.admin .msg-bubble {
+            background: var(--accent) !important;
+            color: #000 !important;
+        }
         [data-theme="light"] .msg-row.them .msg-bubble,
         [data-theme="light"] .msg-row.customer .msg-bubble {
-            background: #f0f0f2;
-            color: #111;
-            border-color: #e0e0e0;
+            background: #f0f0f2 !important;
+            color: #111 !important;
+            border-color: #e0e0e0 !important;
+        }
+        [data-theme="light"] .msg-meta { color: #888 !important; }
+        [data-theme="light"] .msg-sender { color: #555 !important; }
+        [data-theme="light"] .resolved-banner {
+            background: rgba(0, 0, 0, 0.04) !important;
+            border-color: #e0e0e0 !important;
+        }
+
+        /* ---- Conversations panel (admin) ---- */
+        [data-theme="light"] .conv-list-panel,
+        [data-theme="light"] .conv-chat-panel,
+        [data-theme="light"] .context-panel {
+            background: #ffffff !important;
+            border-color: #e0e0e0 !important;
+        }
+        [data-theme="light"] .conv-item { border-color: #eee !important; }
+        [data-theme="light"] .conv-item:hover { background: #f5f5f7 !important; }
+        [data-theme="light"] .conv-item.active { background: rgba(212, 160, 23, 0.08) !important; border-color: var(--accent) !important; }
+        [data-theme="light"] .conv-filter-tab { color: #555 !important; }
+        [data-theme="light"] .conv-filter-tab.active { background: var(--accent) !important; color: #000 !important; }
+        [data-theme="light"] .conv-search {
+            background: #f5f5f7 !important;
+            color: #111 !important;
+            border-color: #d0d0d0 !important;
+        }
+        [data-theme="light"] .conv-empty-state,
+        [data-theme="light"] .conv-list-empty { color: #888 !important; }
+        [data-theme="light"] .identity-switcher {
+            background: #f5f5f7 !important;
+            border-color: #e0e0e0 !important;
+        }
+        [data-theme="light"] .identity-select {
+            background: #ffffff !important;
+            color: #111 !important;
+            border-color: #d0d0d0 !important;
+        }
+
+        /* ---- Support hub (portal) ---- */
+        [data-theme="light"] .support-hub,
+        [data-theme="light"] .support-wrapper {
+            background: transparent !important;
+        }
+        [data-theme="light"] .support-hero h1 {
+            background: none !important;
+            -webkit-text-fill-color: #111 !important;
+            color: #111 !important;
+        }
+        [data-theme="light"] .conv-card {
+            background: #ffffff !important;
+            border-color: #e0e0e0 !important;
+        }
+        [data-theme="light"] .conv-card:hover { background: #f9f9f9 !important; }
+
+        /* ---- Tables ---- */
+        [data-theme="light"] table { color: #111; }
+        [data-theme="light"] th { background: #fafafa !important; color: #333 !important; border-color: #e0e0e0 !important; }
+        [data-theme="light"] td { border-color: #eee !important; }
+        [data-theme="light"] tr:hover td { background: #f9f9f9 !important; }
+
+        /* ---- Tabs ---- */
+        [data-theme="light"] .settings-tabs,
+        [data-theme="light"] .conv-filter-tabs {
+            background: #f5f5f7 !important;
+            border-color: #e0e0e0 !important;
+        }
+        [data-theme="light"] .settings-tab { color: #555 !important; }
+        [data-theme="light"] .settings-tab:hover { background: #eee !important; color: #111 !important; }
+        [data-theme="light"] .settings-tab.active {
+            background: var(--accent) !important;
+            color: #000 !important;
+        }
+        [data-theme="light"] .tab-content { color: #111; }
+
+        /* ---- Toast ---- */
+        [data-theme="light"] .toast.success { background: rgba(22, 163, 74, 0.1) !important; border-color: rgba(22, 163, 74, 0.3) !important; }
+        [data-theme="light"] .toast.error { background: rgba(220, 38, 38, 0.1) !important; border-color: rgba(220, 38, 38, 0.3) !important; }
+
+        /* ---- Dropdowns, selects, context menus ---- */
+        [data-theme="light"] select,
+        [data-theme="light"] option {
+            background: #ffffff !important;
+            color: #111 !important;
+        }
+
+        /* ---- Misc: all rgba(255,255,255,low-alpha) backgrounds become visible gray ---- */
+        [data-theme="light"] [style*="rgba(255,255,255,0.0"],
+        [data-theme="light"] [style*="rgba(255, 255, 255, 0.0"] {
+            background-color: #f5f5f7 !important;
+        }
+
+        /* ---- Onboarding / Auth ---- */
+        [data-theme="light"] .auth-card,
+        [data-theme="light"] .login-card,
+        [data-theme="light"] .signup-card,
+        [data-theme="light"] .recovery-card {
+            background: #ffffff !important;
+            border-color: #e0e0e0 !important;
+        }
+        [data-theme="light"] .lesson-container,
+        [data-theme="light"] .course-header {
+            background: #ffffff !important;
+            border-color: #e0e0e0 !important;
+        }
+
+        /* ---- Admin badges ---- */
+        [data-theme="light"] .admin-badge {
+            background: rgba(212, 160, 23, 0.1) !important;
+            color: var(--accent) !important;
+        }
+        [data-theme="light"] .status-badge { color: #333 !important; }
+
+        /* ---- Scrollbars ---- */
+        [data-theme="light"] ::-webkit-scrollbar-thumb { background: #ccc !important; }
+        [data-theme="light"] ::-webkit-scrollbar-track { background: #f0f0f0 !important; }
+
+        /* ---- Category options in ticket modal ---- */
+        [data-theme="light"] .category-option {
+            background: #f9f9f9 !important;
+            border-color: #e0e0e0 !important;
+        }
+        [data-theme="light"] .category-option:hover { background: #f0f0f2 !important; }
+        [data-theme="light"] .category-option.selected {
+            background: rgba(212, 160, 23, 0.08) !important;
+            border-color: var(--accent) !important;
+        }
+
+        /* ---- Confirm dialogs ---- */
+        [data-theme="light"] .confirm-overlay { background: rgba(0, 0, 0, 0.3) !important; }
+
+        /* ---- Portal page titles with gradient text ---- */
+        [data-theme="light"] h1[style*="background-clip"],
+        [data-theme="light"] .page-title {
+            -webkit-text-fill-color: #111 !important;
+            color: #111 !important;
+            background: none !important;
+        }
+
+        /* ---- Context panel (admin right sidebar) ---- */
+        [data-theme="light"] .ctx-section { border-color: #eee !important; }
+        [data-theme="light"] .ctx-notes-area,
+        [data-theme="light"] .ctx-notes {
+            background: #f5f5f7 !important;
+            color: #111 !important;
+            border-color: #d0d0d0 !important;
+        }
+        [data-theme="light"] .tag-pill { background: #f0f0f2 !important; color: #333 !important; }
+        [data-theme="light"] .tag-dropdown {
+            background: #ffffff !important;
+            border-color: #e0e0e0 !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
         }
 
         /* Theme toggle button in sidebar */
@@ -409,11 +670,16 @@ window._navigateWithTransition = function(url) {
             height: 36px;
             border-radius: 10px;
             border: 1px solid var(--border);
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--text-secondary);
+            background: rgba(128, 128, 128, 0.08);
+            color: #888;
             cursor: pointer;
             transition: all 0.2s ease;
             padding: 0;
+        }
+        [data-theme="light"] .theme-toggle-btn {
+            background: #f0f0f2;
+            color: #555;
+            border-color: #d0d0d0;
         }
         .theme-toggle-btn:hover {
             background: var(--accent-dim);
