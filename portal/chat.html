@@ -1703,6 +1703,11 @@
                 showToast('Ticket submitted successfully!', 'success');
                 await openChatView(newConv.id);
 
+                // Fire pre-chat intake bot for eligible categories (non-blocking)
+                if (getIntakeCategories().includes(selectedCategory.id)) {
+                    startTicketIntake(newConv.id, selectedCategory.id);
+                }
+
             } catch (err) {
                 console.error('Error creating ticket:', err);
                 showToast('Failed to create ticket. Please try again.', 'error');
@@ -2320,6 +2325,101 @@
             if (pollingInterval) clearInterval(pollingInterval);
             if (messagesSubscription) window.supabaseClient.removeChannel(messagesSubscription);
         });
+
+        // ============================================================
+        // PRE-CHAT INTAKE AUTOMATION
+        // Bot asks questions one at a time after ticket creation for
+        // performance/technical categories so the team gets full context.
+        // ============================================================
+
+        const TICKET_INTAKE_QUESTIONS = {
+            broker_connection: [
+                "Thanks for reaching out! Before our team jumps in, I have a few quick questions so they have everything they need. Which broker platform are you trying to connect? (e.g., TD Ameritrade, TradeStation, Interactive Brokers, IBKR, etc.)",
+                "What error or behavior are you seeing when you attempt to connect?",
+                "Have you successfully connected this broker before, or is this your first attempt?",
+                "Have you made any recent changes to your broker account, API keys, or security/firewall settings?",
+                "Perfect — that's everything our team needs. They'll be with you as soon as possible. Thank you for your patience!"
+            ],
+            algorithm_config: [
+                "Thanks for reaching out! I have a few quick questions to make sure our team can dive straight into your issue. Which strategy or algorithm are you having trouble configuring?",
+                "What is your approximate account balance that the algorithm is managing?",
+                "Can you describe exactly what's happening? For example: no trades executing, wrong position sizes, algorithm not starting, unexpected behavior, etc.",
+                "When did you first notice this issue?",
+                "Have you changed any settings recently — such as risk parameters, trade size, or time filters?",
+                "Got it — our team has everything they need and will be with you shortly!"
+            ],
+            platform_bug: [
+                "Thanks for reporting this! A few quick questions so our team can reproduce and fix it. What page or feature are you on when you encounter the bug?",
+                "What exactly happens? Please describe what you see versus what you expected to see.",
+                "Does this happen every time, or only sometimes?",
+                "What browser and device are you using? (e.g., Chrome on Mac, Safari on iPhone, etc.)",
+                "Have you tried refreshing the page or clearing your browser cache?",
+                "Thanks! Our team will review this and get back to you as soon as possible."
+            ]
+        };
+
+        // Categories that trigger the intake sequence (merged with ticket config if available)
+        function getIntakeCategories() {
+            var defaults = Object.keys(TICKET_INTAKE_QUESTIONS);
+            if (ticketConfig && Array.isArray(ticketConfig.intake_category_ids)) {
+                return ticketConfig.intake_category_ids;
+            }
+            return defaults;
+        }
+
+        // Show/hide the typing indicator in the chat view
+        function showIntakeTyping() {
+            const ti = document.getElementById('typingIndicator');
+            if (ti) {
+                ti.style.display = '';
+                const msgs = document.getElementById('chatMessages');
+                if (msgs) requestAnimationFrame(() => { msgs.scrollTop = msgs.scrollHeight; });
+            }
+        }
+        function hideIntakeTyping() {
+            const ti = document.getElementById('typingIndicator');
+            if (ti) ti.style.display = 'none';
+        }
+
+        // Insert a single bot message into the DB (realtime subscription renders it)
+        async function insertIntakeBotMessage(convId, text) {
+            await window.supabaseClient
+                .from('chat_messages')
+                .insert({
+                    conversation_id: convId,
+                    sender_id: currentUser.id,
+                    sender_type: 'admin',
+                    content: text,
+                    message: text,
+                    is_ai_message: true,
+                    display_name_override: 'Support Bot'
+                });
+        }
+
+        // Run the automated intake sequence for a newly created ticket
+        async function startTicketIntake(convId, categoryId) {
+            const questions = TICKET_INTAKE_QUESTIONS[categoryId];
+            if (!questions || questions.length === 0) return;
+
+            // Stagger: initial pause → typing → insert, repeat for each question
+            const TYPING_DELAY = 2200;   // how long the typing indicator shows
+            const BETWEEN_DELAY = 3500;  // gap between questions
+
+            let totalDelay = 1800; // initial pause before first question starts
+
+            for (let i = 0; i < questions.length; i++) {
+                // Show typing indicator
+                await new Promise(resolve => setTimeout(resolve, totalDelay));
+                showIntakeTyping();
+
+                // Pause while "typing", then insert message and hide indicator
+                await new Promise(resolve => setTimeout(resolve, TYPING_DELAY));
+                hideIntakeTyping();
+                await insertIntakeBotMessage(convId, questions[i]);
+
+                totalDelay = BETWEEN_DELAY; // gap before the next question loop iteration
+            }
+        }
     </script>
 </body>
 </html>

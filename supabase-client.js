@@ -1237,181 +1237,151 @@ window.CHAT_WIDGET_CSS = `
     .cw-bubble svg { width: 26px; height: 26px; color: #0a0a0a; }
     .cw-bubble-badge {
         position: absolute;
-        top: -2px; right: -2px;
-        width: 14px; height: 14px;
-        border-radius: 50%;
+        top: -4px; right: -4px;
+        min-width: 18px; height: 18px;
+        border-radius: 9px;
         background: #ef4444;
         border: 2px solid #0a0a0a;
         display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        font-weight: 700;
+        color: #fff;
+        padding: 0 4px;
+        font-family: 'Manrope', sans-serif;
     }
-    .cw-bubble-badge.visible { display: block; }
+    .cw-bubble-badge.visible { display: flex; }
 
     .cw-panel {
         position: fixed;
         bottom: 92px;
         right: 24px;
-        width: 380px;
-        height: 520px;
+        width: 360px;
         max-height: calc(100vh - 120px);
         background: rgba(14, 14, 14, 0.97);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(240, 200, 50, 0.2);
+        border: 1px solid rgba(240, 200, 50, 0.15);
         border-radius: 16px;
         z-index: 295;
         display: none;
         flex-direction: column;
         overflow: hidden;
         box-shadow: 0 16px 60px rgba(0, 0, 0, 0.6);
-        animation: cwSlideUp 0.3s ease-out;
+        animation: cwSlideUp 0.25s ease-out;
     }
     .cw-panel.open { display: flex; }
     @keyframes cwSlideUp {
-        from { opacity: 0; transform: translateY(20px); }
+        from { opacity: 0; transform: translateY(16px); }
         to { opacity: 1; transform: translateY(0); }
     }
 
     .cw-header {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 16px 18px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        gap: 10px;
+        padding: 14px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
         flex-shrink: 0;
     }
-    .cw-header-avatar {
-        width: 36px; height: 36px;
-        border-radius: 50%;
-        background: rgba(240, 200, 50, 0.15);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        border: 1px solid rgba(240, 200, 50, 0.2);
-    }
-    .cw-header-avatar svg { width: 18px; height: 18px; color: #f0c832; }
     .cw-header-info { flex: 1; }
     .cw-header-name { font-weight: 700; font-size: 14px; color: #f5f5f5; }
-    .cw-header-status {
-        font-size: 11px; color: #22c55e;
-        display: flex; align-items: center; gap: 4px;
+    .cwt-view-all {
+        font-size: 12px;
+        color: #f0c832;
+        text-decoration: none;
+        font-weight: 600;
+        flex-shrink: 0;
+        transition: opacity 0.15s;
     }
-    .cw-header-status::before {
-        content: ''; width: 6px; height: 6px;
-        border-radius: 50%; background: #22c55e;
-    }
+    .cwt-view-all:hover { opacity: 0.75; }
     .cw-close {
-        width: 30px; height: 30px; border-radius: 50%;
+        width: 28px; height: 28px; border-radius: 50%;
         background: rgba(255, 255, 255, 0.06); border: none;
-        color: #9ca3af; cursor: pointer;
+        color: #9ca3af; cursor: pointer; flex-shrink: 0;
         display: flex; align-items: center; justify-content: center;
         transition: background 0.15s;
     }
     .cw-close:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
-    .cw-close svg { width: 16px; height: 16px; }
+    .cw-close svg { width: 14px; height: 14px; }
 
-    .cw-messages {
-        flex: 1; overflow-y: auto; padding: 16px;
-        display: flex; flex-direction: column; gap: 12px;
+    /* Ticket hub body */
+    .cwt-body {
+        flex: 1; overflow-y: auto; padding: 10px 10px 4px;
+        display: flex; flex-direction: column;
+        min-height: 80px;
     }
-    .cw-messages::-webkit-scrollbar { width: 4px; }
-    .cw-messages::-webkit-scrollbar-thumb {
-        background: rgba(255, 255, 255, 0.1); border-radius: 2px;
-    }
+    .cwt-body::-webkit-scrollbar { width: 3px; }
+    .cwt-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
 
-    .cw-msg { display: flex; flex-direction: column; max-width: 85%; }
-    .cw-msg.them { align-self: flex-start; }
-    .cw-msg.me { align-self: flex-end; }
-    .cw-msg-bubble {
-        padding: 10px 14px; border-radius: 14px;
-        font-size: 13px; line-height: 1.5; word-wrap: break-word;
-    }
-    .cw-msg.them .cw-msg-bubble {
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        color: #e5e7eb; border-bottom-left-radius: 4px;
-    }
-    .cw-msg.me .cw-msg-bubble {
-        background: rgba(240, 200, 50, 0.15);
-        border: 1px solid rgba(240, 200, 50, 0.2);
-        color: #f5f5f5; border-bottom-right-radius: 4px;
-    }
-    .cw-msg-time {
-        font-size: 10px; color: #6b7280; margin-top: 4px; padding: 0 4px;
-    }
-    .cw-msg.me .cw-msg-time { text-align: right; }
-
-    .cw-empty {
-        flex: 1; display: flex; align-items: center; justify-content: center;
-        color: #6b7280; font-size: 13px; text-align: center; padding: 20px;
+    .cwt-section-label {
+        font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+        color: #6b7280; padding: 6px 4px 4px; font-weight: 600;
     }
 
-    .cw-input-area {
-        padding: 12px 16px;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
-        display: flex; align-items: flex-end; gap: 8px; flex-shrink: 0;
+    .cwt-ticket {
+        display: block; padding: 10px 12px; border-radius: 10px;
+        margin-bottom: 5px; text-decoration: none;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.06);
+        cursor: pointer; transition: background 0.15s, border-color 0.15s;
     }
-    .cw-input {
-        flex: 1;
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        padding: 10px 14px;
-        color: #f5f5f5;
-        font-family: 'Manrope', sans-serif;
-        font-size: 13px;
-        resize: none; outline: none;
-        max-height: 100px; line-height: 1.4;
-        transition: border-color 0.2s;
+    .cwt-ticket:hover { background: rgba(255,255,255,0.08); }
+    .cwt-ticket.unread { border-color: rgba(239,68,68,0.25); background: rgba(239,68,68,0.04); }
+
+    .cwt-ticket-top {
+        display: flex; align-items: center; gap: 6px; margin-bottom: 3px;
     }
-    .cw-input::placeholder { color: #6b7280; }
-    .cw-input:focus { border-color: rgba(240, 200, 50, 0.3); }
-    .cw-send {
-        width: 36px; height: 36px; border-radius: 50%;
+    .cwt-ticket-dot {
+        width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .cwt-ticket-dot.open { background: #f0c832; }
+    .cwt-ticket-dot.in_progress { background: #3b82f6; }
+    .cwt-ticket-dot.resolved { background: #22c55e; }
+    .cwt-ticket-dot.closed { background: #6b7280; }
+
+    .cwt-ticket-title {
+        font-size: 12.5px; font-weight: 600; color: #e5e7eb;
+        flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .cwt-unread-badge {
+        background: #ef4444; color: #fff; font-size: 9px; font-weight: 700;
+        border-radius: 8px; padding: 1px 5px; flex-shrink: 0;
+    }
+    .cwt-ticket-preview {
+        font-size: 11.5px; color: #9ca3af;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        padding-left: 13px;
+    }
+    .cwt-ticket-time {
+        font-size: 10px; color: #6b7280; padding-left: 13px; margin-top: 2px;
+    }
+
+    .cwt-empty {
+        flex: 1; display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        text-align: center; padding: 28px 20px; color: #6b7280;
+        font-size: 13px; gap: 6px;
+    }
+
+    .cwt-footer {
+        padding: 10px 12px 12px;
+        border-top: 1px solid rgba(255,255,255,0.07);
+        flex-shrink: 0;
+    }
+    .cwt-new-btn {
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+        width: 100%; padding: 10px; border-radius: 10px;
         background: linear-gradient(135deg, #f0c832, #e6b800);
-        border: none; cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0; transition: opacity 0.2s, transform 0.15s;
+        border: none; color: #0a0a0a; font-family: 'Manrope', sans-serif;
+        font-size: 13px; font-weight: 700; cursor: pointer;
+        transition: opacity 0.2s, transform 0.15s;
     }
-    .cw-send:disabled { opacity: 0.4; cursor: not-allowed; }
-    .cw-send:not(:disabled):hover { transform: scale(1.05); }
-    .cw-send svg { width: 16px; height: 16px; color: #0a0a0a; }
-
-    /* Typing indicator */
-    .cw-typing-indicator {
-        align-self: flex-start;
-        display: none;
-        padding: 10px 14px;
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 14px;
-        border-bottom-left-radius: 4px;
-        max-width: 85%;
-    }
-    .cw-typing-indicator.visible {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
-    .cw-typing-dot {
-        width: 7px; height: 7px;
-        border-radius: 50%;
-        background: #6b7280;
-        animation: cwTypingBounce 1.4s ease-in-out infinite;
-    }
-    .cw-typing-dot:nth-child(2) { animation-delay: 0.2s; }
-    .cw-typing-dot:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes cwTypingBounce {
-        0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-        30% { transform: translateY(-6px); opacity: 1; }
-    }
+    .cwt-new-btn:hover { opacity: 0.9; transform: translateY(-1px); }
 
     @media (max-width: 600px) {
-        .cw-panel {
-            right: 0; bottom: 0; left: 0;
-            width: 100%; height: 100%;
-            max-height: 100vh; border-radius: 0;
-        }
+        .cw-panel { right: 0; bottom: 0; left: 0; width: 100%; max-height: 100vh; border-radius: 0; }
         .cw-bubble { bottom: 16px; right: 16px; width: 50px; height: 50px; }
     }
 `;
@@ -2223,25 +2193,19 @@ window.initNotificationSystem = async function() {
 // ============================================================
 
 window._chatWidgetState = {
-    conversationId: null,
-    messages: [],
     isOpen: false,
-    subscription: null,
     initialized: false,
     userId: null,
-    userEmail: null,
-    userDisplayName: null,
     displayName: 'Support Team',
-    greetingMessage: 'Hi! How can I help you today?',
-    webhookUrl: null,
-    _typingTimeout: null
+    unreadCount: 0,
+    ticketSubscription: null
 };
 
 // Initialize chat widget
 window._initChatWidget = async function() {
     if (window._chatWidgetState.initialized) return;
 
-    // Skip on chat.html page
+    // Skip on the full chat/support page
     var path = window.location.pathname;
     if (path.indexOf('/portal/chat') !== -1) return;
 
@@ -2262,30 +2226,26 @@ window._initChatWidget = async function() {
     if (['member', 'verified_member', 'active'].indexOf(userStatus) === -1) return;
 
     window._chatWidgetState.userId = session.user.id;
-    window._chatWidgetState.userEmail = session.user.email || '';
-    window._chatWidgetState.userDisplayName =
-        ((userData.data.first_name || '') + ' ' + (userData.data.last_name || '')).trim()
-        || session.user.email || '';
     window._chatWidgetState.initialized = true;
 
-    // Load AI config (display name, greeting, webhook URL)
+    // Load display name from AI config
     try {
         var aiConfig = await window.getAIChatConfig();
-        if (aiConfig) {
-            window._chatWidgetState.displayName = aiConfig.ai_display_name || 'Support Team';
-            window._chatWidgetState.greetingMessage = aiConfig.greeting_message || 'Hi! How can I help you today?';
-            window._chatWidgetState.webhookUrl = aiConfig.webhook_url || null;
-        }
-    } catch (e) { /* use defaults */ }
+        if (aiConfig) window._chatWidgetState.displayName = aiConfig.ai_display_name || 'Support Team';
+    } catch (e) {}
 
     window._injectChatWidgetHTML();
+
+    // Check for existing unread tickets and set badge
+    window._checkWidgetUnread();
+    // Subscribe to realtime conversation changes for live badge updates
+    window._subscribeWidgetConversations();
 };
 
 // Inject widget HTML into DOM
 window._injectChatWidgetHTML = function() {
     if (document.getElementById('cw-bubble')) return;
 
-    // Inject CSS
     if (!document.getElementById('cw-css')) {
         var style = document.createElement('style');
         style.id = 'cw-css';
@@ -2293,10 +2253,11 @@ window._injectChatWidgetHTML = function() {
         document.head.appendChild(style);
     }
 
-    // Bubble
+    // Bubble button
     var bubble = document.createElement('button');
     bubble.id = 'cw-bubble';
     bubble.className = 'cw-bubble';
+    bubble.setAttribute('aria-label', 'Support tickets');
     bubble.onclick = function() { window._toggleChatWidget(); };
     bubble.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span class="cw-bubble-badge" id="cw-badge"></span>';
     document.body.appendChild(bubble);
@@ -2307,33 +2268,18 @@ window._injectChatWidgetHTML = function() {
     panel.className = 'cw-panel';
     panel.innerHTML =
         '<div class="cw-header">' +
-            '<div class="cw-header-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg></div>' +
-            '<div class="cw-header-info">' +
-                '<div class="cw-header-name">' + _escCw(window._chatWidgetState.displayName) + '</div>' +
-                '<div class="cw-header-status">Online</div>' +
-            '</div>' +
+            '<div class="cw-header-info"><div class="cw-header-name">Support Tickets</div></div>' +
+            '<a class="cwt-view-all" href="/portal/chat" onclick="event.preventDefault(); window._navigateWithTransition(\'/portal/chat\');">View All →</a>' +
             '<button class="cw-close" onclick="window._toggleChatWidget()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
         '</div>' +
-        '<div class="cw-messages" id="cw-messages"><div class="cw-empty">Send a message to get started</div></div>' +
-        '<div class="cw-input-area">' +
-            '<textarea class="cw-input" id="cw-input" placeholder="Type a message..." rows="1"></textarea>' +
-            '<button class="cw-send" id="cw-send" onclick="window._sendWidgetMessage()" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg></button>' +
+        '<div class="cwt-body" id="cwt-body"><div class="cwt-empty">Loading...</div></div>' +
+        '<div class="cwt-footer">' +
+            '<button class="cwt-new-btn" onclick="window._navigateWithTransition(\'/portal/chat\')">' +
+                '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
+                'Open New Ticket' +
+            '</button>' +
         '</div>';
     document.body.appendChild(panel);
-
-    // Wire input events
-    var cwInput = document.getElementById('cw-input');
-    cwInput.addEventListener('input', function() {
-        document.getElementById('cw-send').disabled = !cwInput.value.trim();
-        cwInput.style.height = 'auto';
-        cwInput.style.height = Math.min(cwInput.scrollHeight, 100) + 'px';
-    });
-    cwInput.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            window._sendWidgetMessage();
-        }
-    });
 };
 
 // HTML escape helper for chat widget
@@ -2355,310 +2301,154 @@ window._toggleChatWidget = function() {
     } else {
         panel.classList.add('open');
         window._chatWidgetState.isOpen = true;
-        // Clear badge
-        var badge = document.getElementById('cw-badge');
-        if (badge) badge.classList.remove('visible');
-        // Load or create conversation on first open
-        window._openOrCreateWidgetConversation();
-        setTimeout(function() {
-            var inp = document.getElementById('cw-input');
-            if (inp) inp.focus();
-        }, 300);
+        // Clear unread badge — user is now looking at their tickets
+        window._updateWidgetBadge(0);
+        // Load/refresh ticket list
+        window._loadWidgetTickets();
     }
 };
 
-// Open existing or create new Quick Chat conversation
-window._openOrCreateWidgetConversation = async function() {
-    var state = window._chatWidgetState;
-    if (state.conversationId) {
-        window._scrollWidgetToBottom();
-        return;
+// Update the red unread badge on the bubble
+window._updateWidgetBadge = function(count) {
+    window._chatWidgetState.unreadCount = count;
+    var badge = document.getElementById('cw-badge');
+    if (!badge) return;
+    if (count > 0) {
+        badge.textContent = count > 9 ? '9+' : String(count);
+        badge.classList.add('visible');
+    } else {
+        badge.classList.remove('visible');
+        badge.textContent = '';
     }
+};
 
-    var messagesEl = document.getElementById('cw-messages');
-    messagesEl.innerHTML = '<div class="cw-empty">Connecting...</div>';
-
+// Query all user conversations and show badge if any have unread messages
+window._checkWidgetUnread = async function() {
+    var state = window._chatWidgetState;
+    if (!state.userId) return;
     try {
-        // Look for existing open Quick Chat
         var result = await window.supabaseClient
             .from('chat_conversations')
-            .select('*')
+            .select('user_unread_count')
             .eq('user_id', state.userId)
-            .eq('title', 'Quick Chat')
-            .eq('status', 'open')
-            .order('created_at', { ascending: false })
-            .limit(1);
-
-        if (result.error) throw result.error;
-
-        if (result.data && result.data.length > 0) {
-            state.conversationId = result.data[0].id;
-            await window._loadWidgetMessages(state.conversationId);
-            window._subscribeChatWidget();
-            return;
-        }
-
-        // Create new conversation
-        var now = new Date().toISOString();
-        var greeting = state.greetingMessage;
-
-        var convResult = await window.supabaseClient
-            .from('chat_conversations')
-            .insert({
-                user_id: state.userId,
-                status: 'open',
-                handler_type: 'ai',
-                category: 'ai',
-                title: 'Quick Chat',
-                last_message_at: now,
-                last_message_preview: greeting.substring(0, 100),
-                user_unread_count: 0
-            })
-            .select()
-            .single();
-
-        if (convResult.error) throw convResult.error;
-
-        state.conversationId = convResult.data.id;
-
-        // Insert AI greeting
-        await window.supabaseClient
-            .from('chat_messages')
-            .insert({
-                conversation_id: state.conversationId,
-                sender_id: state.userId,
-                sender_type: 'admin',
-                content: greeting,
-                message: greeting,
-                is_ai_message: true,
-                display_name_override: state.displayName
-            });
-
-        await window._loadWidgetMessages(state.conversationId);
-        window._subscribeChatWidget();
-
-    } catch (err) {
-        console.error('Chat widget: error opening conversation:', err);
-        messagesEl.innerHTML = '<div class="cw-empty">Unable to connect. Please try again.</div>';
-    }
+            .gt('user_unread_count', 0);
+        var total = (result.data || []).reduce(function(sum, c) {
+            return sum + (c.user_unread_count || 0);
+        }, 0);
+        window._updateWidgetBadge(total);
+    } catch (e) {}
 };
 
-// Load messages for a conversation
-window._loadWidgetMessages = async function(convId) {
-    var messagesEl = document.getElementById('cw-messages');
-    if (!messagesEl) return;
-
-    try {
-        var result = await window.supabaseClient
-            .from('chat_messages')
-            .select('*')
-            .eq('conversation_id', convId)
-            .order('created_at', { ascending: true });
-
-        if (result.error) throw result.error;
-
-        var messages = result.data || [];
-        window._chatWidgetState.messages = messages;
-
-        if (messages.length === 0) {
-            messagesEl.innerHTML = '<div class="cw-empty">Send a message to get started.</div>';
-            return;
-        }
-
-        messagesEl.innerHTML = '';
-        messages.forEach(function(msg) {
-            window._renderWidgetMessage(msg);
-        });
-        window._scrollWidgetToBottom();
-
-    } catch (err) {
-        console.error('Chat widget: error loading messages:', err);
-        messagesEl.innerHTML = '<div class="cw-empty">Error loading messages.</div>';
-    }
-};
-
-// Render a single message bubble
-window._renderWidgetMessage = function(msg) {
-    var messagesEl = document.getElementById('cw-messages');
-    if (!messagesEl) return;
-
-    var empty = messagesEl.querySelector('.cw-empty');
-    if (empty) empty.remove();
-
-    var isMe = msg.sender_type === 'customer';
-    var timeStr = new Date(msg.created_at).toLocaleTimeString('en-US', {
-        hour: 'numeric', minute: '2-digit', hour12: true
-    });
-    var content = msg.content || msg.message || '';
-
-    var msgEl = document.createElement('div');
-    msgEl.className = 'cw-msg ' + (isMe ? 'me' : 'them');
-    msgEl.setAttribute('data-msg-id', msg.id);
-    msgEl.innerHTML =
-        '<div class="cw-msg-bubble">' + _escCw(content) + '</div>' +
-        '<div class="cw-msg-time">' + timeStr + '</div>';
-
-    messagesEl.appendChild(msgEl);
-};
-
-// Send a message
-window._sendWidgetMessage = async function() {
-    var input = document.getElementById('cw-input');
-    var sendBtn = document.getElementById('cw-send');
-    if (!input) return;
-
-    var text = input.value.trim();
-    if (!text) return;
-
+// Subscribe to realtime conversation changes to keep badge live
+window._subscribeWidgetConversations = function() {
     var state = window._chatWidgetState;
-    if (!state.userId || !state.conversationId) return;
+    if (!state.userId) return;
+    if (state.ticketSubscription) window.supabaseClient.removeChannel(state.ticketSubscription);
 
-    sendBtn.disabled = true;
-    input.disabled = true;
-
-    try {
-        var result = await window.supabaseClient
-            .from('chat_messages')
-            .insert({
-                conversation_id: state.conversationId,
-                sender_id: state.userId,
-                sender_type: 'customer',
-                content: text,
-                message: text
-            })
-            .select()
-            .single();
-
-        if (result.error) throw result.error;
-
-        // Update conversation metadata
-        await window.supabaseClient
-            .from('chat_conversations')
-            .update({
-                last_message_at: new Date().toISOString(),
-                last_message_preview: text.substring(0, 100),
-                admin_unread_count: 1
-            })
-            .eq('id', state.conversationId);
-
-        input.value = '';
-        input.style.height = 'auto';
-
-        window._renderWidgetMessage(result.data);
-        window._scrollWidgetToBottom();
-
-        // Trigger N8N webhook (non-blocking, fire-and-forget)
-        window._callWidgetWebhook(text);
-
-        // Show typing indicator while waiting for AI response
-        window._showWidgetTyping();
-
-    } catch (err) {
-        console.error('Chat widget: error sending message:', err);
-    } finally {
-        input.disabled = false;
-        input.focus();
-        sendBtn.disabled = !input.value.trim();
-    }
-};
-
-// Non-blocking webhook call to N8N
-window._callWidgetWebhook = function(messageContent) {
-    var state = window._chatWidgetState;
-    if (!state.webhookUrl) return;
-
-    fetch(state.webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            conversationId: state.conversationId,
-            messageContent: messageContent,
-            userId: state.userId,
-            userEmail: state.userEmail || '',
-            userDisplayName: state.userDisplayName || ''
-        })
-    }).catch(function(err) {
-        console.error('Chat widget: webhook call failed:', err);
-    });
-};
-
-// Subscribe to real-time messages
-window._subscribeChatWidget = function() {
-    var state = window._chatWidgetState;
-    if (!state.conversationId) return;
-    if (state.subscription) {
-        window.supabaseClient.removeChannel(state.subscription);
-    }
-
-    state.subscription = window.supabaseClient
-        .channel('widget-chat-' + state.conversationId)
+    state.ticketSubscription = window.supabaseClient
+        .channel('widget-convs-' + state.userId)
         .on('postgres_changes', {
-            event: 'INSERT',
+            event: '*',
             schema: 'public',
-            table: 'chat_messages',
-            filter: 'conversation_id=eq.' + state.conversationId
+            table: 'chat_conversations',
+            filter: 'user_id=eq.' + state.userId
         }, function(payload) {
             if (!payload.new) return;
-            if (payload.new.sender_type === 'customer') return;
-            var existing = document.querySelector('[data-msg-id="' + payload.new.id + '"]');
-            if (existing) return;
-
-            window._hideWidgetTyping();
-            window._renderWidgetMessage(payload.new);
-            window._scrollWidgetToBottom();
-
-            // Show badge if panel is closed
-            if (!window._chatWidgetState.isOpen) {
-                var badge = document.getElementById('cw-badge');
-                if (badge) badge.classList.add('visible');
+            var hasUnread = (payload.new.user_unread_count || 0) > 0;
+            if (hasUnread) {
+                // Re-query total unread across all tickets
+                window._checkWidgetUnread();
+                // If panel is open, refresh the list so the red dot appears
+                if (state.isOpen) window._loadWidgetTickets();
             }
         })
         .subscribe();
 };
 
-// Scroll to bottom of chat
-window._scrollWidgetToBottom = function() {
-    var el = document.getElementById('cw-messages');
-    if (el) {
-        requestAnimationFrame(function() { el.scrollTop = el.scrollHeight; });
+// Load user's recent tickets and render them in the panel
+window._loadWidgetTickets = async function() {
+    var state = window._chatWidgetState;
+    var body = document.getElementById('cwt-body');
+    if (!body || !state.userId) return;
+
+    try {
+        var result = await window.supabaseClient
+            .from('chat_conversations')
+            .select('id, title, status, category, last_message_preview, last_message_at, user_unread_count, ticket_number')
+            .eq('user_id', state.userId)
+            .order('last_message_at', { ascending: false })
+            .limit(8);
+
+        if (result.error) throw result.error;
+        window._renderWidgetTickets(result.data || []);
+    } catch (e) {
+        body.innerHTML = '<div class="cwt-empty">Unable to load tickets.</div>';
     }
 };
 
-// Show typing indicator (bouncing dots)
-window._showWidgetTyping = function() {
-    var messagesEl = document.getElementById('cw-messages');
-    if (!messagesEl) return;
+// Render the ticket list inside the panel
+window._renderWidgetTickets = function(tickets) {
+    var body = document.getElementById('cwt-body');
+    if (!body) return;
 
-    var existing = document.getElementById('cw-typing');
-    if (existing) existing.remove();
-
-    var el = document.createElement('div');
-    el.id = 'cw-typing';
-    el.className = 'cw-typing-indicator visible';
-    el.innerHTML = '<div class="cw-typing-dot"></div><div class="cw-typing-dot"></div><div class="cw-typing-dot"></div>';
-    messagesEl.appendChild(el);
-    window._scrollWidgetToBottom();
-
-    // Safety: auto-hide after 30 seconds if no response
-    window._chatWidgetState._typingTimeout = setTimeout(function() {
-        window._hideWidgetTyping();
-    }, 30000);
-};
-
-// Hide typing indicator
-window._hideWidgetTyping = function() {
-    var el = document.getElementById('cw-typing');
-    if (el) el.remove();
-    if (window._chatWidgetState._typingTimeout) {
-        clearTimeout(window._chatWidgetState._typingTimeout);
-        window._chatWidgetState._typingTimeout = null;
+    if (tickets.length === 0) {
+        body.innerHTML =
+            '<div class="cwt-empty">' +
+                '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="opacity:0.25"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>' +
+                '<span>No tickets yet</span>' +
+                '<span style="font-size:11px;color:#4b5563;">Submit a ticket and we\'ll get you sorted</span>' +
+            '</div>';
+        return;
     }
+
+    var open = tickets.filter(function(t) { return ['open', 'in_progress'].includes(t.status); });
+    var closed = tickets.filter(function(t) { return ['resolved', 'closed'].includes(t.status); });
+
+    function relativeTime(ts) {
+        if (!ts) return '';
+        var d = new Date(ts);
+        var diff = Math.floor((Date.now() - d) / 1000);
+        if (diff < 60) return 'Just now';
+        if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+        if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+        return Math.floor(diff / 86400) + 'd ago';
+    }
+
+    function renderTicket(t) {
+        var statusClass = t.status === 'in_progress' ? 'in_progress' : (t.status === 'resolved' ? 'resolved' : (t.status === 'closed' ? 'closed' : 'open'));
+        var hasUnread = (t.user_unread_count || 0) > 0;
+        var numStr = t.ticket_number ? '#' + t.ticket_number + ' · ' : '';
+        var title = t.title || (t.category || 'Ticket').replace(/_/g, ' ');
+        var preview = t.last_message_preview || '';
+        var timeStr = relativeTime(t.last_message_at);
+
+        return '<a class="cwt-ticket' + (hasUnread ? ' unread' : '') + '" href="/portal/chat" onclick="event.preventDefault(); window._navigateWithTransition(\'/portal/chat\');">' +
+            '<div class="cwt-ticket-top">' +
+                '<span class="cwt-ticket-dot ' + statusClass + '"></span>' +
+                '<span class="cwt-ticket-title">' + _escCw(numStr + title) + '</span>' +
+                (hasUnread ? '<span class="cwt-unread-badge">' + (t.user_unread_count > 9 ? '9+' : t.user_unread_count) + ' new</span>' : '') +
+            '</div>' +
+            (preview ? '<div class="cwt-ticket-preview">' + _escCw(preview) + '</div>' : '') +
+            (timeStr ? '<div class="cwt-ticket-time">' + _escCw(timeStr) + '</div>' : '') +
+        '</a>';
+    }
+
+    var html = '';
+    if (open.length > 0) {
+        html += '<div class="cwt-section-label">Open Tickets</div>';
+        open.forEach(function(t) { html += renderTicket(t); });
+    }
+    if (closed.length > 0) {
+        html += '<div class="cwt-section-label">Recent</div>';
+        closed.slice(0, 3).forEach(function(t) { html += renderTicket(t); });
+    }
+    body.innerHTML = html;
 };
 
 // Cleanup on page unload
 window.addEventListener('beforeunload', function() {
-    if (window._chatWidgetState.subscription) {
-        window.supabaseClient.removeChannel(window._chatWidgetState.subscription);
+    if (window._chatWidgetState.ticketSubscription) {
+        window.supabaseClient.removeChannel(window._chatWidgetState.ticketSubscription);
     }
 });
 
