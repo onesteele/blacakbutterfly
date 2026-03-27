@@ -6,7 +6,7 @@
     <title>Profit Insider - Customer Detail</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
         @font-face {
             font-family: 'Gilroy ExtraBold';
@@ -1718,6 +1718,179 @@
                 font-size: 20px;
             }
         }
+
+        /* ============================================================
+           DIGITAL SIGNING RECORD
+           ============================================================ */
+        .signing-record {
+            background: #0f0f0f;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .signing-record-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            background: rgba(240, 200, 50, 0.06);
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .signing-record-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .signing-record-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #22c55e;
+        }
+
+        .signing-record-badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #22c55e;
+        }
+
+        .signing-record-body {
+            padding: 24px;
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+        }
+
+        .signing-record-photo {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .signing-record-photo img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #2a2a2a;
+        }
+
+        .signing-record-photo-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .signing-record-meta {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .signing-record-meta-row {
+            display: flex;
+            gap: 8px;
+            font-size: 12.5px;
+            line-height: 1.5;
+        }
+
+        .signing-record-meta-label {
+            color: var(--text-muted);
+            min-width: 90px;
+            flex-shrink: 0;
+        }
+
+        .signing-record-meta-value {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .signing-record-divider {
+            height: 1px;
+            background: #2a2a2a;
+            margin: 20px 24px;
+        }
+
+        .signing-record-sig-block {
+            padding: 0 24px 24px;
+        }
+
+        .signing-record-sig-label {
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .signing-record-sig-name {
+            font-family: 'Dancing Script', cursive;
+            font-size: 38px;
+            font-weight: 700;
+            color: #c0c8ff;
+            line-height: 1.1;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #3a3a3a;
+            display: inline-block;
+            min-width: 200px;
+        }
+
+        .signing-record-sig-printed {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 8px;
+            gap: 24px;
+        }
+
+        .signing-record-sig-printed-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .signing-record-sig-printed-value {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .signing-record-sig-printed-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        .signing-record-disclaimer {
+            margin: 16px 24px 24px;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid #222;
+            border-radius: 8px;
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        .signing-record-unsigned {
+            padding: 32px 24px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -2112,22 +2285,12 @@
                     </div>
                     <div class="glass-card">
                         <div class="card-header">
-                            <span class="card-title">Contract Agreement</span>
+                            <span class="card-title">Digital Signing Record</span>
+                            <span id="legal-guarantee-badge" style="display:none; font-size:11px; font-weight:700; color:var(--accent); background:var(--accent-dim); padding:4px 10px; border-radius:20px;">90-Day Guarantee Active</span>
                         </div>
-                        <div class="card-body">
-                            <div class="profile-grid" id="contract-info-grid">
-                                <div class="profile-field">
-                                    <div class="field-label">Contract Signed</div>
-                                    <div class="field-value" id="legal-contract-date">Not signed</div>
-                                </div>
-                                <div class="profile-field">
-                                    <div class="field-label">Signature</div>
-                                    <div class="field-value" id="legal-signature">--</div>
-                                </div>
-                                <div class="profile-field">
-                                    <div class="field-label">Performance Guarantee</div>
-                                    <div class="field-value" id="legal-guarantee">--</div>
-                                </div>
+                        <div class="card-body" style="padding:0;">
+                            <div id="signing-record-container">
+                                <div class="signing-record-unsigned">No contract on file.</div>
                             </div>
                         </div>
                     </div>
@@ -2705,12 +2868,99 @@
                     '<p style="color:var(--text-muted); margin-top:8px; font-size:13px;">Verified: ' + verifiedDate + '</p>';
             }
 
-            // Contract info
-            document.getElementById('legal-contract-date').textContent = c.contract_signed_at ? window.formatFullDate(c.contract_signed_at) : 'Not signed';
-            document.getElementById('legal-signature').textContent = c.contract_signature || 'N/A';
-            document.getElementById('legal-guarantee').textContent = c.guarantee_opted_in ? 'Opted In' : 'Not opted in';
+            // Digital signing record
+            const sigContainer = document.getElementById('signing-record-container');
+            const guaranteeBadge = document.getElementById('legal-guarantee-badge');
             if (c.guarantee_opted_in) {
-                document.getElementById('legal-guarantee').style.color = '#22c55e';
+                guaranteeBadge.style.display = 'inline-block';
+            }
+            if (c.contract_signed_at && c.contract_signature) {
+                const sigDate = new Date(c.contract_signed_at);
+                const sigDateStr = sigDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+                const sigTimeStr = sigDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' });
+                const locationParts = [c.city, c.region, c.country].filter(Boolean);
+                const locationStr = locationParts.length > 0 ? locationParts.join(', ') : 'Unknown';
+
+                // Resolve photo URL
+                let photoHtml = '';
+                const photoSrc = c.verification_photo_url || c.avatar_url || '';
+                if (photoSrc) {
+                    let resolvedUrl = photoSrc;
+                    if (!resolvedUrl.startsWith('http') && window.getVerificationPhotoUrl) {
+                        try { resolvedUrl = window.getVerificationPhotoUrl(photoSrc); } catch(e) {}
+                    }
+                    if (resolvedUrl) {
+                        photoHtml = `
+                            <div class="signing-record-photo">
+                                <img src="${resolvedUrl}" alt="Signer photo" onerror="this.parentElement.style.display='none'">
+                                <span class="signing-record-photo-label">Signer ID Photo</span>
+                            </div>`;
+                    }
+                }
+
+                sigContainer.innerHTML = `
+                    <div class="signing-record">
+                        <div class="signing-record-header">
+                            <span class="signing-record-title">Electronically Signed Document</span>
+                            <span class="signing-record-badge">
+                                <span class="signing-record-badge-dot"></span>
+                                SIGNATURE VERIFIED
+                            </span>
+                        </div>
+                        <div class="signing-record-body">
+                            ${photoHtml}
+                            <div class="signing-record-meta">
+                                <div class="signing-record-meta-row">
+                                    <span class="signing-record-meta-label">Signed by</span>
+                                    <span class="signing-record-meta-value">${escapeHtml(c.contract_signature)}</span>
+                                </div>
+                                <div class="signing-record-meta-row">
+                                    <span class="signing-record-meta-label">Date</span>
+                                    <span class="signing-record-meta-value">${escapeHtml(sigDateStr)}</span>
+                                </div>
+                                <div class="signing-record-meta-row">
+                                    <span class="signing-record-meta-label">Time</span>
+                                    <span class="signing-record-meta-value">${escapeHtml(sigTimeStr)}</span>
+                                </div>
+                                <div class="signing-record-meta-row">
+                                    <span class="signing-record-meta-label">IP Address</span>
+                                    <span class="signing-record-meta-value">${escapeHtml(c.ip_address || 'N/A')}</span>
+                                </div>
+                                <div class="signing-record-meta-row">
+                                    <span class="signing-record-meta-label">Location</span>
+                                    <span class="signing-record-meta-value">${escapeHtml(locationStr)}</span>
+                                </div>
+                                <div class="signing-record-meta-row">
+                                    <span class="signing-record-meta-label">Method</span>
+                                    <span class="signing-record-meta-value">Click-wrap Electronic Signature</span>
+                                </div>
+                                <div class="signing-record-meta-row">
+                                    <span class="signing-record-meta-label">Guarantee</span>
+                                    <span class="signing-record-meta-value" style="color:${c.guarantee_opted_in ? '#22c55e' : 'var(--text-muted)'};">${c.guarantee_opted_in ? '90-Day Performance Guarantee Opted In' : 'Not opted in'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="signing-record-divider"></div>
+                        <div class="signing-record-sig-block">
+                            <div class="signing-record-sig-label">Customer Signature</div>
+                            <div class="signing-record-sig-name">${escapeHtml(c.contract_signature)}</div>
+                            <div class="signing-record-sig-printed">
+                                <div class="signing-record-sig-printed-col">
+                                    <span class="signing-record-sig-printed-value">${escapeHtml(c.contract_signature)}</span>
+                                    <span class="signing-record-sig-printed-label">Printed Name</span>
+                                </div>
+                                <div class="signing-record-sig-printed-col" style="text-align:right;">
+                                    <span class="signing-record-sig-printed-value">${escapeHtml(sigDateStr)}</span>
+                                    <span class="signing-record-sig-printed-label">Date Signed</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="signing-record-disclaimer">
+                            This electronic signature was captured via click-wrap acceptance. The signatory checked all required agreement boxes, typed their full legal name, and submitted the form at the date and time shown above. Their IP address and geographic location were recorded at the time of signing. This record is stored and associated with the customer's account as evidence of agreement.
+                        </div>
+                    </div>`;
+            } else {
+                sigContainer.innerHTML = '<div class="signing-record-unsigned">This customer has not yet signed the contract.</div>';
             }
         }
 
