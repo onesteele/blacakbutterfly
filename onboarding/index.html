@@ -2304,7 +2304,9 @@
         // ============================================
         function initCourseFlow() {
             renderAllLessons();
-            loadProgress().then(function() {
+            loadProgress().catch(function(e) {
+                console.error('Progress load error, starting from step 1:', e);
+            }).then(function() {
                 showCurrentLesson();
             });
         }
@@ -2648,10 +2650,13 @@
                         completedSteps = [];
                         watchedVideos = {};
                         checkedItems = {};
-                        await window.supabaseClient
-                            .from('onboarding_progress')
-                            .delete()
-                            .eq('user_id', currentUser.id);
+                        // Best-effort delete — don't let RLS failure block the course from loading
+                        try {
+                            await window.supabaseClient
+                                .from('onboarding_progress')
+                                .delete()
+                                .eq('user_id', currentUser.id);
+                        } catch (delErr) { /* will be overwritten on next saveProgress */ }
                     } else {
                         completedSteps = loadedSteps;
                         watchedVideos = loadedVideos;
