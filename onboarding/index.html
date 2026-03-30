@@ -1750,14 +1750,29 @@
                     showVerificationScreen('details');
                     prefillDetails(profile);
                 } else {
+                    // Show the course. Wrap initCourseFlow in its own try-catch so any
+                    // course-level error doesn't bubble up and trigger the email-form fallback.
                     document.getElementById('course-flow').style.display = 'block';
-                    initCourseFlow();
+                    try {
+                        initCourseFlow();
+                    } catch (courseErr) {
+                        console.error('Error starting course flow:', courseErr);
+                    }
                 }
 
                 document.getElementById('loadingScreen').classList.add('hidden');
             } catch (error) {
                 console.error('Error during initialization:', error);
-                // Fallback: show verification flow email entry
+                // If a session exists but something else failed, send them to auth to re-route
+                // properly rather than trapping them in the email entry form loop.
+                try {
+                    var fallbackSession = await window.supabaseClient.auth.getSession();
+                    if (fallbackSession.data && fallbackSession.data.session) {
+                        window.location.href = '/auth/';
+                        return;
+                    }
+                } catch (e) { /* ignore */ }
+                // Genuinely not logged in — show email entry for new account setup
                 document.getElementById('verification-flow').style.display = 'block';
                 document.getElementById('v-screen-email').classList.add('active');
                 document.getElementById('loadingScreen').classList.add('hidden');
@@ -1875,10 +1890,29 @@
                     }
                     showVerificationScreen('details');
                 } else {
-                    // No pending account found — they're either already a member or not in the system.
-                    // We can't distinguish without an authenticated query, so show a helpful message
-                    // that covers both cases.
-                    errorEl.innerHTML = 'No pending account found for this email. If you already have an account, <a href="/auth/" style="color: var(--accent); text-decoration: underline;">sign in here</a>. Otherwise, please contact our team.';
+                    // No pending account found.
+                    // Check if they have an existing auth account — if so, send them directly to login.
+                    // This also breaks the redirect loop for users whose status was reset to onboarding.
+                    var sessionCheck = await window.supabaseClient.auth.getSession();
+                    if (sessionCheck.data && sessionCheck.data.session) {
+                        // They're already logged in — go straight to auth to re-route properly
+                        window.location.href = '/auth/';
+                        return;
+                    }
+                    // Try a password-less sign-in check via OTP to see if the email exists in auth.
+                    // Supabase doesn't expose "does this email exist" directly, so we use the users table.
+                    // Fall back to a helpful message that sends them to login if they have an account.
+                    var sessionResult2 = await window.supabaseClient
+                        .from('users')
+                        .select('id, status')
+                        .eq('email', email)
+                        .maybeSingle();
+                    if (sessionResult2.data) {
+                        // Account exists — redirect to login immediately, no message needed
+                        window.location.href = '/auth/';
+                        return;
+                    }
+                    errorEl.textContent = 'No account found for this email. Please contact our team.';
                     errorEl.classList.add('show');
                 }
             } catch (err) {
