@@ -1513,6 +1513,11 @@
     <div class="confetti-container" id="confetti-container"></div>
 
     <script>
+        function escapeHtml(str) {
+            if (str == null) return '';
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+        }
+
         // ============================================
         // GLOBAL STATE
         // ============================================
@@ -2303,7 +2308,11 @@
         // COURSE FLOW
         // ============================================
         function initCourseFlow() {
-            renderAllLessons();
+            try {
+                renderAllLessons();
+            } catch (renderErr) {
+                console.error('Error rendering lessons:', renderErr);
+            }
             loadProgress().catch(function(e) {
                 console.error('Progress load error, starting from step 1:', e);
             }).then(function() {
