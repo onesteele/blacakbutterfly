@@ -1703,8 +1703,8 @@
                 showToast('Ticket submitted successfully!', 'success');
                 await openChatView(newConv.id);
 
-                // Fire pre-chat intake bot for eligible categories (non-blocking)
-                if (getIntakeCategories().includes(selectedCategory.id)) {
+                // Fire pre-chat intake bot if this category has a configured sequence
+                if (getIntakeQuestionsForCategory(selectedCategory.id)) {
                     startTicketIntake(newConv.id, selectedCategory.id);
                 }
 
@@ -2332,39 +2332,12 @@
         // performance/technical categories so the team gets full context.
         // ============================================================
 
-        const TICKET_INTAKE_QUESTIONS = {
-            broker_connection: [
-                "Thanks for reaching out! Before our team jumps in, I have a few quick questions so they have everything they need. Which broker platform are you trying to connect? (e.g., TD Ameritrade, TradeStation, Interactive Brokers, IBKR, etc.)",
-                "What error or behavior are you seeing when you attempt to connect?",
-                "Have you successfully connected this broker before, or is this your first attempt?",
-                "Have you made any recent changes to your broker account, API keys, or security/firewall settings?",
-                "Perfect — that's everything our team needs. They'll be with you as soon as possible. Thank you for your patience!"
-            ],
-            algorithm_config: [
-                "Thanks for reaching out! I have a few quick questions to make sure our team can dive straight into your issue. Which strategy or algorithm are you having trouble configuring?",
-                "What is your approximate account balance that the algorithm is managing?",
-                "Can you describe exactly what's happening? For example: no trades executing, wrong position sizes, algorithm not starting, unexpected behavior, etc.",
-                "When did you first notice this issue?",
-                "Have you changed any settings recently — such as risk parameters, trade size, or time filters?",
-                "Got it — our team has everything they need and will be with you shortly!"
-            ],
-            platform_bug: [
-                "Thanks for reporting this! A few quick questions so our team can reproduce and fix it. What page or feature are you on when you encounter the bug?",
-                "What exactly happens? Please describe what you see versus what you expected to see.",
-                "Does this happen every time, or only sometimes?",
-                "What browser and device are you using? (e.g., Chrome on Mac, Safari on iPhone, etc.)",
-                "Have you tried refreshing the page or clearing your browser cache?",
-                "Thanks! Our team will review this and get back to you as soon as possible."
-            ]
-        };
-
-        // Categories that trigger the intake sequence (merged with ticket config if available)
-        function getIntakeCategories() {
-            var defaults = Object.keys(TICKET_INTAKE_QUESTIONS);
-            if (ticketConfig && Array.isArray(ticketConfig.intake_category_ids)) {
-                return ticketConfig.intake_category_ids;
-            }
-            return defaults;
+        // Returns the configured question list for a category, or null if not configured / disabled
+        function getIntakeQuestionsForCategory(categoryId) {
+            if (!ticketConfig || !Array.isArray(ticketConfig.intake_sequences)) return null;
+            const seq = ticketConfig.intake_sequences.find(s => s.category_id === categoryId && s.enabled !== false);
+            if (!seq || !seq.questions || seq.questions.length === 0) return null;
+            return seq.questions.filter(q => q && q.trim());
         }
 
         // Show/hide the typing indicator in the chat view
@@ -2398,7 +2371,7 @@
 
         // Run the automated intake sequence for a newly created ticket
         async function startTicketIntake(convId, categoryId) {
-            const questions = TICKET_INTAKE_QUESTIONS[categoryId];
+            const questions = getIntakeQuestionsForCategory(categoryId);
             if (!questions || questions.length === 0) return;
 
             // Stagger: initial pause → typing → insert, repeat for each question

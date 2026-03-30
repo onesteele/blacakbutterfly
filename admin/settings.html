@@ -2037,6 +2037,15 @@
                         <div id="tc-templates-list"></div>
                     </div>
 
+                    <div style="margin-top: 32px; border-top: 1px solid var(--border); padding-top: 28px;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                            <label style="margin:0; font-weight: 700; font-size: 15px;">Pre-Chat Intake Automations</label>
+                            <button class="btn btn-secondary" onclick="addIntakeSequence()" style="padding: 6px 14px; font-size: 12px;">+ Add Sequence</button>
+                        </div>
+                        <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;line-height:1.5;">When a customer submits a ticket in a configured category, a bot automatically asks these questions one at a time — so your team has full context before they ever open the ticket.</p>
+                        <div id="tc-intake-list"></div>
+                    </div>
+
                     <button class="btn btn-primary" onclick="saveTicketConfig()" id="save-tc-btn" style="margin-top: 24px;">Save Ticket Configuration</button>
                 </div>
             </div>
@@ -3323,8 +3332,10 @@
                 document.getElementById('tc-welcome-msg').value = ticketConfigData.welcome_message || '';
                 document.getElementById('tc-auto-reply').value = ticketConfigData.auto_reply_message || '';
                 if (!ticketConfigData.templates) ticketConfigData.templates = [];
+                if (!ticketConfigData.intake_sequences) ticketConfigData.intake_sequences = [];
                 renderTicketCategories();
                 renderQuestionnaireTemplates();
+                renderIntakeSequences();
             } catch (err) {
                 console.error('Error loading ticket config:', err);
             }
@@ -3378,6 +3389,93 @@
         function removeTicketCategory(index) {
             ticketConfigData.categories.splice(index, 1);
             renderTicketCategories();
+        }
+
+        // ── Intake Sequences ──────────────────────────────────────────
+        function renderIntakeSequences() {
+            const container = document.getElementById('tc-intake-list');
+            const sequences = ticketConfigData.intake_sequences || [];
+            const cats = ticketConfigData.categories || [];
+
+            if (sequences.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No intake sequences configured. Click "+ Add Sequence" to create one.</p>';
+                return;
+            }
+
+            container.innerHTML = sequences.map((seq, si) => {
+                const catOptions = cats.map(c =>
+                    `<option value="${escapeHtml(c.id)}" ${seq.category_id === c.id ? 'selected' : ''}>${escapeHtml(c.label || c.id)}</option>`
+                ).join('');
+
+                const questionsHtml = (seq.questions || []).map((q, qi) => `
+                    <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;">
+                        <span style="padding-top:9px;font-size:12px;color:var(--text-muted);min-width:20px;text-align:right;">${qi + 1}.</span>
+                        <input type="text" class="form-input intake-q" data-si="${si}" data-qi="${qi}"
+                            value="${escapeHtml(q)}" placeholder="Question ${qi + 1}"
+                            style="flex:1;" oninput="syncIntakeQuestion(${si},${qi},this.value)">
+                        <button onclick="removeIntakeQuestion(${si},${qi})"
+                            style="background:none;border:none;color:var(--error);cursor:pointer;font-size:18px;padding:6px;flex-shrink:0;" title="Remove question">&times;</button>
+                    </div>
+                `).join('');
+
+                return `
+                <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+                        <span style="font-weight:700;font-size:14px;color:var(--accent);">Intake Sequence ${si + 1}</span>
+                        <button onclick="removeIntakeSequence(${si})" style="background:none;border:none;color:var(--error);cursor:pointer;font-size:13px;font-weight:600;">Remove</button>
+                    </div>
+                    <div style="display:flex;gap:12px;margin-bottom:14px;align-items:center;">
+                        <div class="form-group" style="flex:2;margin-bottom:0;">
+                            <label style="font-size:12px;">Trigger Category</label>
+                            <select class="form-input" style="padding:8px 10px;" onchange="ticketConfigData.intake_sequences[${si}].category_id=this.value">
+                                <option value="">— Select a category —</option>
+                                ${catOptions}
+                            </select>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;padding-top:20px;">
+                            <label style="font-size:12px;color:var(--text-secondary);margin:0;">Enabled</label>
+                            <input type="checkbox" ${seq.enabled !== false ? 'checked' : ''}
+                                onchange="ticketConfigData.intake_sequences[${si}].enabled=this.checked"
+                                style="width:16px;height:16px;cursor:pointer;accent-color:var(--accent);">
+                        </div>
+                    </div>
+                    <div style="margin-bottom:8px;">
+                        <label style="font-size:12px;color:var(--text-secondary);display:block;margin-bottom:8px;">Questions <span style="color:var(--text-muted);">(asked one at a time in order)</span></label>
+                        <div id="intake-questions-${si}">${questionsHtml}</div>
+                        <button onclick="addIntakeQuestion(${si})"
+                            style="background:none;border:1px dashed var(--border);border-radius:8px;color:var(--text-muted);cursor:pointer;font-size:12px;padding:6px 14px;width:100%;margin-top:4px;transition:color 0.15s,border-color 0.15s;"
+                            onmouseover="this.style.color='var(--accent)';this.style.borderColor='var(--accent)'"
+                            onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border)'">
+                            + Add Question
+                        </button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function addIntakeSequence() {
+            if (!ticketConfigData.intake_sequences) ticketConfigData.intake_sequences = [];
+            ticketConfigData.intake_sequences.push({ category_id: '', enabled: true, questions: [''] });
+            renderIntakeSequences();
+        }
+
+        function removeIntakeSequence(si) {
+            ticketConfigData.intake_sequences.splice(si, 1);
+            renderIntakeSequences();
+        }
+
+        function addIntakeQuestion(si) {
+            ticketConfigData.intake_sequences[si].questions.push('');
+            renderIntakeSequences();
+        }
+
+        function removeIntakeQuestion(si, qi) {
+            ticketConfigData.intake_sequences[si].questions.splice(qi, 1);
+            renderIntakeSequences();
+        }
+
+        function syncIntakeQuestion(si, qi, val) {
+            ticketConfigData.intake_sequences[si].questions[qi] = val;
         }
 
         async function saveTicketConfig() {
