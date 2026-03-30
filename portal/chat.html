@@ -2390,7 +2390,7 @@
             try {
                 await new Promise(resolve => setTimeout(resolve, 1200));
                 showIntakeTyping();
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                await new Promise(resolve => setTimeout(resolve, 6000));
                 hideIntakeTyping();
                 await insertIntakeBotMessage(convId, questions[0]);
             } finally {
@@ -2423,7 +2423,7 @@
             try {
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 showIntakeTyping();
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                await new Promise(resolve => setTimeout(resolve, 6000));
                 hideIntakeTyping();
                 await insertIntakeBotMessage(convId, questions[nextIndex]);
             } finally {

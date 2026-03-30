@@ -190,6 +190,14 @@
             color: var(--text-secondary); transition: all 0.2s ease;
         }
         .btn-bulk-cancel:hover { color: var(--text-primary); border-color: var(--text-muted); }
+        .btn-bulk-close {
+            padding: 6px 14px; border-radius: 8px; font-family: 'Manrope', sans-serif;
+            font-size: 12px; font-weight: 700; cursor: pointer;
+            background: rgba(107, 114, 128, 0.12); border: 1px solid rgba(107, 114, 128, 0.3);
+            color: #9ca3af; transition: all 0.2s ease;
+        }
+        .btn-bulk-close:hover { background: rgba(107, 114, 128, 0.22); color: #d1d5db; }
+        .btn-bulk-close:disabled { opacity: 0.5; cursor: not-allowed; }
         .btn-bulk-delete {
             padding: 6px 14px; border-radius: 8px; font-family: 'Manrope', sans-serif;
             font-size: 12px; font-weight: 700; cursor: pointer;
@@ -553,6 +561,7 @@
                     <span class="bulk-count" id="bulk-count">0 selected</span>
                     <div class="bulk-actions">
                         <button class="btn-bulk-cancel" onclick="exitSelectMode()">Cancel</button>
+                        <button class="btn-bulk-close" id="btn-bulk-close" onclick="bulkMarkClosed()">Mark Closed</button>
                         <button class="btn-bulk-delete" id="btn-bulk-delete" onclick="openDeleteModal()">Delete</button>
                     </div>
                 </div>
@@ -1815,6 +1824,37 @@
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Delete';
+            }
+        }
+
+        async function bulkMarkClosed() {
+            if (selectedForDelete.size === 0) return;
+            var btn = document.getElementById('btn-bulk-close');
+            btn.disabled = true;
+            btn.textContent = 'Closing...';
+
+            try {
+                var ids = Array.from(selectedForDelete);
+                var { error } = await window.supabaseClient
+                    .from('chat_conversations')
+                    .update({ status: 'closed' })
+                    .in('id', ids);
+
+                if (error) throw error;
+
+                if (selectedConversationId && selectedForDelete.has(selectedConversationId)) {
+                    deselectConversation();
+                }
+
+                exitSelectMode();
+                await loadConversations();
+                showToast(ids.length + ' conversation' + (ids.length !== 1 ? 's' : '') + ' marked as closed.', 'success');
+            } catch (error) {
+                console.error('Error closing conversations:', error);
+                showToast('Failed to mark conversations as closed.', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Mark Closed';
             }
         }
         /* ============================================================

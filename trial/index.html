@@ -289,6 +289,28 @@
             border: 1px solid var(--border);
         }
 
+        .video-watch-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 12px;
+            padding: 11px 18px;
+            background: rgba(240, 200, 50, 0.1);
+            border: 1px solid rgba(240, 200, 50, 0.3);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #f0c832;
+            letter-spacing: 0.02em;
+            text-align: center;
+        }
+        .video-watch-banner svg {
+            flex-shrink: 0;
+            width: 17px; height: 17px;
+        }
         .lesson-video-wrapper {
             position: relative;
             padding-bottom: 56.25%;
@@ -943,6 +965,10 @@
                     '<div class="lesson-icon">' + iconSvg + '</div>' +
                     '<h2 class="lesson-title">' + escapeHtml(video.title) + '</h2>' +
                     '<p class="lesson-description">' + escapeHtml(description) + '</p>' +
+                    '<div class="video-watch-banner">' +
+                        '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' +
+                        'Watch the entire video — the next step will not unlock until it is complete.' +
+                    '</div>' +
                     '<div class="lesson-video">' +
                         '<div class="lesson-video-wrapper">' +
                             '<iframe id="course-video-' + step + '" src="' + escapeHtml(video.url) + '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>' +
