@@ -1395,6 +1395,7 @@
 
         let ticketConfig = null;
         let selectedCategory = null;
+        let currentConvCategoryId = null; // tracks the intake category for the open ticket
 
         // ============================================================
         // AUTO-LOGOUT
@@ -1707,6 +1708,7 @@
 
                 // Fire pre-chat intake bot if this category has a configured sequence
                 if (getIntakeQuestionsForCategory(submittedCategoryId)) {
+                    currentConvCategoryId = submittedCategoryId;
                     startTicketIntake(newConv.id, submittedCategoryId);
                 }
 
@@ -1730,6 +1732,7 @@
             selectedConvStatus = conv.status || 'open';
             currentView = 'chat';
             lastMessageTimestamp = null;
+            currentConvCategoryId = conv.category || null;
 
             // Set ticket info in header
             const ticketLabel = conv.ticket_number ? `Ticket #${conv.ticket_number}` : teamDisplayName;
@@ -2071,6 +2074,9 @@
                 requestAnimationFrame(() => { container.scrollTop = container.scrollHeight; });
                 if (newMsg.created_at) lastMessageTimestamp = newMsg.created_at;
 
+                // Trigger next intake bot question (fire-and-forget, non-blocking)
+                maybeFireNextIntakeQuestion(selectedConvId);
+
             } catch (err) {
                 console.error('Error sending message:', err);
                 showToast('Failed to send message. Please try again.', 'error');
@@ -2371,28 +2377,57 @@
                 });
         }
 
-        // Run the automated intake sequence for a newly created ticket
+        // Guard: prevents firing the next intake question while one is already in-flight
+        let intakeBotBusy = false;
+
+        // Run the automated intake sequence for a newly created ticket — sends ONLY Q1.
+        // Subsequent questions are sent by maybeFireNextIntakeQuestion() after each customer reply.
         async function startTicketIntake(convId, categoryId) {
             const questions = getIntakeQuestionsForCategory(categoryId);
             if (!questions || questions.length === 0) return;
 
-            // Stagger: initial pause → typing → insert, repeat for each question
-            const TYPING_DELAY = 2200;   // how long the typing indicator shows
-            const BETWEEN_DELAY = 3500;  // gap between questions
-
-            let totalDelay = 1800; // initial pause before first question starts
-
-            for (let i = 0; i < questions.length; i++) {
-                // Show typing indicator
-                await new Promise(resolve => setTimeout(resolve, totalDelay));
+            intakeBotBusy = true;
+            try {
+                await new Promise(resolve => setTimeout(resolve, 1200));
                 showIntakeTyping();
-
-                // Pause while "typing", then insert message and hide indicator
-                await new Promise(resolve => setTimeout(resolve, TYPING_DELAY));
+                await new Promise(resolve => setTimeout(resolve, 2000));
                 hideIntakeTyping();
-                await insertIntakeBotMessage(convId, questions[i]);
+                await insertIntakeBotMessage(convId, questions[0]);
+            } finally {
+                intakeBotBusy = false;
+            }
+        }
 
-                totalDelay = BETWEEN_DELAY; // gap before the next question loop iteration
+        // Called after each customer message is saved.
+        // Counts existing Support Bot messages → determines next question index → sends it.
+        async function maybeFireNextIntakeQuestion(convId) {
+            if (intakeBotBusy) return;
+
+            // Only run if this conversation has an active intake sequence
+            const questions = getIntakeQuestionsForCategory(currentConvCategoryId);
+            if (!questions || questions.length === 0) return;
+
+            // Count how many bot questions have already been sent
+            const { count, error } = await window.supabaseClient
+                .from('chat_messages')
+                .select('id', { count: 'exact', head: true })
+                .eq('conversation_id', convId)
+                .eq('display_name_override', 'Support Bot');
+
+            if (error || count == null) return;
+
+            const nextIndex = count; // count of existing bot msgs = index of next question
+            if (nextIndex >= questions.length) return; // all questions already asked
+
+            intakeBotBusy = true;
+            try {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                showIntakeTyping();
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                hideIntakeTyping();
+                await insertIntakeBotMessage(convId, questions[nextIndex]);
+            } finally {
+                intakeBotBusy = false;
             }
         }
     </script>
