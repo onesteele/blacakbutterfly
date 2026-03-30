@@ -1947,6 +1947,19 @@
                         </div>
                     </div>
 
+                    <div style="margin-top: 24px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:12px; padding:16px;">
+                        <label style="font-weight:700; font-size:15px; margin-bottom:12px; display:block;">Video 3 Button</label>
+                        <p style="color:var(--text-muted); font-size:12px; margin-bottom:12px;">Optional button displayed below video #3 in the onboarding flow (e.g. TradeLink signup). Opens in a pop-up window.</p>
+                        <div class="form-group" style="margin-bottom:10px;">
+                            <label style="font-size:12px;">Button Label</label>
+                            <input type="text" class="form-input" id="ob-video3-btn-text" placeholder="e.g. Create Your TradeLink Account">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label style="font-size:12px;">Button URL</label>
+                            <input type="url" class="form-input" id="ob-video3-btn-url" placeholder="https://tradelink.com/signup">
+                        </div>
+                    </div>
+
                     <div style="margin-top: 24px;">
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
                             <label style="margin:0; font-weight: 700; font-size: 15px;">Videos</label>
@@ -3236,6 +3249,8 @@
                 if (data && data.value) {
                     onboardingVideosConfig = data.value;
                 }
+                document.getElementById('ob-video3-btn-text').value = onboardingVideosConfig.video3_button_text || '';
+                document.getElementById('ob-video3-btn-url').value = onboardingVideosConfig.video3_button_url || '';
                 renderOnboardingVideos();
             } catch (err) {
                 console.error('Error loading onboarding videos config:', err);
@@ -3295,6 +3310,9 @@
             const btn = document.getElementById('save-ob-btn');
             btn.disabled = true;
             btn.style.opacity = '0.6';
+
+            onboardingVideosConfig.video3_button_text = document.getElementById('ob-video3-btn-text').value.trim();
+            onboardingVideosConfig.video3_button_url = document.getElementById('ob-video3-btn-url').value.trim();
 
             try {
                 const { error } = await window.supabaseClient
