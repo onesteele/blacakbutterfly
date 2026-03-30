@@ -1875,30 +1875,11 @@
                     }
                     showVerificationScreen('details');
                 } else {
-                    // Check if user exists with a different status (already onboarded)
-                    try {
-                        var existsResult = await window.supabaseClient
-                            .from('users')
-                            .select('id, status')
-                            .eq('email', email)
-                            .limit(1);
-                        if (existsResult.data && existsResult.data.length > 0) {
-                            var userStatus = existsResult.data[0].status;
-                            if (userStatus === 'onboarding' || userStatus === 'member' || userStatus === 'verified_member' || userStatus === 'active') {
-                                errorEl.innerHTML = 'This account has already been set up. <a href="/auth/" style="color: var(--accent); text-decoration: underline;">Go to login</a>';
-                                errorEl.classList.add('show');
-                            } else {
-                                errorEl.textContent = 'No account found with that email. Please contact our team.';
-                                errorEl.classList.add('show');
-                            }
-                        } else {
-                            errorEl.textContent = 'No account found with that email. Please contact our team.';
-                            errorEl.classList.add('show');
-                        }
-                    } catch (lookupErr) {
-                        errorEl.textContent = 'No account found with that email. Please contact our team.';
-                        errorEl.classList.add('show');
-                    }
+                    // No pending account found — they're either already a member or not in the system.
+                    // We can't distinguish without an authenticated query, so show a helpful message
+                    // that covers both cases.
+                    errorEl.innerHTML = 'No pending account found for this email. If you already have an account, <a href="/auth/" style="color: var(--accent); text-decoration: underline;">sign in here</a>. Otherwise, please contact our team.';
+                    errorEl.classList.add('show');
                 }
             } catch (err) {
                 console.error('Email lookup error:', err);
@@ -2619,20 +2600,28 @@
                 }
 
                 if (result.data) {
-                    try {
-                        completedSteps = JSON.parse(result.data.completed_steps || '[]');
-                    } catch (e) {
-                        completedSteps = result.data.completed_steps || [];
-                    }
-                    try {
-                        watchedVideos = JSON.parse(result.data.watched_videos || '{}');
-                    } catch (e) {
-                        watchedVideos = result.data.watched_videos || {};
-                    }
-                    try {
-                        checkedItems = JSON.parse(result.data.checked_items || '{}');
-                    } catch (e) {
-                        checkedItems = result.data.checked_items || {};
+                    var loadedSteps, loadedVideos, loadedChecked;
+                    try { loadedSteps = JSON.parse(result.data.completed_steps || '[]'); }
+                    catch (e) { loadedSteps = result.data.completed_steps || []; }
+                    try { loadedVideos = JSON.parse(result.data.watched_videos || '{}'); }
+                    catch (e) { loadedVideos = result.data.watched_videos || {}; }
+                    try { loadedChecked = JSON.parse(result.data.checked_items || '{}'); }
+                    catch (e) { loadedChecked = result.data.checked_items || {}; }
+
+                    // If the user was reset back to onboarding by an admin, their old progress
+                    // will show all steps complete. Wipe it so they go through from the start.
+                    if (totalSteps > 0 && loadedSteps.length >= totalSteps) {
+                        completedSteps = [];
+                        watchedVideos = {};
+                        checkedItems = {};
+                        await window.supabaseClient
+                            .from('onboarding_progress')
+                            .delete()
+                            .eq('user_id', currentUser.id);
+                    } else {
+                        completedSteps = loadedSteps;
+                        watchedVideos = loadedVideos;
+                        checkedItems = loadedChecked;
                     }
                 }
             } catch (error) {
