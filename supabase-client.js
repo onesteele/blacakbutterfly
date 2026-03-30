@@ -1870,11 +1870,10 @@ window.getAIChatConfig = async function() {
             .from('admin_settings')
             .select('value')
             .eq('key', 'ai_chat_config')
-            .single();
-        if (error && error.code !== 'PGRST116') throw error;
+            .maybeSingle();
+        if (error) throw error;
         return data?.value || {};
     } catch (err) {
-        console.error('Error fetching AI config:', err);
         return { enabled: true, webhook_url: '', greeting_message: 'Hi! How can I help you today?', ai_display_name: 'Support Team' };
     }
 };
@@ -2483,7 +2482,7 @@ window.getTicketConfig = async function() {
             .from('admin_settings')
             .select('value')
             .eq('key', 'ticket_config')
-            .single();
+            .maybeSingle();
         if (error) throw error;
         return data?.value || null;
     } catch (err) {

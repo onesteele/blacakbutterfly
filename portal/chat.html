@@ -1659,6 +1659,7 @@
                     .single();
 
                 if (convError) throw convError;
+                if (!newConv) throw new Error('Ticket was not returned after creation. Please try again.');
 
                 // Insert issue description as first message
                 await window.supabaseClient
