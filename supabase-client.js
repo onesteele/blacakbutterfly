@@ -1871,7 +1871,7 @@ window.getAIChatConfig = async function() {
             .select('value')
             .eq('key', 'ai_chat_config')
             .single();
-        if (error) throw error;
+        if (error && error.code !== 'PGRST116') throw error;
         return data?.value || {};
     } catch (err) {
         console.error('Error fetching AI config:', err);

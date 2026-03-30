@@ -1698,14 +1698,15 @@
                     ).catch(e => console.log('Email send failed:', e));
                 }
 
+                const submittedCategoryId = selectedCategory.id;
                 closeTicketModal();
                 allConversations.unshift(newConv);
                 showToast('Ticket submitted successfully!', 'success');
                 await openChatView(newConv.id);
 
                 // Fire pre-chat intake bot if this category has a configured sequence
-                if (getIntakeQuestionsForCategory(selectedCategory.id)) {
-                    startTicketIntake(newConv.id, selectedCategory.id);
+                if (getIntakeQuestionsForCategory(submittedCategoryId)) {
+                    startTicketIntake(newConv.id, submittedCategoryId);
                 }
 
             } catch (err) {
