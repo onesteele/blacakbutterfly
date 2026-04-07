@@ -35,7 +35,24 @@ VALUES (
 )
 ON CONFLICT (key) DO NOTHING;
 
--- 3. Add ticket_number as an auto-incrementing column if it does not exist.
+-- 3. Seed a default support_availability row (schedule-based) if one does not exist.
+--    If the old manual-status row already exists, leave it alone — the widget handles
+--    the legacy format gracefully and the admin can re-save to upgrade it.
+INSERT INTO admin_settings (key, value, updated_at)
+VALUES (
+    'support_availability',
+    '{
+        "days": [1,2,3,4,5],
+        "start_time": "09:00",
+        "end_time": "17:00",
+        "timezone": "America/New_York",
+        "hours_display": "Mon\u2013Fri, 9am\u20135pm ET"
+    }'::jsonb,
+    NOW()
+)
+ON CONFLICT (key) DO NOTHING;
+
+-- 4. Add ticket_number as an auto-incrementing column if it does not exist.
 DO $$ BEGIN
     ALTER TABLE chat_conversations ADD COLUMN ticket_number SERIAL;
 EXCEPTION WHEN duplicate_column THEN NULL;

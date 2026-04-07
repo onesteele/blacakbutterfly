@@ -2243,7 +2243,7 @@ window._initChatWidget = async function() {
         if (aiConfig) window._chatWidgetState.displayName = aiConfig.ai_display_name || 'Support Team';
     } catch (e) {}
 
-    // Load support availability status
+    // Load support availability schedule and auto-compute online/offline
     try {
         var availResult = await window.supabaseClient
             .from('admin_settings')
@@ -2251,8 +2251,16 @@ window._initChatWidget = async function() {
             .eq('key', 'support_availability')
             .maybeSingle();
         if (availResult.data && availResult.data.value) {
-            window._chatWidgetState.supportStatus = availResult.data.value.status || 'online';
-            window._chatWidgetState.supportHours = availResult.data.value.hours_text || '';
+            var avCfg = availResult.data.value;
+            // Legacy fallback: if old manual-status format, use it as-is
+            if (typeof avCfg.status === 'string' && !avCfg.days) {
+                window._chatWidgetState.supportStatus = avCfg.status;
+                window._chatWidgetState.supportHours  = avCfg.hours_text || '';
+            } else {
+                // Compute from schedule
+                window._chatWidgetState.supportStatus = _computeSupportStatus(avCfg);
+                window._chatWidgetState.supportHours  = avCfg.hours_display || '';
+            }
         }
     } catch (e) {}
 
@@ -2315,6 +2323,44 @@ window._injectChatWidgetHTML = function() {
         '</div>';
     document.body.appendChild(panel);
 };
+
+// Compute support online/offline from a schedule config object.
+// config: { days: [0..6], start_time: "HH:MM", end_time: "HH:MM", timezone: "..." }
+// Returns 'online' if the current moment falls within the schedule, 'offline' otherwise.
+function _computeSupportStatus(config) {
+    if (!config || !Array.isArray(config.days) || !config.start_time || !config.end_time) {
+        return 'online'; // no schedule configured → default to online
+    }
+    try {
+        var tz = config.timezone || 'America/New_York';
+        var now = new Date();
+        var parts = new Intl.DateTimeFormat('en-US', {
+            timeZone: tz,
+            weekday: 'short',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        }).formatToParts(now);
+        var dayMap = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+        var weekdayStr = (parts.find(function(p) { return p.type === 'weekday'; }) || {}).value || '';
+        var currentDay = dayMap[weekdayStr];
+        var hourStr   = (parts.find(function(p) { return p.type === 'hour';   }) || {}).value || '0';
+        var minuteStr = (parts.find(function(p) { return p.type === 'minute'; }) || {}).value || '0';
+        // Intl may return '24' for midnight in some locales — normalise
+        var currentH = parseInt(hourStr, 10) % 24;
+        var currentM = parseInt(minuteStr, 10);
+        var currentMins = currentH * 60 + currentM;
+        var startParts = config.start_time.split(':');
+        var endParts   = config.end_time.split(':');
+        var startMins  = parseInt(startParts[0], 10) * 60 + parseInt(startParts[1], 10);
+        var endMins    = parseInt(endParts[0],   10) * 60 + parseInt(endParts[1],   10);
+        var dayMatch  = config.days.indexOf(currentDay) !== -1;
+        var timeMatch = currentMins >= startMins && currentMins < endMins;
+        return (dayMatch && timeMatch) ? 'online' : 'offline';
+    } catch (e) {
+        return 'online';
+    }
+}
 
 // HTML escape helper for chat widget
 function _escCw(str) {
