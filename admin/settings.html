@@ -3720,6 +3720,7 @@
                             <option value="text" ${q.type === 'text' || !q.type ? 'selected' : ''}>Text</option>
                             <option value="yesno" ${q.type === 'yesno' ? 'selected' : ''}>Yes / No</option>
                             <option value="select" ${q.type === 'select' ? 'selected' : ''}>Multiple choice</option>
+                            <option value="image" ${q.type === 'image' ? 'selected' : ''}>Image upload</option>
                         </select>
                         ${q.type === 'select' ? `<input type="text" class="form-input" value="${escapeHtml(q.options || '')}" data-ti="${ti}" data-qi="${qi}" data-field="options" placeholder="Options (comma-separated)" style="font-size:11px;padding:4px 6px;flex:1;">` : ''}
                     </div>

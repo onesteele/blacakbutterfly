@@ -1932,6 +1932,7 @@
                             <option value="text" ${q.type === 'text' ? 'selected' : ''}>Text answer</option>
                             <option value="yesno" ${q.type === 'yesno' ? 'selected' : ''}>Yes / No</option>
                             <option value="select" ${q.type === 'select' ? 'selected' : ''}>Multiple choice</option>
+                            <option value="image" ${q.type === 'image' ? 'selected' : ''}>Image upload</option>
                         </select>
                         ${q.type === 'select' ? `<input type="text" value="${escapeHtml(q.options || '')}" onchange="formQuestions[${i}].options=this.value" placeholder="Options (comma-separated)" style="width:100%;padding:6px 8px;margin-top:6px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-family:inherit;font-size:12px;">` : ''}
                     </div>

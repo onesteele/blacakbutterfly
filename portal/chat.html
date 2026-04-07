@@ -1211,6 +1211,43 @@
         .q-submit-btn:hover:not(:disabled) { background: var(--accent-light); transform: translateY(-1px); }
         .q-submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+        .q-image-upload-wrap {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px dashed rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .q-image-upload-wrap:hover { border-color: var(--accent); }
+        .q-image-upload-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 14px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+        .q-image-upload-label:hover { border-color: var(--accent); color: var(--accent); }
+        .q-image-upload-label svg { width: 15px; height: 15px; flex-shrink: 0; }
+        .q-image-filename {
+            font-size: 13px;
+            color: var(--text-muted);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .q-image-filename.has-file { color: var(--accent); }
+
         /* ========== Mobile ========== */
         @media (max-width: 768px) {
             .support-wrapper { padding-left: 0; }
@@ -2219,6 +2256,14 @@
                             fieldsHtml += '<option value="' + escapeHtml(opt) + '">' + escapeHtml(opt) + '</option>';
                         });
                         fieldsHtml += '</select>';
+                    } else if (q.type === 'image') {
+                        fieldsHtml += '<div class="q-image-upload-wrap">';
+                        fieldsHtml += '<input type="file" class="q-image-input" data-qi="' + i + '" id="q-img-' + i + '" accept="image/*,.pdf" style="display:none;" onchange="previewQImage(this,' + i + ')">';
+                        fieldsHtml += '<label for="q-img-' + i + '" class="q-image-upload-label">';
+                        fieldsHtml += '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>';
+                        fieldsHtml += 'Choose File</label>';
+                        fieldsHtml += '<span class="q-image-filename" id="q-img-name-' + i + '">No file selected</span>';
+                        fieldsHtml += '</div>';
                     } else {
                         fieldsHtml += '<textarea class="q-field-input" data-qi="' + i + '" placeholder="Type your answer..." rows="2"></textarea>';
                     }
@@ -2243,6 +2288,17 @@
             btn.classList.add('selected');
         }
 
+        function previewQImage(input, qi) {
+            const nameEl = document.getElementById('q-img-name-' + qi);
+            if (input.files && input.files[0]) {
+                nameEl.textContent = input.files[0].name;
+                nameEl.classList.add('has-file');
+            } else {
+                nameEl.textContent = 'No file selected';
+                nameEl.classList.remove('has-file');
+            }
+        }
+
         function closeQuestionnaireModal() {
             document.getElementById('qModal').classList.remove('show');
             activeQuestionnaireMsg = null;
@@ -2261,12 +2317,14 @@
                 if (q.type === 'yesno') {
                     var selected = document.querySelector('.q-yesno-btn.selected[data-qi="' + i + '"]');
                     answer = selected ? selected.dataset.val : '';
+                } else if (q.type === 'image') {
+                    answer = imageUploads[i] || '';
                 } else {
                     var input = document.querySelector('.q-field-input[data-qi="' + i + '"]');
                     answer = input ? input.value.trim() : '';
                 }
                 if (!answer) allFilled = false;
-                responses.push({ question: q.text, answer: answer });
+                responses.push({ question: q.text, answer: answer, type: q.type });
             });
 
             if (!allFilled) {
@@ -2279,6 +2337,26 @@
             btn.textContent = 'Submitting...';
 
             try {
+                // Upload any image files first
+                const imageUploads = {};
+                const imageInputs = document.querySelectorAll('.q-image-input');
+                for (const input of imageInputs) {
+                    if (input.files && input.files[0]) {
+                        const qi = parseInt(input.dataset.qi);
+                        const file = input.files[0];
+                        const ext = file.name.split('.').pop().toLowerCase();
+                        const path = selectedConvId + '/' + activeQuestionnaireMsg.id + '/q' + qi + '_' + Date.now() + '.' + ext;
+                        const { error: uploadErr } = await window.supabaseClient.storage
+                            .from('questionnaire-files')
+                            .upload(path, file, { contentType: file.type || 'application/octet-stream', upsert: false });
+                        if (uploadErr) throw uploadErr;
+                        const { data: urlData } = window.supabaseClient.storage
+                            .from('questionnaire-files')
+                            .getPublicUrl(path);
+                        imageUploads[qi] = urlData.publicUrl;
+                    }
+                }
+
                 // Update the original questionnaire message attachments
                 const updatedData = {
                     ...data,
@@ -2295,7 +2373,8 @@
                 // Post formatted responses as a new message
                 let responseText = 'Questionnaire Responses — ' + (data.template_name || 'Questionnaire') + '\n\n';
                 responses.forEach(function(r, i) {
-                    responseText += (i + 1) + '. ' + r.question + '\n   → ' + r.answer + '\n\n';
+                    const answerDisplay = r.type === 'image' ? '[File uploaded]' : r.answer;
+                    responseText += (i + 1) + '. ' + r.question + '\n   → ' + answerDisplay + '\n\n';
                 });
 
                 await window.supabaseClient
