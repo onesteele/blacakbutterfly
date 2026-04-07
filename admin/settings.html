@@ -1481,6 +1481,37 @@
                         </div>
                     </div>
 
+                    <!-- Support Availability -->
+                    <div class="form-divider"></div>
+                    <div class="form-section-label">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>
+                        </svg>
+                        Support Availability
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <div style="display:flex; gap:10px; margin-bottom:14px;">
+                            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 16px;border-radius:10px;border:1px solid var(--border);flex:1;transition:border-color 0.2s;" id="avail-online-label">
+                                <input type="radio" name="support-status" id="avail-online" value="online" style="accent-color:#22c55e;">
+                                <span style="font-size:13px;font-weight:600;color:#22c55e;">● Online</span>
+                            </label>
+                            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 16px;border-radius:10px;border:1px solid var(--border);flex:1;transition:border-color 0.2s;" id="avail-offline-label">
+                                <input type="radio" name="support-status" id="avail-offline" value="offline" style="accent-color:#6b7280;">
+                                <span style="font-size:13px;font-weight:600;color:#9ca3af;">☾ Offline / Out of Office</span>
+                            </label>
+                        </div>
+                        <label class="form-label" for="support-hours-text">Status Message / Support Hours</label>
+                        <input type="text" class="form-input" id="support-hours-text" placeholder="e.g. Available Mon–Fri, 9am–5pm EST">
+                        <p style="font-size:11px;color:var(--text-muted);margin-top:6px;">Shown to customers under the support widget header.</p>
+                    </div>
+                    <div class="form-actions" style="border-top:none;padding-top:0;margin-top:12px;">
+                        <button class="btn-primary" onclick="saveSupportAvailability()">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            Save Availability
+                        </button>
+                    </div>
+
                     <!-- Chat Display Name -->
                     <div class="form-divider"></div>
                     <div class="form-section-label">
@@ -2200,6 +2231,7 @@
                     loadExportSettings(),
                     loadPerformanceData(),
                     loadChatDisplayName(),
+                    loadSupportAvailability(),
                     loadOnboardingSettings(),
                     loadPermissionsUI(),
                     loadFreeTrialConfig(),
@@ -2894,6 +2926,40 @@
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
             document.getElementById(`tab-${tabId}`).classList.add('active');
+        }
+
+        /* ============================================================
+           SUPPORT AVAILABILITY
+           ============================================================ */
+        async function loadSupportAvailability() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .select('value')
+                    .eq('key', 'support_availability')
+                    .maybeSingle();
+                const config = (data && data.value) || {};
+                const status = config.status || 'online';
+                document.getElementById(status === 'offline' ? 'avail-offline' : 'avail-online').checked = true;
+                document.getElementById('support-hours-text').value = config.hours_text || '';
+            } catch (err) {
+                console.error('Error loading support availability:', err);
+            }
+        }
+
+        async function saveSupportAvailability() {
+            const status = document.querySelector('input[name="support-status"]:checked')?.value || 'online';
+            const hoursText = document.getElementById('support-hours-text').value.trim();
+            try {
+                const { error } = await window.supabaseClient
+                    .from('admin_settings')
+                    .upsert({ key: 'support_availability', value: { status, hours_text: hoursText }, updated_at: new Date().toISOString() }, { onConflict: 'key' });
+                if (error) throw error;
+                showToast('Support availability saved!', 'success');
+            } catch (err) {
+                console.error('Error saving support availability:', err);
+                showToast('Failed to save availability.', 'error');
+            }
         }
 
         /* ============================================================

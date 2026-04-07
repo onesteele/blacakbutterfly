@@ -1285,8 +1285,16 @@ window.CHAT_WIDGET_CSS = `
         border-bottom: 1px solid rgba(255, 255, 255, 0.07);
         flex-shrink: 0;
     }
-    .cw-header-info { flex: 1; }
+    .cw-header-info { flex: 1; min-width: 0; }
     .cw-header-name { font-weight: 700; font-size: 14px; color: #f5f5f5; }
+    .cw-status-row { display: flex; align-items: center; gap: 5px; margin-top: 3px; }
+    .cw-status-dot {
+        width: 7px; height: 7px; border-radius: 50%; background: #22c55e; flex-shrink: 0;
+        box-shadow: 0 0 5px rgba(34,197,94,0.6);
+    }
+    .cw-status-dot.offline { background: none; width: auto; height: auto; box-shadow: none; }
+    .cw-status-dot.offline svg { width: 11px; height: 11px; color: #9ca3af; display: block; }
+    .cw-status-text { font-size: 11px; color: #6b7280; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .cwt-view-all {
         font-size: 12px;
         color: #f0c832;
@@ -2197,7 +2205,9 @@ window._chatWidgetState = {
     userId: null,
     displayName: 'Support Team',
     unreadCount: 0,
-    ticketSubscription: null
+    ticketSubscription: null,
+    supportStatus: 'online',   // 'online' | 'offline'
+    supportHours: ''
 };
 
 // Initialize chat widget
@@ -2233,6 +2243,19 @@ window._initChatWidget = async function() {
         if (aiConfig) window._chatWidgetState.displayName = aiConfig.ai_display_name || 'Support Team';
     } catch (e) {}
 
+    // Load support availability status
+    try {
+        var availResult = await window.supabaseClient
+            .from('admin_settings')
+            .select('value')
+            .eq('key', 'support_availability')
+            .maybeSingle();
+        if (availResult.data && availResult.data.value) {
+            window._chatWidgetState.supportStatus = availResult.data.value.status || 'online';
+            window._chatWidgetState.supportHours = availResult.data.value.hours_text || '';
+        }
+    } catch (e) {}
+
     window._injectChatWidgetHTML();
 
     // Check for existing unread tickets and set badge
@@ -2265,9 +2288,21 @@ window._injectChatWidgetHTML = function() {
     var panel = document.createElement('div');
     panel.id = 'cw-panel';
     panel.className = 'cw-panel';
+    var isOffline = window._chatWidgetState.supportStatus === 'offline';
+    var hoursText = window._chatWidgetState.supportHours;
+    var statusIndicator = isOffline
+        ? '<span class="cw-status-dot offline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg></span>'
+        : '<span class="cw-status-dot"></span>';
+    var statusLabel = isOffline
+        ? (hoursText || 'Out of office')
+        : (hoursText || 'Online now');
+
     panel.innerHTML =
         '<div class="cw-header">' +
-            '<div class="cw-header-info"><div class="cw-header-name">Support Tickets</div></div>' +
+            '<div class="cw-header-info">' +
+                '<div class="cw-header-name">Support Tickets</div>' +
+                '<div class="cw-status-row">' + statusIndicator + '<span class="cw-status-text">' + _escCw(statusLabel) + '</span></div>' +
+            '</div>' +
             '<a class="cwt-view-all" href="/portal/chat" onclick="event.preventDefault(); window._navigateWithTransition(\'/portal/chat\');">View All →</a>' +
             '<button class="cw-close" onclick="window._toggleChatWidget()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>' +
         '</div>' +

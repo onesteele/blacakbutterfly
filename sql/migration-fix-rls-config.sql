@@ -16,7 +16,7 @@ DO $$ BEGIN
             FOR SELECT USING (key IN (
                 ''payment_plans'', ''contract_config'', ''booking_config'',
                 ''role_permissions'', ''free_trial_config'', ''onboarding_config'',
-                ''ticket_config'', ''resend_config'', ''ai_chat_config''
+                ''ticket_config'', ''resend_config'', ''ai_chat_config'', ''support_availability''
             ))';
 END $$;
 
