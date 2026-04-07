@@ -651,6 +651,19 @@
             border-radius: 50%;
             background: var(--success);
         }
+        .chat-header-team-status.offline {
+            color: #9ca3af;
+        }
+        .chat-header-team-status.offline svg {
+            width: 11px;
+            height: 11px;
+            flex-shrink: 0;
+        }
+        .chat-support-hours {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
 
         /* Resolved Banner */
         .resolved-banner {
@@ -1266,9 +1279,11 @@
                     </div>
                     <div class="chat-header-team-info">
                         <div class="chat-header-team-name" id="chatTeamName">Support Team</div>
-                        <div class="chat-header-team-status">
-                            <span class="online-dot"></span>
-                            <span>Available</span>
+                        <div id="chatSupportStatus">
+                            <div class="chat-header-team-status">
+                                <span class="online-dot"></span>
+                                <span>Available</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1444,6 +1459,39 @@
                     const aiConfig = await window.getAIChatConfig();
                     teamDisplayName = aiConfig.ai_display_name || 'Support Team';
                 } catch (e) { /* use default */ }
+
+                // Load support availability schedule and update header
+                try {
+                    const { data: availData } = await window.supabaseClient
+                        .from('admin_settings')
+                        .select('value')
+                        .eq('key', 'support_availability')
+                        .maybeSingle();
+                    const avCfg = (availData && availData.value) || {};
+                    let isOnline = true;
+                    let hoursDisplay = '';
+                    if (typeof avCfg.status === 'string' && !avCfg.days) {
+                        // Legacy manual format
+                        isOnline = avCfg.status !== 'offline';
+                        hoursDisplay = avCfg.hours_text || '';
+                    } else if (avCfg.days) {
+                        // Schedule-based
+                        isOnline = (typeof _computeSupportStatus === 'function')
+                            ? _computeSupportStatus(avCfg) === 'online'
+                            : true;
+                        hoursDisplay = avCfg.hours_display || '';
+                    }
+                    const statusEl = document.getElementById('chatSupportStatus');
+                    if (statusEl) {
+                        const statusLine = isOnline
+                            ? '<div class="chat-header-team-status"><span class="online-dot"></span><span>Available</span></div>'
+                            : '<div class="chat-header-team-status offline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg><span>Out of office</span></div>';
+                        const hoursLine = hoursDisplay
+                            ? '<div class="chat-support-hours">' + hoursDisplay.replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])) + '</div>'
+                            : '';
+                        statusEl.innerHTML = statusLine + hoursLine;
+                    }
+                } catch (e) { /* keep default */ }
 
                 // Load ticket configuration
                 try {
