@@ -110,6 +110,10 @@
         .conv-filter-tab.active { background: var(--accent-dim); border-color: rgba(240, 200, 50, 0.3); color: var(--accent); }
         .tab-count { display: inline-flex; align-items: center; justify-content: center; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; font-size: 10px; font-weight: 700; margin-left: 2px; background: rgba(255,255,255,0.08); color: var(--text-muted); }
         .conv-filter-tab.active .tab-count { background: rgba(240, 200, 50, 0.25); color: var(--accent); }
+        .conv-filter-tab-priority { border-color: rgba(239, 68, 68, 0.25); color: rgba(239, 68, 68, 0.7); }
+        .conv-filter-tab-priority:hover { border-color: rgba(239, 68, 68, 0.5); color: rgb(239, 68, 68); }
+        .conv-filter-tab-priority.active { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); color: rgb(239, 68, 68); }
+        .conv-filter-tab-priority.active .tab-count { background: rgba(239, 68, 68, 0.2); color: rgb(239, 68, 68); }
 
         .conv-list-body { flex: 1; overflow-y: auto; }
         .conv-list-body::-webkit-scrollbar { width: 4px; }
@@ -545,9 +549,8 @@
                     <div class="conv-filter-tabs">
                         <button class="conv-filter-tab active" data-filter="all" onclick="setFilter('all')">All</button>
                         <button class="conv-filter-tab" data-filter="open" onclick="setFilter('open')">Open <span class="tab-count" id="count-open">0</span></button>
-                        <button class="conv-filter-tab" data-filter="in_progress" onclick="setFilter('in_progress')">Active <span class="tab-count" id="count-in_progress">0</span></button>
-                        <button class="conv-filter-tab" data-filter="escalated" onclick="setFilter('escalated')">Esc <span class="tab-count" id="count-escalated">0</span></button>
-                        <button class="conv-filter-tab" data-filter="resolved" onclick="setFilter('resolved')">Done <span class="tab-count" id="count-resolved">0</span></button>
+                        <button class="conv-filter-tab conv-filter-tab-priority" data-filter="high_priority" onclick="setFilter('high_priority')">High Priority <span class="tab-count" id="count-high_priority">0</span></button>
+                        <button class="conv-filter-tab" data-filter="resolved" onclick="setFilter('resolved')">Closed <span class="tab-count" id="count-resolved">0</span></button>
                     </div>
                 </div>
                 <div class="select-all-row" id="select-all-row">
@@ -979,24 +982,22 @@
         }
 
         function applyFilters() {
-            let countOpen = 0, countInProgress = 0, countEsc = 0, countResolved = 0;
+            let countOpen = 0, countHighPriority = 0, countResolved = 0;
             allConversations.forEach(c => {
                 const cat = getCategory(c);
-                if (cat === 'open') countOpen++;
-                else if (cat === 'in_progress') countInProgress++;
-                else if (cat === 'escalated') countEsc++;
-                else if (cat === 'resolved' || cat === 'closed') countResolved++;
+                if (cat === 'open' || cat === 'in_progress') countOpen++;
+                if ((c.priority === 'high' || c.priority === 'urgent') && cat !== 'resolved' && cat !== 'closed') countHighPriority++;
+                if (cat === 'resolved' || cat === 'closed') countResolved++;
             });
             document.getElementById('count-open').textContent = countOpen;
-            document.getElementById('count-in_progress').textContent = countInProgress;
-            document.getElementById('count-escalated').textContent = countEsc;
+            document.getElementById('count-high_priority').textContent = countHighPriority;
             document.getElementById('count-resolved').textContent = countResolved;
 
             filteredConversations = allConversations.filter(conv => {
                 const cat = getCategory(conv);
-                if (currentFilter === 'open' && cat !== 'open') return false;
-                if (currentFilter === 'in_progress' && cat !== 'in_progress') return false;
-                if (currentFilter === 'escalated' && cat !== 'escalated') return false;
+                if (currentFilter === 'open' && cat !== 'open' && cat !== 'in_progress') return false;
+                if (currentFilter === 'high_priority' && conv.priority !== 'high' && conv.priority !== 'urgent') return false;
+                if (currentFilter === 'high_priority' && (cat === 'resolved' || cat === 'closed')) return false;
                 if (currentFilter === 'resolved' && cat !== 'resolved' && cat !== 'closed') return false;
                 if (searchQuery) {
                     const name = getCustomerName(conv).toLowerCase();
