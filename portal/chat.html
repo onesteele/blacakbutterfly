@@ -1947,7 +1947,7 @@
 
                 const themAvatarStyle = isMe ? '' : ' style="background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(240,200,50,0.2);"';
 
-                if (msg.message_type === 'questionnaire_completed') continue;
+                if (msg.message_type === 'questionnaire_completed') return;
 
                 const bubbleContent = msg.message_type === 'questionnaire'
                     ? renderQuestionnaireBubble(msg)
