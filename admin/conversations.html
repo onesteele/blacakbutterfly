@@ -921,6 +921,11 @@
                     }
                     loadConversations();
                 })
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'chat_messages' }, (payload) => {
+                    if (selectedConversationId && payload.new.conversation_id === selectedConversationId && payload.new.message_type === 'questionnaire') {
+                        loadMessages(selectedConversationId);
+                    }
+                })
                 .subscribe();
         }
 
