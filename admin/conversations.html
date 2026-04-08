@@ -922,16 +922,18 @@
                             const notif = typeof payload.new.attachments === 'string' ? JSON.parse(payload.new.attachments) : (payload.new.attachments || {});
                             const qMsgId = notif.questionnaire_msg_id;
                             if (qMsgId) {
-                                window.supabaseClient.from('chat_messages').select('*').eq('id', qMsgId).single().then(({ data: qMsg }) => {
-                                    if (!qMsg) return;
-                                    const msgRow = document.querySelector('[data-msg-id="' + qMsgId + '"]');
-                                    if (msgRow) {
-                                        const oldBubble = msgRow.querySelector('.msg-bubble');
-                                        if (oldBubble) oldBubble.outerHTML = renderQuestionnaireBubbleAdmin(qMsg);
-                                    } else {
-                                        loadMessages(selectedConversationId);
-                                    }
-                                });
+                                setTimeout(() => {
+                                    window.supabaseClient.from('chat_messages').select('*').eq('id', qMsgId).single().then(({ data: qMsg }) => {
+                                        if (!qMsg) return;
+                                        const msgRow = document.querySelector('[data-msg-id="' + qMsgId + '"]');
+                                        if (msgRow) {
+                                            const oldBubble = msgRow.querySelector('.msg-bubble');
+                                            if (oldBubble) oldBubble.outerHTML = renderQuestionnaireBubbleAdmin(qMsg);
+                                        } else {
+                                            loadMessages(selectedConversationId);
+                                        }
+                                    });
+                                }, 800);
                             } else {
                                 setTimeout(() => loadMessages(selectedConversationId), 800);
                             }
