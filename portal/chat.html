@@ -2185,16 +2185,36 @@
                 const attrsJson = escapeHtml(JSON.stringify(msg.attachments));
 
                 if (isCompleted) {
+                    const responses = data.responses || [];
+                    const questions = data.questions || [];
+                    let responsesHtml = '';
+                    questions.forEach(function(q, i) {
+                        const r = responses[i] || {};
+                        const answer = r.answer || '';
+                        const isImageType = r.type === 'image' || q.type === 'image';
+                        const isPdf = isImageType && /\.pdf(\?|$)/i.test(answer);
+                        let answerHtml;
+                        if (isImageType && answer) {
+                            if (isPdf) {
+                                answerHtml = '<a href="' + escapeHtml(answer) + '" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--accent);text-decoration:none;margin-top:4px;">📄 View PDF</a>';
+                            } else {
+                                answerHtml = '<a href="' + escapeHtml(answer) + '" target="_blank" rel="noopener"><img src="' + escapeHtml(answer) + '" alt="Uploaded image" style="max-width:200px;max-height:160px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);display:block;margin-top:5px;cursor:pointer;"></a>';
+                            }
+                        } else {
+                            answerHtml = '<span style="color:var(--text-primary);">' + escapeHtml(answer) + '</span>';
+                        }
+                        responsesHtml += '<div style="font-size:12px;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.05);">'
+                            + '<div style="color:var(--text-secondary);margin-bottom:2px;"><span style="color:var(--accent);font-weight:600;">' + (i + 1) + '.</span> ' + escapeHtml(q.text) + '</div>'
+                            + '<div style="padding-left:12px;">' + answerHtml + '</div>'
+                            + '</div>';
+                    });
                     return `<div class="msg-bubble q-bubble-card">
                         <div class="q-bubble-header">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/></svg>
                             <span class="q-bubble-title">${escapeHtml(name)}</span>
                             <span class="q-bubble-status completed">COMPLETED</span>
                         </div>
-                        <div class="q-bubble-completed">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                            Responses submitted
-                        </div>
+                        <div style="margin-top:10px;">${responsesHtml}</div>
                     </div>`;
                 }
 
@@ -2382,24 +2402,6 @@
                     .from('chat_messages')
                     .update({ attachments: JSON.stringify(updatedData) })
                     .eq('id', activeQuestionnaireMsg.id);
-
-                // Post formatted responses as a new message
-                let responseText = 'Questionnaire Responses — ' + (data.template_name || 'Questionnaire') + '\n\n';
-                responses.forEach(function(r, i) {
-                    const answerDisplay = r.type === 'image' ? '[File uploaded]' : r.answer;
-                    responseText += (i + 1) + '. ' + r.question + '\n   → ' + answerDisplay + '\n\n';
-                });
-
-                await window.supabaseClient
-                    .from('chat_messages')
-                    .insert({
-                        conversation_id: selectedConvId,
-                        sender_id: currentUser.id,
-                        sender_type: 'customer',
-                        content: responseText.trim(),
-                        message: responseText.trim(),
-                        message_type: 'text'
-                    });
 
                 await window.supabaseClient
                     .from('chat_conversations')
