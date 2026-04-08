@@ -1866,7 +1866,12 @@
                 var ids = Array.from(selectedForDelete);
                 var { error } = await window.supabaseClient
                     .from('chat_conversations')
-                    .update({ status: 'closed' })
+                    .update({
+                        status: 'closed',
+                        closed_at: new Date().toISOString(),
+                        closed_by: adminUser.id,
+                        category: 'resolved'
+                    })
                     .in('id', ids);
 
                 if (error) throw error;
