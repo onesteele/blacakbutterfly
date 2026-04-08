@@ -2368,7 +2368,13 @@
                         const { error: uploadErr } = await window.supabaseClient.storage
                             .from('questionnaire-files')
                             .upload(path, file, { contentType: file.type || 'application/octet-stream', upsert: false });
-                        if (uploadErr) throw uploadErr;
+                        if (uploadErr) {
+                            console.error('Image upload failed:', uploadErr);
+                            showToast('Image upload failed: ' + (uploadErr.message || 'Storage error'), 'error');
+                            btn.disabled = false;
+                            btn.textContent = 'Submit Responses';
+                            return;
+                        }
                         const { data: urlData } = window.supabaseClient.storage
                             .from('questionnaire-files')
                             .getPublicUrl(path);
@@ -2427,11 +2433,23 @@
                     })
                     .eq('id', selectedConvId);
 
+                // Update the questionnaire bubble in the DOM directly from local data — no re-fetch race condition
+                const msgRow = document.querySelector('[data-msg-id="' + activeQuestionnaireMsg.id + '"]');
+                if (msgRow) {
+                    const bubbleWrap = msgRow.querySelector('.msg-content');
+                    if (bubbleWrap) {
+                        const fakeMsg = { ...activeQuestionnaireMsg, attachments: JSON.stringify(updatedData), message_type: 'questionnaire' };
+                        const newBubble = renderQuestionnaireBubble(fakeMsg);
+                        const oldBubble = bubbleWrap.querySelector('.q-bubble-card, .msg-bubble');
+                        if (oldBubble) oldBubble.outerHTML = newBubble;
+                    }
+                } else {
+                    await new Promise(r => setTimeout(r, 600));
+                    await loadMessages();
+                }
+
                 closeQuestionnaireModal();
                 showToast('Responses submitted!', 'success');
-
-                // Refresh messages to show updated bubble
-                await loadMessages();
 
             } catch (e) {
                 console.error('Error submitting questionnaire:', e);

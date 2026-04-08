@@ -918,8 +918,23 @@
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, (payload) => {
                     if (selectedConversationId && payload.new.conversation_id === selectedConversationId && payload.new.sender_id !== adminUser.id) {
                         if (payload.new.message_type === 'questionnaire_completed') {
-                            // Reload full conversation so the updated questionnaire card shows with responses
-                            loadMessages(selectedConversationId);
+                            // Fetch the updated questionnaire message directly and patch the bubble in-place
+                            const notif = typeof payload.new.attachments === 'string' ? JSON.parse(payload.new.attachments) : (payload.new.attachments || {});
+                            const qMsgId = notif.questionnaire_msg_id;
+                            if (qMsgId) {
+                                window.supabaseClient.from('chat_messages').select('*').eq('id', qMsgId).single().then(({ data: qMsg }) => {
+                                    if (!qMsg) return;
+                                    const msgRow = document.querySelector('[data-msg-id="' + qMsgId + '"]');
+                                    if (msgRow) {
+                                        const oldBubble = msgRow.querySelector('.msg-bubble');
+                                        if (oldBubble) oldBubble.outerHTML = renderQuestionnaireBubbleAdmin(qMsg);
+                                    } else {
+                                        loadMessages(selectedConversationId);
+                                    }
+                                });
+                            } else {
+                                setTimeout(() => loadMessages(selectedConversationId), 800);
+                            }
                         } else {
                             appendMessage(payload.new);
                         }
@@ -1270,7 +1285,7 @@
                     bubbleHtml = `<div class="msg-bubble">${escapeHtml(msg.content || msg.message || '')}</div>`;
                 }
 
-                html += `<div class="msg-row ${isAdmin ? 'admin' : 'customer'}">
+                html += `<div class="msg-row ${isAdmin ? 'admin' : 'customer'}" data-msg-id="${msg.id}">
                     <div class="msg-avatar">${(initials||'?').toUpperCase()}</div>
                     <div class="msg-content">
                         ${bubbleHtml}
