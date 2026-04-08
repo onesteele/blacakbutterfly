@@ -1416,18 +1416,6 @@
 
             try {
                 const updateData = { status: newStatus };
-                if (newStatus === 'resolved') {
-                    updateData.resolved_at = new Date().toISOString();
-                    updateData.category = 'resolved';
-                } else if (newStatus === 'closed') {
-                    updateData.closed_at = new Date().toISOString();
-                    updateData.closed_by = adminUser.id;
-                    updateData.category = 'resolved';
-                } else {
-                    updateData.resolved_at = null;
-                    updateData.closed_at = null;
-                    updateData.category = 'open';
-                }
 
                 const { error } = await window.supabaseClient.from('chat_conversations').update(updateData).eq('id', selectedConversationId);
                 if (error) throw error;
@@ -1871,12 +1859,7 @@
                 for (var id of ids) {
                     var { error } = await window.supabaseClient
                         .from('chat_conversations')
-                        .update({
-                            status: 'closed',
-                            closed_at: new Date().toISOString(),
-                            closed_by: adminUser.id,
-                            category: 'resolved'
-                        })
+                        .update({ status: 'closed' })
                         .eq('id', id);
                     if (error) {
                         console.error('Failed to close conversation', id, ':', error);
