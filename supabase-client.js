@@ -1931,6 +1931,7 @@ window.escalateConversation = async function(conversationId) {
 };
 
 window.getConversationCategory = function(conv) {
+    if (conv.status === 'closed') return 'closed';
     if (conv.status === 'resolved') return 'resolved';
     if (conv.is_escalated) return 'escalated';
     if (conv.handler_type === 'ai') return 'ai';

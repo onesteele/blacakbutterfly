@@ -1862,30 +1862,42 @@
             btn.disabled = true;
             btn.textContent = 'Closing...';
 
+            var ids = Array.from(selectedForDelete);
+            console.log('bulkMarkClosed: attempting to close', ids.length, 'conversations:', ids);
+
             try {
-                var ids = Array.from(selectedForDelete);
-                var { error } = await window.supabaseClient
-                    .from('chat_conversations')
-                    .update({
-                        status: 'closed',
-                        closed_at: new Date().toISOString(),
-                        closed_by: adminUser.id,
-                        category: 'resolved'
-                    })
-                    .in('id', ids);
-
-                if (error) throw error;
-
-                if (selectedConversationId && selectedForDelete.has(selectedConversationId)) {
-                    deselectConversation();
+                // Close one at a time to avoid any bulk RLS issues
+                var failed = 0;
+                for (var id of ids) {
+                    var { error } = await window.supabaseClient
+                        .from('chat_conversations')
+                        .update({
+                            status: 'closed',
+                            closed_at: new Date().toISOString(),
+                            closed_by: adminUser.id,
+                            category: 'resolved'
+                        })
+                        .eq('id', id);
+                    if (error) {
+                        console.error('Failed to close conversation', id, ':', error);
+                        failed++;
+                    }
                 }
 
-                exitSelectMode();
+                if (failed > 0) {
+                    showToast('Failed to close ' + failed + ' conversation(s). Check console for details.', 'error');
+                } else {
+                    if (selectedConversationId && selectedForDelete.has(selectedConversationId)) {
+                        deselectConversation();
+                    }
+                    exitSelectMode();
+                    showToast(ids.length + ' conversation' + (ids.length !== 1 ? 's' : '') + ' marked as closed.', 'success');
+                }
+
                 await loadConversations();
-                showToast(ids.length + ' conversation' + (ids.length !== 1 ? 's' : '') + ' marked as closed.', 'success');
-            } catch (error) {
-                console.error('Error closing conversations:', error);
-                showToast('Failed to mark conversations as closed.', 'error');
+            } catch (err) {
+                console.error('bulkMarkClosed unexpected error:', err);
+                showToast('Error: ' + (err.message || 'Unknown error'), 'error');
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Mark Closed';
