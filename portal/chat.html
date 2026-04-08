@@ -1947,6 +1947,8 @@
 
                 const themAvatarStyle = isMe ? '' : ' style="background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(240,200,50,0.2);"';
 
+                if (msg.message_type === 'questionnaire_completed') continue;
+
                 const bubbleContent = msg.message_type === 'questionnaire'
                     ? renderQuestionnaireBubble(msg)
                     : `<div class="msg-bubble">${escapeHtml(msg.content || msg.message || '')}</div>`;
@@ -2403,11 +2405,24 @@
                     .update({ attachments: JSON.stringify(updatedData) })
                     .eq('id', activeQuestionnaireMsg.id);
 
+                // Insert a notification message so the admin realtime subscription fires (UPDATE events are unreliable without REPLICA IDENTITY FULL)
+                await window.supabaseClient
+                    .from('chat_messages')
+                    .insert({
+                        conversation_id: selectedConvId,
+                        sender_id: currentUser.id,
+                        sender_type: 'customer',
+                        content: '📋 Questionnaire completed: ' + (data.template_name || 'Questionnaire'),
+                        message: '📋 Questionnaire completed: ' + (data.template_name || 'Questionnaire'),
+                        message_type: 'questionnaire_completed',
+                        attachments: JSON.stringify({ questionnaire_msg_id: activeQuestionnaireMsg.id })
+                    });
+
                 await window.supabaseClient
                     .from('chat_conversations')
                     .update({
                         last_message_at: new Date().toISOString(),
-                        last_message_preview: 'Questionnaire completed',
+                        last_message_preview: '📋 Questionnaire completed',
                         admin_unread_count: 1
                     })
                     .eq('id', selectedConvId);

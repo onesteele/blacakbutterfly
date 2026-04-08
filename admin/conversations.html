@@ -917,14 +917,14 @@
                 })
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, (payload) => {
                     if (selectedConversationId && payload.new.conversation_id === selectedConversationId && payload.new.sender_id !== adminUser.id) {
-                        appendMessage(payload.new);
+                        if (payload.new.message_type === 'questionnaire_completed') {
+                            // Reload full conversation so the updated questionnaire card shows with responses
+                            loadMessages(selectedConversationId);
+                        } else {
+                            appendMessage(payload.new);
+                        }
                     }
                     loadConversations();
-                })
-                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'chat_messages' }, (payload) => {
-                    if (selectedConversationId && payload.new.conversation_id === selectedConversationId && payload.new.message_type === 'questionnaire') {
-                        loadMessages(selectedConversationId);
-                    }
                 })
                 .subscribe();
         }
@@ -1250,6 +1250,8 @@
             }
             let html = '', lastDate = '';
             messages.forEach(msg => {
+                if (msg.message_type === 'questionnaire_completed') return;
+
                 const msgDate = new Date(msg.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
                 if (msgDate !== lastDate) { html += `<div class="msg-date-separator"><span>${msgDate}</span></div>`; lastDate = msgDate; }
 
