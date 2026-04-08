@@ -1308,8 +1308,9 @@
         }
 
         function getSelectedIdentityName() {
-            if (!selectedIdentityId || selectedIdentityId === adminUser.id) return null;
-            const m = teamIdentities.find(x => x.id === selectedIdentityId);
+            const id = selectedIdentityId || (adminUser && adminUser.id);
+            if (!id) return null;
+            const m = teamIdentities.find(x => x.id === id);
             if (!m) return null;
             return m.chat_display_name || ((m.first_name||'') + ' ' + (m.last_name||'')).trim() || m.email;
         }

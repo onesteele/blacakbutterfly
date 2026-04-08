@@ -2309,22 +2309,19 @@
 
             const data = activeQuestionnaireMsg.data;
             const questions = data.questions || [];
-            const responses = [];
-            let allFilled = true;
 
+            // Validate all questions have input before doing any uploads
+            let allFilled = true;
             questions.forEach(function(q, i) {
-                var answer = '';
                 if (q.type === 'yesno') {
-                    var selected = document.querySelector('.q-yesno-btn.selected[data-qi="' + i + '"]');
-                    answer = selected ? selected.dataset.val : '';
+                    if (!document.querySelector('.q-yesno-btn.selected[data-qi="' + i + '"]')) allFilled = false;
                 } else if (q.type === 'image') {
-                    answer = imageUploads[i] || '';
+                    const imgInput = document.getElementById('q-img-' + i);
+                    if (!imgInput || !imgInput.files || !imgInput.files[0]) allFilled = false;
                 } else {
-                    var input = document.querySelector('.q-field-input[data-qi="' + i + '"]');
-                    answer = input ? input.value.trim() : '';
+                    const input = document.querySelector('.q-field-input[data-qi="' + i + '"]');
+                    if (!input || !input.value.trim()) allFilled = false;
                 }
-                if (!answer) allFilled = false;
-                responses.push({ question: q.text, answer: answer, type: q.type });
             });
 
             if (!allFilled) {
@@ -2337,7 +2334,7 @@
             btn.textContent = 'Submitting...';
 
             try {
-                // Upload any image files first
+                // Upload image files first, collect URLs by question index
                 const imageUploads = {};
                 const imageInputs = document.querySelectorAll('.q-image-input');
                 for (const input of imageInputs) {
@@ -2356,6 +2353,22 @@
                         imageUploads[qi] = urlData.publicUrl;
                     }
                 }
+
+                // Build responses now that uploads are complete
+                const responses = [];
+                questions.forEach(function(q, i) {
+                    var answer = '';
+                    if (q.type === 'yesno') {
+                        var selected = document.querySelector('.q-yesno-btn.selected[data-qi="' + i + '"]');
+                        answer = selected ? selected.dataset.val : '';
+                    } else if (q.type === 'image') {
+                        answer = imageUploads[i] || '';
+                    } else {
+                        var input = document.querySelector('.q-field-input[data-qi="' + i + '"]');
+                        answer = input ? input.value.trim() : '';
+                    }
+                    responses.push({ question: q.text, answer: answer, type: q.type });
+                });
 
                 // Update the original questionnaire message attachments
                 const updatedData = {
