@@ -835,6 +835,46 @@
             width: 16px; height: 16px;
         }
 
+        .video-countdown {
+            width: 100%;
+            max-width: 800px;
+            margin: 12px auto 0;
+            padding: 12px 16px;
+            background: rgba(240, 200, 50, 0.08);
+            border: 1px solid rgba(240, 200, 50, 0.25);
+            border-radius: 10px;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        .video-countdown.done {
+            background: rgba(0, 179, 65, 0.1);
+            border-color: rgba(0, 179, 65, 0.35);
+        }
+        .video-countdown-text {
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: 0.01em;
+        }
+        .video-countdown-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        .video-countdown-fill {
+            height: 100%;
+            width: 0%;
+            background: #f0c832;
+            border-radius: 999px;
+            transition: width 0.5s linear, background 0.3s ease;
+        }
+        .video-countdown.done .video-countdown-fill {
+            background: #00b341;
+            width: 100% !important;
+        }
+
         .quiz-section {
             background: rgba(20, 20, 20, 0.8);
             /* backdrop-filter removed for performance */
@@ -1449,7 +1489,7 @@
         <div class="course-header">
             <div class="course-header-inner">
                 <div class="course-header-left">
-                    <span class="course-lesson-count">Lesson <span id="course-current-lesson">1</span> of 7</span>
+                    <span class="course-lesson-count">Lesson <span id="course-current-lesson">1</span> of <span id="course-total-lessons">3</span></span>
                     <div class="course-progress-bar-wrap">
                         <div class="course-progress-bar-container">
                             <div class="course-progress-bar" id="course-progress-bar"></div>
@@ -2364,6 +2404,10 @@
                                 '<span>Video Complete!</span>' +
                             '</div>' +
                         '</div>' +
+                        '<div class="video-countdown" id="course-countdown-' + lesson.step + '">' +
+                            '<div class="video-countdown-text" id="course-countdown-text-' + lesson.step + '">Preparing…</div>' +
+                            '<div class="video-countdown-bar"><div class="video-countdown-fill" id="course-countdown-fill-' + lesson.step + '"></div></div>' +
+                        '</div>' +
                     '</div>' +
                     video3ButtonHtml +
                     '<div class="quiz-section" id="course-quiz-' + lesson.step + '">' +
@@ -2418,8 +2462,14 @@
                 if (watchedVideos[s]) {
                     var badge = document.getElementById('course-badge-' + s);
                     var quiz = document.getElementById('course-quiz-' + s);
+                    var cdEl = document.getElementById('course-countdown-' + s);
+                    var cdText = document.getElementById('course-countdown-text-' + s);
+                    var cdFill = document.getElementById('course-countdown-fill-' + s);
                     if (badge) badge.classList.add('show');
                     if (quiz) quiz.classList.add('show');
+                    if (cdEl) cdEl.classList.add('done');
+                    if (cdText) cdText.textContent = 'Video complete — you can continue below';
+                    if (cdFill) cdFill.style.width = '100%';
                 }
 
                 if (checkedItems[s]) {
@@ -2448,6 +2498,8 @@
 
         function updateCourseHeader(currentStep) {
             document.getElementById('course-current-lesson').textContent = currentStep;
+            var totalEl = document.getElementById('course-total-lessons');
+            if (totalEl) totalEl.textContent = totalSteps;
             var percent = Math.round((completedSteps.length / totalSteps) * 100);
             document.getElementById('course-progress-bar').style.width = percent + '%';
         }
@@ -2455,9 +2507,40 @@
         function startCourseVideoTimer(step) {
             if (watchedVideos[step] || videoTimers[step]) return;
 
-            var duration = videoDurations[step] * 1000;
-            videoTimers[step] = setTimeout(function() {
+            var duration = (videoDurations[step] || 120) * 1000;
+            var startedAt = Date.now();
+            var countdownEl = document.getElementById('course-countdown-' + step);
+            var textEl = document.getElementById('course-countdown-text-' + step);
+            var fillEl = document.getElementById('course-countdown-fill-' + step);
+
+            function render() {
+                var elapsed = Date.now() - startedAt;
+                var remaining = Math.max(0, duration - elapsed);
+                if (fillEl) {
+                    var pct = Math.min(100, (elapsed / duration) * 100);
+                    fillEl.style.width = pct + '%';
+                }
+                if (textEl) {
+                    if (remaining <= 0) {
+                        textEl.textContent = 'Video complete — you can continue below';
+                    } else {
+                        var secs = Math.ceil(remaining / 1000);
+                        var m = Math.floor(secs / 60);
+                        var s = secs % 60;
+                        textEl.textContent = 'Continue unlocks in ' + m + ':' + (s < 10 ? '0' + s : s);
+                    }
+                }
+                if (remaining <= 0) complete();
+            }
+
+            function complete() {
+                if (!videoTimers[step]) return;
+                if (videoTimers[step].interval) clearInterval(videoTimers[step].interval);
+                delete videoTimers[step];
+                if (watchedVideos[step]) return;
                 watchedVideos[step] = true;
+
+                if (countdownEl) countdownEl.classList.add('done');
 
                 var badge = document.getElementById('course-badge-' + step);
                 if (badge) badge.classList.add('show');
@@ -2467,15 +2550,36 @@
 
                 checkCourseStepCompletion(step);
                 saveProgress();
-            }, duration);
+            }
+
+            videoTimers[step] = {
+                startedAt: startedAt,
+                duration: duration,
+                interval: setInterval(render, 500),
+                render: render,
+                complete: complete
+            };
+            render();
         }
 
         function cancelCourseVideoTimer(step) {
             if (videoTimers[step]) {
-                clearTimeout(videoTimers[step]);
+                if (videoTimers[step].interval) clearInterval(videoTimers[step].interval);
                 delete videoTimers[step];
             }
         }
+
+        // iOS Safari throttles setInterval when tab/video is backgrounded or fullscreen.
+        // When the page becomes visible again, force every active timer to re-check
+        // against wall-clock time so a user who watched the full video in fullscreen
+        // isn't stuck on "Watch the video first…".
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) return;
+            Object.keys(videoTimers).forEach(function(step) {
+                var t = videoTimers[step];
+                if (t && typeof t.render === 'function') t.render();
+            });
+        });
 
         function checkCourseStepCompletion(step) {
             var videoWatched = watchedVideos[step];
