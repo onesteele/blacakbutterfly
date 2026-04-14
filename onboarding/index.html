@@ -1973,7 +1973,7 @@
             btn.textContent = 'Setting up...';
 
             try {
-                // Step 1: Set password via RPC
+                // Step 1: Set password via RPC (creates auth.users row if needed, preserving the existing public.users UUID)
                 var rpcResult = await window.supabaseClient.rpc('set_pending_user_password', {
                     user_email: email,
                     new_password: password
