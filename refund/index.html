@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profit Insider Support</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #ffffff;
+            --bg-secondary: #f7f7f8;
+            --bg-tertiary: #f0f0f2;
+            --surface: #ffffff;
+            --border: #e5e5e7;
+            --border-hover: #d1d1d4;
+            --text: #0e0e0f;
+            --text-secondary: #6b6b6f;
+            --text-muted: #9b9ba0;
+            --accent: #ff6243;
+            --accent-light: #ff8066;
+            --accent-bg: rgba(255, 98, 67, 0.08);
+            --accent-border: rgba(255, 98, 67, 0.2);
+            --success: #00b341;
+            --success-bg: rgba(0, 179, 65, 0.08);
+            --success-border: rgba(0, 179, 65, 0.2);
+            --error: #e5484d;
+            --error-bg: rgba(229, 72, 77, 0.06);
+            --error-border: rgba(229, 72, 77, 0.2);
+            --warning: #f5a623;
+            --warning-bg: rgba(245, 166, 35, 0.08);
+            --warning-border: rgba(245, 166, 35, 0.25);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+            --shadow: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px 80px;
+        }
+
+        /* ── Header ── */
+        .page-header {
+            text-align: center;
+            margin-bottom: 24px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .logo-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .whop-logo { height: 28px; opacity: 0.85; }
+        .logo-x { font-size: 16px; font-weight: 600; color: var(--text-muted); user-select: none; }
+        .pi-logo { height: 32px; border-radius: 6px; }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .page-header p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* ── Chat Card ── */
+        .chat-card {
+            width: 100%;
+            max-width: 540px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease 0.1s both;
+            max-height: calc(100vh - 180px);
+            min-height: 560px;
+        }
+
+        /* ── Chat Header ── */
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .agent-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 15px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .agent-avatar::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: var(--success);
+            border: 2px solid var(--surface);
+        }
+
+        .agent-meta { flex: 1; min-width: 0; }
+
+        .agent-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.2;
+        }
+
+        .agent-role {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .agent-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .agent-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* ── Messages Area ── */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: var(--bg-secondary);
+            scroll-behavior: smooth;
+        }
+
+        .chat-messages::-webkit-scrollbar { width: 6px; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
+        .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+        .chat-messages::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+
+        .msg-row {
+            display: flex;
+            gap: 8px;
+            max-width: 100%;
+            animation: msgIn 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .msg-row.agent { align-self: flex-start; max-width: 85%; }
+        .msg-row.user { align-self: flex-end; max-width: 85%; justify-content: flex-end; }
+
+        .msg-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 11px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .msg-bubble {
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .msg-row.agent .msg-bubble {
+            background: var(--surface);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-top-left-radius: 4px;
+        }
+
+        .msg-row.user .msg-bubble {
+            background: var(--accent);
+            color: #fff;
+            border-top-right-radius: 4px;
+            font-weight: 500;
+        }
+
+        .msg-bubble p { margin: 0; }
+        .msg-bubble p + p { margin-top: 8px; }
+        .msg-bubble strong { font-weight: 700; }
+
+        /* ── Typing indicator ── */
+        .typing-row {
+            display: flex;
+            gap: 8px;
+            align-self: flex-start;
+            max-width: 85%;
+            animation: msgIn 0.2s ease;
+        }
+
+        .typing-bubble {
+            padding: 12px 16px;
+            border-radius: 14px;
+            border-top-left-radius: 4px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            animation: typing 1.3s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-4px); opacity: 1; }
+        }
+
+        /* ── Clause Callout ── */
+        .clause-card {
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .clause-card .clause-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--warning);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .clause-card .clause-text { line-height: 1.55; color: var(--text-secondary); }
+
+        /* ── Deterrent Wall ── */
+        .deterrent-wall {
+            background: var(--error-bg);
+            border: 1px solid var(--error-border);
+            border-radius: var(--radius-sm);
+            padding: 14px 16px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .deterrent-wall .dw-title {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--error);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .deterrent-wall .dw-title svg { width: 14px; height: 14px; }
+
+        .deterrent-wall ul { list-style: none; padding: 0; margin: 0; }
+
+        .deterrent-wall li {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 5px 0;
+            color: var(--text);
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .deterrent-wall li::before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--error);
+            margin-top: 8px;
+            flex-shrink: 0;
+        }
+
+        .deterrent-wall .dw-footer {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--error-border);
+            font-size: 11px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        /* ── Loom Embed ── */
+        .loom-embed {
+            margin-top: 10px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: #000;
+            position: relative;
+            aspect-ratio: 16 / 9;
+        }
+
+        .loom-embed iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .loom-embed .loom-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .loom-wrap { margin-top: 10px; }
+        .loom-wrap .loom-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        /* ── Terminal CTA ── */
+        .terminal-cta {
+            margin-top: 10px;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 18px;
+            background: var(--accent);
+            color: #fff;
+            border: 0;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            width: 100%;
+        }
+
+        .cta-btn:hover {
+            background: #e5543a;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(255, 98, 67, 0.25);
+        }
+
+        .cta-btn svg { width: 14px; height: 14px; }
+
+        .cta-btn.secondary {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .cta-btn.secondary:hover {
+            background: var(--bg-secondary);
+            border-color: var(--border-hover);
+            box-shadow: none;
+        }
+
+        /* ── Options Area ── */
+        .chat-options {
+            padding: 14px 16px 16px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chat-options-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .option-btn {
+            padding: 11px 14px;
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.12s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            animation: msgIn 0.25s ease;
+        }
+
+        .option-btn:hover {
+            border-color: var(--accent);
+            background: var(--accent-bg);
+            transform: translateX(2px);
+        }
+
+        .option-btn:active { transform: translateX(0) scale(0.99); }
+
+        .option-btn .option-arrow {
+            opacity: 0;
+            color: var(--accent);
+            font-size: 15px;
+            transition: opacity 0.12s ease;
+            font-weight: 700;
+        }
+
+        .option-btn:hover .option-arrow { opacity: 1; }
+
+        .option-btn[data-variant="danger"]:hover {
+            border-color: var(--error);
+            background: var(--error-bg);
+        }
+
+        .option-btn[data-variant="danger"]:hover .option-arrow {
+            color: var(--error);
+        }
+
+        /* ── Restart pill ── */
+        .restart-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 12px;
+            background: var(--bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            align-self: center;
+        }
+
+        .restart-pill:hover {
+            color: var(--text);
+            border-color: var(--border-hover);
+            background: var(--bg-secondary);
+        }
+
+        .restart-pill svg { width: 12px; height: 12px; }
+
+        /* ── Footer note ── */
+        .footer-note {
+            margin-top: 20px;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.55;
+            max-width: 540px;
+        }
+
+        .footer-note a { color: var(--text-secondary); text-decoration: underline; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── Mobile ── */
+        @media (max-width: 600px) {
+            .page-wrapper { padding: 20px 12px 60px; }
+            .chat-card { min-height: 520px; max-height: calc(100vh - 140px); }
+            .page-header h1 { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-wrapper">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="logo-row">
+            <svg class="whop-logo" viewBox="0 0 2367 632" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1154.02 497.979H1223.16L1301.49 287.982H1302.36L1380.25 497.979H1450.27L1527.29 193.004H1459.02L1406.95 403.872H1406.07L1331.68 193.004H1272.61L1198.21 403.872H1197.34L1145.7 193.004H1077L1154.02 497.979Z" fill="#0E0E0F"/>
+                <path d="M1546.9 497.979H1611.67V374.682C1611.67 341.135 1637.05 318.044 1674.68 318.044C1712.31 318.044 1735.07 339.392 1735.07 374.682V497.979H1799.83V365.968C1799.83 303.667 1755.2 260.534 1688.68 260.534C1658.05 260.534 1631.8 270.555 1612.54 288.853H1611.67V186H1546.9V497.979Z" fill="#0E0E0F"/>
+                <path d="M1953.81 504.514C2030.39 504.514 2084.65 451.361 2084.65 382.524C2084.65 313.687 2030.39 260.534 1953.81 260.534C1877.67 260.534 1822.97 313.687 1822.97 382.524C1822.97 451.361 1877.67 504.514 1953.81 504.514ZM1953.81 447.876C1913.55 447.876 1887.73 419.992 1887.73 382.524C1887.73 345.056 1913.55 317.173 1953.81 317.173C1994.07 317.173 2019.89 345.056 2019.89 382.524C2019.89 419.992 1994.07 447.876 1953.81 447.876Z" fill="#0E0E0F"/>
+                <path d="M2108.82 584H2173.58V480.116H2174.46C2189.34 494.493 2218.22 504.514 2247.1 504.514C2315.8 504.514 2367 452.233 2367 382.524C2367 313.251 2315.36 260.534 2246.66 260.534C2216.9 260.534 2189.77 269.248 2171.83 287.546H2170.96V267.07H2108.82V584ZM2237.03 447.876C2201.15 447.876 2173.58 424.785 2173.58 396.902V367.711C2173.58 340.699 2202.46 317.608 2236.6 317.608C2275.54 317.608 2302.24 343.749 2302.24 382.524C2302.24 421.299 2275.1 447.876 2237.03 447.876Z" fill="#0E0E0F"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M276.62 160.782L138.31 299.092L0.266129 160.515C67.5354 93.2462 188.277 72.4398 276.62 160.782Z" fill="#FF6243"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M304.282 465.064L594.733 174.613C523.829 103.709 415.402 77.323 311.168 181.558L165.971 326.754L304.282 465.064Z" fill="#FF6243"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M622.127 479.16L926.675 174.613C862.514 110.452 742.643 82.0246 636.489 188.179L331.941 492.726C401.096 561.881 521.142 580.146 622.127 479.16Z" fill="#FF6243"/>
+            </svg>
+            <span class="logo-x">x</span>
+            <img src="../logo.png" alt="Profit Insider" class="pi-logo">
+        </div>
+        <h1>Profit Insider Support</h1>
+        <p>Chat with our support team about your account</p>
+    </div>
+
+    <!-- Chat Card -->
+    <div class="chat-card">
+        <div class="chat-header">
+            <div class="agent-avatar">C</div>
+            <div class="agent-meta">
+                <div class="agent-name">Caleb</div>
+                <div class="agent-role">Profit Insider Payments Team</div>
+            </div>
+            <div class="agent-status">Online</div>
+        </div>
+
+        <div class="chat-messages" id="messages"></div>
+
+        <div class="chat-options" id="options">
+            <div class="chat-options-label">Choose an option</div>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        Acies Investments LLC, d/b/a Profit Insider — RP Profits &middot; <a href="/legal/" target="_blank">Customer Agreement</a>
+    </div>
+</div>
+
+<script>
+(function () {
+    'use strict';
+
+    // ──────────────────────────────────────────────────────────
+    // Config
+    // ──────────────────────────────────────────────────────────
+    const REFUND_FORM_URL = '/refreq/';
+    const SUPPORT_EMAIL = 'info@profit-insiders.com';
+    // Swap this to the real Loom share ID when ready
+    const LOOM_EMBED_URL = 'https://www.loom.com/embed/REPLACE_WITH_LOOM_ID';
+
+    // ──────────────────────────────────────────────────────────
+    // Reusable content blocks
+    // ──────────────────────────────────────────────────────────
+    const DETERRENT_WALL = {
+        type: 'deterrent',
+        title: 'What happens if you file a chargeback',
+        items: [
+            'Immediate and permanent termination of your software access (§15.3(a))',
+            'Your account referred to our collections partner, American Collection Systems Incorporated, for the full balance plus fees (§15.3(b))',
+            'Legal action initiated by our legal partner, Vanguard Retail Law, for breach of contract — you pay attorneys\' fees and damages (§15.3(c), §15.5)',
+            'Asset seizure, wage garnishment, bank levies, and liens on personal and business assets (§15.3(d))',
+            'Delinquent debt reported to Equifax, Experian, and TransUnion — severe, lasting credit damage (§15.3(e))',
+            'Unpaid balance accrues 1% per month interest from original due date (§15.6)',
+            'Any dispute must be resolved through binding arbitration in Miami-Dade County, Florida (§15.7) — no jury trial, no class action (§15.8)'
+        ],
+        footer: 'Nothing here waives your non-waivable cardholder rights. What the agreement you signed says is this: using a chargeback to circumvent the contractual refund process is a breach of contract, and the consequences above will apply.'
+    };
+
+    const CHARGEBACK_DETERRENT_MSG = [
+        'Before we go any further, I need you to understand what\'s at stake under the Customer Agreement you signed. Your agreement treats an unauthorized chargeback as a material breach with serious consequences.'
+    ];
+
+    // ──────────────────────────────────────────────────────────
+    // Flow definition
+    // ──────────────────────────────────────────────────────────
+    const flow = {
+
+        // ─── Entry ─────────────────────────────────────────────
+        'start': {
+            agent: [
+                'Hey — this is Caleb on the Profit Insider Payments Team. I\'m here to help you get your account handled directly, without the back-and-forth.',
+                'What would you like to do today?'
+            ],
+            options: [
+                { label: 'I want to request a refund',           next: 'refund-ca-check' },
+                { label: 'I have a billing or payment question', next: 'billing-menu' },
+                { label: 'I\'m thinking about disputing with my bank', next: 'chargeback-threat' },
+                { label: 'I already filed a chargeback',         next: 'chargeback-filed' },
+                { label: 'I received a Final Notice from Vanguard', next: 'settlement-intro' }
+            ]
+        },
+
+        // ─── Refund flow ───────────────────────────────────────
+        'refund-ca-check': {
+            agent: [
+                'Got it — let\'s walk through this. I\'ll ask a few quick questions and tell you straight whether you\'re eligible under Annex B of your Customer Agreement.',
+                'First thing: when you purchased the Profit Insider Automated Trading Algorithm, did you sign the full Customer Agreement during onboarding?'
+            ],
+            options: [
+                { label: 'Yes, I signed it',        next: 'refund-eval-status' },
+                { label: 'No, I never signed it',   next: 'denied-no-ca' },
+                { label: 'I\'m not sure',           next: 'denied-ca-unsure' }
+            ]
+        },
+
+        'refund-eval-status': {
+            agent: [
+                'The refund guarantee is governed by Annex B of your agreement. It covers a single <strong>90-day Evaluation Period</strong>, starting from the day we confirmed your setup was complete and the Software was live on your brokerage account via TradePost.',
+                'Where are you right now in that 90-day window?'
+            ],
+            options: [
+                { label: 'I haven\'t activated / finished onboarding yet',            next: 'denied-not-started' },
+                { label: 'I\'m currently in my 90-day window (Day 1–89)',             next: 'denied-in-window' },
+                { label: 'My 90 days just ended — within the last 30 days',           next: 'refund-prior-check' },
+                { label: 'My 90 days ended more than 30 days ago',                    next: 'denied-window-closed' }
+            ]
+        },
+
+        'refund-prior-check': {
+            agent: [
+                'Okay — you\'re inside the 30-day claim window. That\'s what you need under Annex B §5.1.',
+                'Next question: have you previously received a refund from Profit Insider under this guarantee or any earlier version?'
+            ],
+            options: [
+                { label: 'No, this would be my first refund request', next: 'refund-conditions-intro' },
+                { label: 'Yes, I\'ve received a refund before',       next: 'denied-one-per-customer' }
+            ]
+        },
+
+        'refund-conditions-intro': {
+            agent: [
+                'Good. Now, the refund guarantee is conditional — it\'s not automatic even if you lost money. Annex B §3 sets out the Conditions of Use you had to satisfy during the <strong>entire</strong> 90-day period to qualify.',
+                'I\'m going to ask you about each one. Answer honestly — if you violated a condition, that\'s going to come out when we verify your broker statements anyway.'
+            ],
+            options: [
+                { label: 'Understood, let\'s go through them', next: 'refund-cond-settings' }
+            ]
+        },
+
+        'refund-cond-settings': {
+            agent: [
+                '<strong>Annex B §3.1 — Default Settings.</strong> Did you use the default strategy settings and parameters we recommended during your onboarding call, without materially modifying the strategy settings, risk parameters, or position sizing?'
+            ],
+            options: [
+                { label: 'Yes, I ran the default settings the whole time', next: 'refund-cond-uptime' },
+                { label: 'I modified the settings on my own',              next: 'denied-modified-settings' },
+                { label: 'I\'m not sure what I changed',                   next: 'denied-cannot-verify-settings' }
+            ]
+        },
+
+        'refund-cond-uptime': {
+            agent: [
+                '<strong>Annex B §3.2 — System Uptime.</strong> Was the Software operational and connected via TradePost for at least <strong>95%</strong> of active trading hours (Sunday evening through Friday afternoon ET) across your full 90-day window?'
+            ],
+            options: [
+                { label: 'Yes, I kept it running ≥95% of the time',        next: 'refund-cond-conflict' },
+                { label: 'No, it was offline for significant stretches',   next: 'denied-uptime' },
+                { label: 'I don\'t have logs to know either way',          next: 'denied-cannot-verify-uptime' }
+            ]
+        },
+
+        'refund-cond-conflict': {
+            agent: [
+                '<strong>Annex B §3.3 — No Conflicting Strategies.</strong> During the 90 days, did you run any <strong>other</strong> automated bots or strategies on the same brokerage account that traded ES futures or interfered with our Software?'
+            ],
+            options: [
+                { label: 'No, only your algorithm ran on that account',    next: 'refund-cond-manual' },
+                { label: 'Yes, I had other bots running on the same account', next: 'denied-conflicting-bots' }
+            ]
+        },
+
+        'refund-cond-manual': {
+            agent: [
+                '<strong>Annex B §3.3 — Manual Overrides.</strong> Did you place manual ES futures trades on the same account, or manually cancel or modify the Software\'s orders, outside of the narrow emergency exceptions?'
+            ],
+            options: [
+                { label: 'No manual trades or overrides',                      next: 'refund-cond-pnl' },
+                { label: 'Only emergency position-closes when the bot failed', next: 'refund-cond-pnl' },
+                { label: 'Yes, I traded manually on the side',                 next: 'denied-manual-trades' },
+                { label: 'Yes, I overrode orders without notifying you',       next: 'denied-manual-trades' }
+            ]
+        },
+
+        'refund-cond-pnl': {
+            agent: [
+                '<strong>Annex B §4 — Profitability.</strong> Profitable is defined as Net P&amp;L ≥ $0.01 at the end of 90 days, where Net P&amp;L = Gross Realized P&L − Commissions − Exchange Fees − Estimated Slippage.',
+                'Based on your broker statements, was your Net P&amp;L at the end of Day 90 <strong>negative</strong>?'
+            ],
+            options: [
+                { label: 'Yes, my Net P&amp;L was negative (I lost money)',  next: 'refund-cond-records' },
+                { label: 'No, my Net P&amp;L was $0.01 or higher',           next: 'denied-profitable' },
+                { label: 'I haven\'t calculated it yet',                 next: 'denied-need-pnl-calc' }
+            ]
+        },
+
+        'refund-cond-records': {
+            agent: [
+                '<strong>Annex B §3.5 + §5.2 — Documentation.</strong> When you submit your claim, you\'re required to include <strong>all</strong> of the following: complete broker account statements for the 90 days, software logs and configuration files, screenshots of your Software and TradePost settings, and a log of any downtime or errors.',
+                'Do you have all of that ready to upload?'
+            ],
+            options: [
+                { label: 'Yes, I have everything ready',                   next: 'eligible' },
+                { label: 'I have most of it — I\'ll gather the rest first', next: 'denied-records-missing' },
+                { label: 'No, I don\'t have those records',                next: 'denied-no-records' }
+            ]
+        },
+
+        // ─── Eligible terminal ──────────────────────────────────
+        'eligible': {
+            type: 'eligible',
+            agent: [
+                'Based on what you\'ve told me, your situation appears to meet the Annex B refund eligibility criteria.',
+                'I want to be clear on what happens next so there are no surprises:',
+                '&bull; You submit through the refund request form below with all the documentation we just went through.<br>&bull; Our team acknowledges receipt within <strong>5 business days</strong> (Annex B §5.3).<br>&bull; Complete review is done within <strong>30 calendar days</strong> of us receiving your full package.<br>&bull; If approved, the refund is issued to your original payment method within <strong>15 business days</strong> (§5.4).<br>&bull; If any Condition of Use wasn\'t actually met when we verify against your statements, the claim will be denied — so please only submit if everything on your end checks out.'
+            ],
+            cta: {
+                label: 'Continue to Refund Request Form',
+                href: REFUND_FORM_URL
+            }
+        },
+
+        // ─── Denial terminals ──────────────────────────────────
+        'denied-no-ca': {
+            type: 'denied',
+            agent: [
+                'I need to be straight with you, because I don\'t want to waste your time. The refund guarantee exists <strong>only</strong> inside the Customer Agreement that clients sign at enrollment. It\'s not a default right of purchase — it\'s a contractual provision.',
+                'If you didn\'t sign the Customer Agreement, Annex B never applied to your account. There is no refund pathway I can route you to, because none exists for your purchase.',
+                'That said — the software you paid for is still active on your account and you\'re welcome to keep using it. What\'s not an option is disputing the charge, and I want to explain why before you consider that.'
+            ],
+            clause: {
+                label: 'Your purchase',
+                text: 'Acies Investments LLC d/b/a Profit Insider — RP Profits delivered the software license you paid for. Under standard commercial terms, a completed sale of a delivered product is final absent a specific refund provision. In your case, no such provision was agreed to.'
+            },
+            deterrent: true,
+            loom: true
+        },
+
+        'denied-ca-unsure': {
+            type: 'denied',
+            agent: [
+                'Understood. You can confirm whether a signed Customer Agreement is on file by emailing <strong>' + SUPPORT_EMAIL + '</strong>.',
+                'Before you do anything else, I want to be direct with you about something: if you don\'t have a signed agreement on file, there is no contractual refund pathway. And either way — signed or not — a chargeback on a delivered product triggers consequences. I\'d rather you hear that from me now than learn it from our collections partner later.'
+            ],
+            deterrent: true,
+            loom: true
+        },
+
+        'denied-not-started': {
+            type: 'denied',
+            agent: [
+                'Your 90-day Evaluation Period hasn\'t started yet. Per Annex B §1, the clock begins on your <strong>Start Date</strong>, which is the date onboarding is complete, the Software is connected to your brokerage account via TradePost, signals are generating, and we\'ve confirmed setup by email.',
+                'Until that happens, the refund guarantee hasn\'t started running — and there\'s nothing to evaluate.',
+                'The right move here is to finish onboarding and get your 90 days underway. If you want help with that, email ' + SUPPORT_EMAIL + ' and the tech team will get you set up.'
+            ],
+            clause: {
+                label: 'Annex B §1 — Evaluation Period',
+                text: 'The Evaluation Period is a period of ninety (90) consecutive calendar days, commencing on the date that you successfully complete the setup and activation of the Software (the "Start Date").'
+            }
+        },
+
+        'denied-in-window': {
+            type: 'denied',
+            agent: [
+                'You\'re still inside your 90-day Evaluation Period — which means I can\'t evaluate a refund claim yet. Annex B §4 defines "Profitable" based on Net P&amp;L <strong>at the end</strong> of the 90 days. A refund can only be assessed after Day 90.',
+                'I know that\'s not what you wanted to hear. But here\'s the practical path: if something\'s going wrong with your setup right now, let\'s fix it so the remaining time in your window actually works for you. Email ' + SUPPORT_EMAIL + ' and the tech team will look at your configuration.',
+                'And one more thing you need to hear clearly before you consider disputing the charge: the refund guarantee in Annex B is the <strong>sole and exclusive remedy</strong> for any performance claim (§8.2 of your agreement). There is no shortcut around the 90-day window.'
+            ],
+            clause: {
+                label: 'Annex B §4 — Profitability Definition',
+                text: 'Profitable is defined as achieving a Net P&amp;L of greater than or equal to $0.01 at the end of the Evaluation Period.'
+            },
+            deterrent: true,
+            loom: true
+        },
+
+        'denied-window-closed': {
+            type: 'denied',
+            agent: [
+                'I have to be direct with you here. Per Annex B §5.1, refund claims must be submitted within <strong>30 calendar days</strong> after your End Date. Claims submitted after that 30-day window will not be accepted — that\'s a firm contractual cutoff, not a soft deadline.',
+                'Your window has closed. I don\'t have discretion to extend it, and I\'m not going to pretend I do.',
+                'Before you think about disputing the charge based on this, I want you to understand what that triggers.'
+            ],
+            clause: {
+                label: 'Annex B §5.1 — Claim Window',
+                text: 'You must submit your refund claim within thirty (30) calendar days after the End Date of the Evaluation Period. Claims submitted after the 30-day claim window will not be accepted.'
+            },
+            deterrent: true,
+            loom: true
+        },
+
+        'denied-one-per-customer': {
+            type: 'denied',
+            agent: [
+                'Per Annex B §7.1, the refund guarantee is limited to <strong>one refund per customer</strong> — including entities under common control, and including any prior version of our refund policy.',
+                'Our records show you\'ve already received a refund under this guarantee. That means you\'re not eligible for another one. This isn\'t a discretionary call — the contract is explicit on this.'
+            ],
+            clause: {
+                label: 'Annex B §7.1 — One Refund Per Customer',
+                text: 'The refund guarantee is limited to one (1) refund per customer (including individuals and entities under common control). If you have previously received a refund under this guarantee, you are not eligible for another refund.'
+            },
+            deterrent: true,
+            loom: true
+        },
+
+        'denied-modified-settings': {
+            type: 'denied',
+            agent: [
+                'Here\'s where this gets hard. Annex B §3.1 requires you to use the <strong>default settings and parameters</strong> we recommended during onboarding, without material modifications to the strategy settings, risk parameters, or position sizing during the Evaluation Period.',
+                'When you modified the settings yourself, that broke the Conditions of Use needed to qualify under Annex B §3. Per §8.2, meeting the Conditions in full is the only pathway to the refund guarantee — which is itself the sole and exclusive remedy for any performance claim.',
+                'I understand the instinct was probably to improve results. But the contract is explicit: modifying the settings voids eligibility.'
+            ],
+            clause: {
+                label: 'Annex B §3.1 — Default Settings',
+                text: 'You must use the default strategy settings and parameters that were recommended to you by the Company during your onboarding call. You may not materially modify the strategy settings, risk parameters, position sizing, or other configuration options without the Company\'s prior written consent.'
+            },
+            deterrent: true,
+            loom: true
+        },
+
+        'denied-cannot-verify-settings': {
+            type: 'denied',
+            agent: [
+                'Here\'s the issue. Annex B §3.5 requires you to maintain screenshots or exports of your Software settings and TradePost configuration, and you have to submit them with any refund claim (§5.2).',
+                'If you can\'t show what settings you ran during the 90 days, we can\'t verify §3.1 compliance — and unverifiable means ineligible. The burden of proof sits with the customer, per the documentation requirements in §3.5 and §5.2.',
+                'Before you consider disputing this outcome, please understand what that triggers.'
+            ],
+            clause: {
+                label: 'Annex B §3.5 — Data and Record Retention',
+                text: 'You must maintain complete and accurate records of all trading activity during the Evaluation Period, including screenshots or exports of your Software settings and TradePost configuration.'
+            },
+            deterrent: true,
+            loom: true
+        },
+
+        'denied-uptime': {
+            type: 'denied',
+            agent: [
+                'Annex B §3.2 requires the Software to be operational and connected via TradePost for at least <strong>95%</strong> of active trading hours during the entire Evaluation Period. Downtime caused by your own actions or equipment counts against that figure.',
+                'If uptime was materially below 95%, the Software wasn\'t given the conditions Annex B defines for evaluating profitability — and the Conditions of Use weren\'t satisfied. That disqualifies the claim under §3 and §8.2.',
+                'The only downtime that gets excluded is scheduled maintenance we announced in advance, or outages caused by your broker or TradePost (not by you).'
+            ],
+            clause: {
+                label: 'Annex B §3.2 — System Uptime',
+                text: 'The Software must be operational and connected to your brokerage account via TradePost for at least ninety-five percent (95%) of all active trading hours during the Evaluation Period. You are responsible for maintaining a stable internet connection, functional hardware, and any necessary subscriptions or services to ensure the Software remains operational.'
+            },
+            deterrent: true,
+            loom: true
+        },
+
+        'denied-cannot-verify-uptime': {
+            type: 'denied',
+            agent: [
+                'Annex B §3.5 makes you responsible for maintaining a log of any downtime, errors, or issues during the Evaluation Period. Without that log, we can\'t verify the §3.2 95%-uptime requirement was met — and without verification, the claim can\'t be approved.',
+                'I\'m not going to route you into a submission that\'s going to be denied on verification. The honest answer is: without the uptime records, you don\'t have a claim you can document.'
+            ],
+            clause: {
+                label: 'Annex B §3.5 — Records Required',
+                text: 'You must maintain complete and accurate records of all trading activity during the Evaluation Period, including records of any downtime, errors, or issues.'
+            },
+            deterrent: true,
+            loom: true
+        },
+
+        'denied-conflicting-bots': {
+            type: 'denied',
+            agent: [
+                'Annex B §3.3 is explicit: during the Evaluation Period, you may not run any <strong>other</strong> automated strategies, algorithms, or bots in the same brokerage account if they trade the same instrument (ES futures) or otherwise interfere with our Software.',
+                'Running a second bot on the same account voids the Conditions of Use. Any Net P&amp;L we calculate from that account is contaminated by trades our Software didn\'t generate — it\'s not a fair test of the guarantee.',
+                'This disqualifies the claim under §3.3 and §8.2, regardless of Net P&amp;L.'
+            ],
+            clause: {
+                label: 'Annex B §3.3 — No Conflicting Strategies',
+                text: 'You may not run any other automated trading strategies, algorithms, or bots in the same brokerage account during the Evaluation Period if such strategies trade the same instrument (ES futures) or otherwise interfere with the Software\'s operation.'
+            },
+            deterrent: true,
+            loom: true
+        },
+
+        'denied-manual-trades': {
+            type: 'denied',
+            agent: [
+                'Annex B §3.3 prohibits manual ES futures trades on the same account during the Evaluation Period, and it prohibits manually overriding, cancelling, or modifying the Software\'s orders — except in narrow emergencies (and even then, you had to notify us within 24 hours).',
+                'Manual trading on the same account interferes with the Software\'s operation and makes Net P&amp;L impossible to attribute fairly. That breaks §3.3 — and §3 requires <strong>all</strong> Conditions of Use to be satisfied for the entire period.',
+                'This disqualifies the claim under §3.3 and §8.2.'
+            ],
+            clause: {
+                label: 'Annex B §3.3 — Manual Overrides',
+                text: 'You may not manually place trades in ES futures in the same account, except to close positions in an emergency or as expressly authorized by the Company in writing. You may not manually override, cancel, or modify orders generated by the Software unless doing so is necessary to comply with a broker requirement or to address a technical malfunction, and you must notify the Company of any such action within 24 hours.'
+            },
+            deterrent: true,
+            loom: true
+        },
+
+        'denied-profitable': {
+            type: 'denied',
+            agent: [
+                'Under Annex B §4, Profitable means Net P&amp;L ≥ <strong>$0.01</strong> at the end of the 90 days. Your Net P&amp;L was at or above that line — which means the Software performed as the guarantee requires, and no refund is owed.',
+                'I know a small positive number may not feel like a win. But the guarantee is specifically about profitability, not about how much profit. Any positive Net P&amp;L means the account was Profitable as defined, and per §8.2 the refund guarantee is the <strong>sole and exclusive remedy</strong> for any performance-related claim.',
+                'Before you consider disputing the charge on this basis, I want you to see what that triggers.'
+            ],
+            clause: {
+                label: 'Annex B §4 — Profitability Definition',
+                text: 'Profitable is defined as achieving a Net P&amp;L of greater than or equal to $0.01 at the end of the Evaluation Period. If the Net P&amp;L is negative, the account would not be Profitable and would be eligible for a refund (subject to satisfying all other conditions).'
+            },
+            deterrent: true,
+            loom: true
+        },
+
+        'denied-need-pnl-calc': {
+            type: 'denied',
+            agent: [
+                'You need to calculate your Net P&amp;L from your broker statements before you can file a claim. Per §5.2 item 3, your Net P&amp;L calculation is a required part of the claim package.',
+                'The formula is in §4: <strong>Net P&amp;L = Gross Realized P&L − Commissions − Exchange Fees − Estimated Slippage</strong>.',
+                'Pull your 90-day broker statements, do the math, and if it\'s negative, come back and restart this chat. You\'ve got 30 calendar days after your End Date to submit (§5.1) — don\'t let the window close while you\'re gathering documents.'
+            ]
+        },
+
+        'denied-records-missing': {
+            type: 'denied',
+            agent: [
+                'Fair enough. Don\'t submit until you have the full package — a partial submission is just going to get kicked back and eat into your 30-day window.',
+                'Required per §5.2: account info, Start and End dates, your Net P&amp;L calculation, full broker statements, Software + TradePost config screenshots, downtime/error log, and written read-only authorization for verification.',
+                'Pull it all together, then restart this chat when you\'re ready.'
+            ]
+        },
+
+        'denied-no-records': {
+            type: 'denied',
+            agent: [
+                'I have to be honest with you: without the §3.5 records, there\'s no claim to submit. The contract puts the documentation burden on you, and §5.2 requires all of it — broker statements, Software logs, config screenshots, downtime log — to be included with the claim.',
+                'No documentation, no claim. The Payments Team can\'t verify Conditions of Use or independently calculate Net P&amp;L without the source records from your account.',
+                'If you can still pull broker statements for the 90 days, do that and restart. If you can\'t, there isn\'t a pathway forward on the refund guarantee.'
+            ],
+            clause: {
+                label: 'Annex B §3.5 — Data and Record Retention',
+                text: 'You must provide the Company with read-only access to your broker statements and any other records reasonably requested by the Company to verify your compliance with the Conditions of Use and to calculate Net P&amp;L.'
+            },
+            deterrent: true,
+            loom: true
+        },
+
+        // ─── Billing flow ──────────────────────────────────────
+        'billing-menu': {
+            agent: [
+                'What would you like to handle?'
+            ],
+            options: [
+                { label: 'Cancel my BNPL / split pay installments (Klarna, Affirm, Payva)', next: 'billing-bnpl' },
+                { label: 'Cancel my recurring subscription',                                 next: 'billing-subscription' },
+                { label: 'Update my payment method',                                         next: 'billing-payment-method' },
+                { label: 'Something else',                                                   next: 'billing-other' }
+            ]
+        },
+
+        'billing-bnpl': {
+            type: 'billing',
+            agent: [
+                'I need to clear up a common misunderstanding about BNPL / split pay, because it changes what I can actually do for you.',
+                'Your purchase with Profit Insider was a <strong>one-time software license</strong> under §7.1 of your Customer Agreement — not a subscription. When you checked out, your BNPL provider (Klarna, Payva, Affirm, etc.) paid us the full purchase price upfront. You then entered into a separate financing agreement directly with them to repay it in installments.',
+                'That installment plan is a <strong>micro-loan between you and your BNPL provider</strong>. It\'s not a Profit Insider subscription. Profit Insider has no ability to cancel, pause, or modify installments you owe to a third-party lender.',
+                'If you want to adjust your installment schedule, you need to contact your BNPL provider directly. What I <strong>can</strong> do is review your account for refund eligibility under Annex B — and if approved, any refund gets processed back through your original payment method, which your lender may then apply against your outstanding balance under their terms.'
+            ],
+            clause: {
+                label: '§7.1 — One-Time License',
+                text: 'Your purchase was a one-time software license. Any BNPL / split pay schedule you see is a separate financing agreement between you and your lender — not a Profit Insider billing cycle. Profit Insider cannot cancel or modify those installments.'
+            },
+            options: [
+                { label: 'Okay — take me through refund eligibility', next: 'refund-ca-check' },
+                { label: 'I\'m thinking about disputing the installments with my bank instead', next: 'chargeback-threat' },
+                { label: 'Back to menu',                            next: 'start' }
+            ]
+        },
+
+        'billing-subscription': {
+            type: 'billing',
+            agent: [
+                'If you have a recurring subscription, §7.4 of your Customer Agreement lets you cancel at any time. Cancellation takes effect at the end of your <strong>current billing period</strong>, and no partial-period refunds are issued for time not yet used (§7.3).',
+                'To cancel, email <strong>' + SUPPORT_EMAIL + '</strong> from the address on your account. Include your full name so we can locate the right record.'
+            ],
+            options: [
+                { label: 'Back to menu', next: 'start' }
+            ]
+        },
+
+        'billing-payment-method': {
+            type: 'billing',
+            agent: [
+                'To update the payment method on file, email <strong>' + SUPPORT_EMAIL + '</strong> from the address tied to your account. Don\'t send card numbers by email — the team will send you a secure way to submit the new method.'
+            ],
+            options: [
+                { label: 'Back to menu', next: 'start' }
+            ]
+        },
+
+        'billing-other': {
+            type: 'billing',
+            agent: [
+                'For anything billing-related that isn\'t covered above, email <strong>' + SUPPORT_EMAIL + '</strong> with a clear description of what you need and your account email. You\'ll get a response within 2 business hours during business days.'
+            ],
+            options: [
+                { label: 'Back to menu', next: 'start' }
+            ]
+        },
+
+        // ─── Chargeback branch ─────────────────────────────────
+        'chargeback-threat': {
+            type: 'chargeback',
+            agent: [
+                'I\'m going to stop you and read back what your Customer Agreement says about this, because I don\'t want you to find out the hard way.',
+                '§15.1 of your agreement is a <strong>condition precedent</strong> — before initiating any third-party dispute, chargeback, arbitration, or legal claim, you are contractually required to send a written notice to ' + SUPPORT_EMAIL + ' and allow <strong>10 business days</strong> for us to investigate and attempt to cure.',
+                'Filing a chargeback without first exhausting that process is a <strong>material breach</strong> under §15.3, and it is treated under §15.13 as a fraudulent attempt to obtain the Software without payment. Here\'s exactly what the agreement you signed authorizes us to do in response:'
+            ],
+            deterrent: true,
+            loom: true,
+            options: [
+                { label: 'I understand — I\'ll submit through the refund process instead', next: 'refund-ca-check' },
+                { label: 'I\'ll email my written notice to ' + SUPPORT_EMAIL,              next: 'chargeback-notice-path' },
+                { label: 'Back to menu',                                                    next: 'start' }
+            ]
+        },
+
+        'chargeback-notice-path': {
+            type: 'chargeback',
+            agent: [
+                'Good call. Email <strong>' + SUPPORT_EMAIL + '</strong> with the subject line "Pre-Dispute Notice — §15.1" and include: a description of the issue, all supporting evidence, your account email, and your contact information.',
+                'Per §15.1, we have 10 business days from receipt to investigate and respond. During that window, do not file anything with your bank — doing so waives the protections of §15.1 and triggers §15.3.'
+            ],
+            options: [
+                { label: 'Got it — back to menu', next: 'start' }
+            ]
+        },
+
+        'chargeback-filed': {
+            type: 'chargeback',
+            agent: [
+                'Okay. I need to be direct with you about where you are right now.',
+                'By filing that chargeback, you\'re in material breach of §15.3 of your Customer Agreement. The consequences aren\'t something I discretionarily decide — they\'re contractual, and they\'re already in motion.'
+            ],
+            deterrent: true,
+            loom: true,
+            options: [
+                { label: 'How do I retract the chargeback?',       next: 'chargeback-retract-path' },
+                { label: 'I\'m not retracting — I\'ll let the bank decide', next: 'chargeback-not-retracting' },
+                { label: 'Back to menu',                            next: 'start' }
+            ]
+        },
+
+        'chargeback-retract-path': {
+            type: 'chargeback',
+            agent: [
+                'Most banks allow you to withdraw a dispute within the first 24 to 72 hours — that window is closing fast. Here\'s exactly what to do:',
+                '<strong>1.</strong> Call your bank\'s dispute department right now (the number is on the back of your card or on the bank\'s website).<br><strong>2.</strong> Tell them you want to <strong>withdraw the dispute</strong> on the charge from Profit Insider.<br><strong>3.</strong> Ask for written confirmation — an email, a reference number, or a statement.<br><strong>4.</strong> Forward that written confirmation to <strong>' + SUPPORT_EMAIL + '</strong>.',
+                'The moment we have the written retraction, we pause the collections referral and the legal process. Then you can proceed with the proper refund pathway under Annex B — assuming you\'re within the 30-day claim window and meet the Conditions of Use.'
+            ],
+            options: [
+                { label: 'I\'m retracting — take me through refund eligibility', next: 'refund-ca-check' },
+                { label: 'Back to menu',                                          next: 'start' }
+            ]
+        },
+
+        'chargeback-not-retracting': {
+            type: 'chargeback',
+            agent: [
+                'I want you to be fully informed before you stick with that decision, because what happens next doesn\'t depend on how the bank rules — your breach under §15.3 is independent of the chargeback outcome.',
+                'If we win the dispute (which is the expected outcome given the evidence we submit — your signed agreement, checkout acceptance, access logs, product delivery), the original charge is reinstated <strong>and</strong> every enforcement action in §15.3 still applies because the breach happened the moment you filed.',
+                'If you somehow win the dispute, §15.3(b)(c)(e) still authorize us to pursue the debt through collections, legal action, and credit reporting. Per §15.5, if we prevail in any related proceeding, you\'re responsible for our attorneys\' fees, arbitration fees, and collection costs.',
+                'The chargeback outcome doesn\'t save you from §15.3. The only thing that does is retracting in writing before your bank\'s withdrawal window closes.'
+            ],
+            deterrent: true,
+            loom: true,
+            options: [
+                { label: 'Okay — walk me through how to retract',   next: 'chargeback-retract-path' },
+                { label: 'I understand and accept the consequences', next: 'chargeback-final-close' },
+                { label: 'Back to menu',                              next: 'start' }
+            ]
+        },
+
+        'chargeback-final-close': {
+            type: 'chargeback',
+            agent: [
+                'Understood. This conversation is being documented in your file, and the record — including the fact that you were given the opportunity to retract and declined — will be forwarded to Vanguard Retail Law along with the dispute evidence package.',
+                'Your file is now in the enforcement queue. If you change your mind, retracting the dispute in writing to ' + SUPPORT_EMAIL + ' is still your fastest off-ramp until your bank\'s withdrawal window closes.'
+            ],
+            options: [
+                { label: 'I\'ve changed my mind — how do I retract?', next: 'chargeback-retract-path' },
+                { label: 'Close chat',                                 next: 'start' }
+            ]
+        },
+
+        // ─── Settlement tier ──────────────────────────────────
+        'settlement-intro': {
+            type: 'settlement',
+            agent: [
+                'You got the Final Notice from Vanguard Retail Law. That means your file is already in the enforcement queue — collections through American Collection Systems Incorporated, legal proceedings for breach of contract under §15.3, and credit reporting on the scheduled timeline.',
+                'There is <strong>one path</strong> available that stops all of that: a one-time settlement offer to close this matter. Let me walk you through how it works before you decide.'
+            ],
+            options: [
+                { label: 'Yes, I want to hear the settlement terms', next: 'settlement-terms' },
+                { label: 'Not interested',                           next: 'settlement-declined' }
+            ]
+        },
+
+        'settlement-terms': {
+            type: 'settlement',
+            agent: [
+                'Here\'s the structure. The settlement amount is <strong>65% of your disputed amount</strong> — a 35% reduction from the full balance you owe under your agreement. That number is <strong>not negotiable downward</strong>. No counter-offers, no payment plans — one-time payment in full, wire or card.',
+                'In exchange, we drop the collections referral to American Collection Systems Incorporated, halt the legal proceedings through Vanguard Retail Law, waive all accrued attorneys\' fees and costs, and — critically — <strong>we do not report to Equifax, Experian, or TransUnion</strong>. The matter closes permanently with a full mutual release.',
+                'There are three non-negotiable conditions to accept:<br><strong>1.</strong> You call your bank, retract the chargeback in writing, and send us the confirmation.<br><strong>2.</strong> We send you a Settlement Release Agreement — you sign and return it.<br><strong>3.</strong> You pay the settlement amount in full via the method we specify.',
+                'You need to know the trade-off: accepting the settlement <strong>permanently terminates</strong> your access to the Profit Insider software. You walk away, we walk away, the file is closed forever.',
+                'This offer expires in <strong>5 business days</strong> from today. If you don\'t complete all three conditions in that window, the offer is withdrawn and the matter returns to full enforcement.'
+            ],
+            options: [
+                { label: 'Yes — I accept. Tell me how to proceed',       next: 'settlement-accept' },
+                { label: 'Can you go lower than 65%?',                    next: 'settlement-hold-line' },
+                { label: 'Can I do a payment plan?',                       next: 'settlement-no-plan' },
+                { label: 'Let me think about it',                         next: 'settlement-delay' },
+                { label: 'No — I\'m not paying anything',                  next: 'settlement-declined' }
+            ]
+        },
+
+        'settlement-accept': {
+            type: 'settlement',
+            agent: [
+                'Good — this is the right call.',
+                'Next step is retraction first. Call your bank\'s dispute department right now, tell them you\'re withdrawing the dispute on the charge from Profit Insider, and get written confirmation (email, reference number, or statement). Forward that to <strong>' + SUPPORT_EMAIL + '</strong>.',
+                'The moment we have the retraction confirmation, we\'ll email you the Settlement Release Agreement and the payment instructions. Sign the release, pay the settlement amount, and within 24 hours of receipt we notify Vanguard and American Collection Systems to stand down. File closed permanently.',
+                'Do the retraction today. The bank\'s withdrawal window and your 5 business day settlement window are both running.'
+            ],
+            options: [
+                { label: 'Got it — closing chat to call my bank', next: 'start' }
+            ]
+        },
+
+        'settlement-hold-line': {
+            type: 'settlement',
+            agent: [
+                'I hear you, and I\'m going to be transparent. The 65% number is not a negotiating starting point — it\'s already a significant reduction from the full balance Vanguard is pursuing through the legal process. I don\'t have the authority to go below it, and I wouldn\'t exercise it even if I did.',
+                'The alternative to the settlement is not a lower settlement — it\'s the full enforcement process you\'ve already been noticed about. If the legal process moves forward and Vanguard Retail Law secures a judgment, you\'re responsible for the full disputed amount plus attorneys\' fees, arbitration fees, collection costs, and 1% monthly interest under §15.6 from the original due date. That can easily double your exposure.',
+                'The 65% settlement resolves it today. That\'s the value proposition.'
+            ],
+            options: [
+                { label: 'Okay — I\'ll take the settlement',    next: 'settlement-accept' },
+                { label: 'Let me think about it',                next: 'settlement-delay' },
+                { label: 'Not interested',                        next: 'settlement-declined' }
+            ]
+        },
+
+        'settlement-no-plan': {
+            type: 'settlement',
+            agent: [
+                'Settlements are one-time payments — no payment plans. The whole point is to resolve the matter in full and close the file. If you break a settlement payment plan, we\'re right back at collections and legal action, except now we\'ve both wasted time.',
+                'If 65% isn\'t possible for you right now, think carefully. The alternative is more expensive. Full balance plus §15.5 fees, §15.6 interest, and §15.3 collections + credit damage will exceed the settlement amount significantly by the time it resolves.'
+            ],
+            options: [
+                { label: 'I\'ll find the full amount — proceed with settlement', next: 'settlement-accept' },
+                { label: 'Let me think about it',                                 next: 'settlement-delay' },
+                { label: 'I can\'t do it',                                        next: 'settlement-declined' }
+            ]
+        },
+
+        'settlement-delay': {
+            type: 'settlement',
+            agent: [
+                'Take up to 24 hours if you need them — but the 5 business day deadline is firm. The pause I\'ve put on Vanguard and American Collection Systems is only good for the 5 business day settlement window. I can\'t extend beyond that.',
+                'If you\'re proceeding, call your bank to retract and email <strong>' + SUPPORT_EMAIL + '</strong> with the confirmation. If you\'re not, the offer withdraws automatically at the end of the window and enforcement resumes.'
+            ],
+            options: [
+                { label: 'Okay, I\'ll retract and accept now',       next: 'settlement-accept' },
+                { label: 'Close chat',                                next: 'start' }
+            ]
+        },
+
+        'settlement-declined': {
+            type: 'settlement',
+            agent: [
+                'Understood. You\'ve declined the settlement offer. This decision is being documented in your file — including the fact that a good-faith, reduced-amount resolution was extended and rejected. That record will be used by Vanguard Retail Law in any subsequent arbitration proceedings.',
+                'Effective immediately: the settlement window is closed, and the full enforcement process is proceeding. Vanguard Retail Law resumes the breach of contract proceedings under §15.3(c). Your account is active in collections with American Collection Systems Incorporated under §15.3(b). Credit bureau reporting is on the timeline outlined in your Final Notice under §15.3(e).'
+            ],
+            deterrent: true,
+            loom: true,
+            options: [
+                { label: 'I\'ve changed my mind — I\'ll accept the settlement', next: 'settlement-terms' },
+                { label: 'Close chat',                                           next: 'start' }
+            ]
+        }
+    };
+
+    // ──────────────────────────────────────────────────────────
+    // State + DOM
+    // ──────────────────────────────────────────────────────────
+    const messagesEl = document.getElementById('messages');
+    const optionsEl  = document.getElementById('options');
+
+    let currentNode = 'start';
+    let busy = false;
+
+    // ──────────────────────────────────────────────────────────
+    // Helpers
+    // ──────────────────────────────────────────────────────────
+    function scrollToBottom() {
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function showTyping() {
+        const row = document.createElement('div');
+        row.className = 'typing-row';
+        row.id = 'typing';
+        row.innerHTML = '<div class="msg-avatar">C</div>' +
+                        '<div class="typing-bubble">' +
+                        '<span class="typing-dot"></span>' +
+                        '<span class="typing-dot"></span>' +
+                        '<span class="typing-dot"></span>' +
+                        '</div>';
+        messagesEl.appendChild(row);
+        scrollToBottom();
+    }
+
+    function hideTyping() {
+        const t = document.getElementById('typing');
+        if (t) t.remove();
+    }
+
+    function addAgentMessage(html) {
+        const row = document.createElement('div');
+        row.className = 'msg-row agent';
+        row.innerHTML = '<div class="msg-avatar">C</div>' +
+                        '<div class="msg-bubble"><p>' + html + '</p></div>';
+        messagesEl.appendChild(row);
+        scrollToBottom();
+    }
+
+    function addUserMessage(text) {
+        const row = document.createElement('div');
+        row.className = 'msg-row user';
+        row.innerHTML = '<div class="msg-bubble">' + escapeHtml(text) + '</div>';
+        messagesEl.appendChild(row);
+        scrollToBottom();
+    }
+
+    function addClauseCard(clause) {
+        const card = document.createElement('div');
+        card.className = 'msg-row agent';
+        card.innerHTML = '<div class="msg-avatar" style="visibility:hidden"></div>' +
+                         '<div style="flex:1">' +
+                         '<div class="clause-card">' +
+                         '<div class="clause-label">' + escapeHtml(clause.label) + '</div>' +
+                         '<div class="clause-text">' + escapeHtml(clause.text) + '</div>' +
+                         '</div></div>';
+        messagesEl.appendChild(card);
+        scrollToBottom();
+    }
+
+    function addDeterrentWall() {
+        const row = document.createElement('div');
+        row.className = 'msg-row agent';
+        let listItems = DETERRENT_WALL.items.map(function (i) { return '<li>' + i + '</li>'; }).join('');
+        row.innerHTML = '<div class="msg-avatar" style="visibility:hidden"></div>' +
+                        '<div style="flex:1"><div class="deterrent-wall">' +
+                        '<div class="dw-title">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>' +
+                        DETERRENT_WALL.title +
+                        '</div>' +
+                        '<ul>' + listItems + '</ul>' +
+                        '<div class="dw-footer">' + DETERRENT_WALL.footer + '</div>' +
+                        '</div></div>';
+        messagesEl.appendChild(row);
+        scrollToBottom();
+    }
+
+    function addLoomEmbed() {
+        const row = document.createElement('div');
+        row.className = 'msg-row agent';
+        row.innerHTML = '<div class="msg-avatar" style="visibility:hidden"></div>' +
+                        '<div style="flex:1" class="loom-wrap">' +
+                        '<span class="loom-label">Watch: why we enforce the contract this way</span>' +
+                        '<div class="loom-embed">' +
+                        '<iframe src="' + LOOM_EMBED_URL + '" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>' +
+                        '</div>' +
+                        '</div>';
+        messagesEl.appendChild(row);
+        scrollToBottom();
+    }
+
+    function addTerminalCTA(cta) {
+        const row = document.createElement('div');
+        row.className = 'msg-row agent';
+        row.innerHTML = '<div class="msg-avatar" style="visibility:hidden"></div>' +
+                        '<div style="flex:1" class="terminal-cta">' +
+                        '<a href="' + cta.href + '" class="cta-btn">' +
+                        escapeHtml(cta.label) +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>' +
+                        '</a></div>';
+        messagesEl.appendChild(row);
+        scrollToBottom();
+    }
+
+    function clearOptions() {
+        optionsEl.innerHTML = '';
+    }
+
+    function setOptionsLabel(text) {
+        const label = document.createElement('div');
+        label.className = 'chat-options-label';
+        label.textContent = text;
+        optionsEl.appendChild(label);
+    }
+
+    function renderOptions(options, isTerminal) {
+        clearOptions();
+        if (isTerminal && (!options || options.length === 0)) {
+            // Terminal node with no options → offer restart only
+            setOptionsLabel('Conversation complete');
+            const restart = document.createElement('button');
+            restart.className = 'restart-pill';
+            restart.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Start a new conversation';
+            restart.onclick = function () { goTo('start'); };
+            optionsEl.appendChild(restart);
+            return;
+        }
+        setOptionsLabel(isTerminal ? 'What would you like to do next?' : 'Choose an option');
+        options.forEach(function (opt) {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            if (opt.variant) btn.dataset.variant = opt.variant;
+            btn.innerHTML = '<span>' + escapeHtml(opt.label) + '</span><span class="option-arrow">&rarr;</span>';
+            btn.onclick = function () {
+                if (busy) return;
+                addUserMessage(opt.label);
+                goTo(opt.next);
+            };
+            optionsEl.appendChild(btn);
+        });
+    }
+
+    function escapeHtml(s) {
+        return String(s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    // ──────────────────────────────────────────────────────────
+    // Flow controller
+    // ──────────────────────────────────────────────────────────
+    async function goTo(nodeId) {
+        const node = flow[nodeId];
+        if (!node) {
+            console.error('Missing flow node:', nodeId);
+            return;
+        }
+        currentNode = nodeId;
+        busy = true;
+        clearOptions();
+
+        // Play agent messages with typing indicator between each
+        const msgs = node.agent || [];
+        for (let i = 0; i < msgs.length; i++) {
+            showTyping();
+            await wait(typingDelay(msgs[i]));
+            hideTyping();
+            addAgentMessage(msgs[i]);
+            await wait(300);
+        }
+
+        // Clause callout
+        if (node.clause) {
+            await wait(200);
+            addClauseCard(node.clause);
+            await wait(300);
+        }
+
+        // Deterrent wall
+        if (node.deterrent) {
+            await wait(200);
+            addDeterrentWall();
+            await wait(300);
+        }
+
+        // Loom embed
+        if (node.loom) {
+            await wait(200);
+            addLoomEmbed();
+            await wait(300);
+        }
+
+        // Terminal CTA (eligible path)
+        if (node.cta) {
+            await wait(200);
+            addTerminalCTA(node.cta);
+            await wait(300);
+        }
+
+        // Render options
+        const isTerminal = !!(node.type && ['eligible', 'denied'].indexOf(node.type) >= 0 && !node.options);
+        renderOptions(node.options || (isTerminal ? [] : [{ label: 'Back to menu', next: 'start' }]), isTerminal);
+
+        busy = false;
+    }
+
+    function typingDelay(text) {
+        const base = Math.min(Math.max(text.replace(/<[^>]+>/g, '').length * 10, 450), 950);
+        return base;
+    }
+
+    function wait(ms) {
+        return new Promise(function (r) { setTimeout(r, ms); });
+    }
+
+    // ──────────────────────────────────────────────────────────
+    // Boot
+    // ──────────────────────────────────────────────────────────
+    goTo('start');
+
+})();
+</script>
+</body>
+</html>
