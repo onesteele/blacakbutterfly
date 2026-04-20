@@ -597,9 +597,9 @@
             <div class="agent-avatar">C</div>
             <div class="agent-meta">
                 <div class="agent-name">Caleb</div>
-                <div class="agent-role">Profit Insider Payments Team</div>
+                <div class="agent-role">Virtual Assistant &middot; Payments Team</div>
             </div>
-            <div class="agent-status">Online</div>
+            <div class="agent-status">Active</div>
         </div>
 
         <div class="chat-messages" id="messages"></div>
@@ -624,7 +624,7 @@
     const REFUND_FORM_URL = '/refreq/';
     const SUPPORT_EMAIL = 'info@profit-insiders.com';
     // Swap this to the real Loom share ID when ready
-    const LOOM_EMBED_URL = 'https://www.loom.com/embed/REPLACE_WITH_LOOM_ID';
+    const LOOM_EMBED_URL = 'https://www.loom.com/embed/5aa3b0bdbd3c4a56883b4fbb51eca8fc';
 
     // ──────────────────────────────────────────────────────────
     // Reusable content blocks
@@ -656,7 +656,8 @@
         // ─── Entry ─────────────────────────────────────────────
         'start': {
             agent: [
-                'Hey — this is Caleb on the Profit Insider Payments Team. I\'m here to help you get your account handled directly, without the back-and-forth.',
+                'Hey — I\'m Caleb, a virtual assistant for the Profit Insider Payments Team.',
+                'I walk through your situation using the exact rules in your Customer Agreement and Annex B and give you a clear, contractually-grounded answer — no long back-and-forth with a human rep.',
                 'What would you like to do today?'
             ],
             options: [
@@ -1439,35 +1440,35 @@
             await wait(typingDelay(msgs[i]));
             hideTyping();
             addAgentMessage(msgs[i]);
-            await wait(300);
+            await wait(550);
         }
 
         // Clause callout
         if (node.clause) {
-            await wait(200);
+            await wait(400);
             addClauseCard(node.clause);
-            await wait(300);
+            await wait(500);
         }
 
         // Deterrent wall
         if (node.deterrent) {
-            await wait(200);
+            await wait(400);
             addDeterrentWall();
-            await wait(300);
+            await wait(500);
         }
 
         // Loom embed
         if (node.loom) {
-            await wait(200);
+            await wait(400);
             addLoomEmbed();
-            await wait(300);
+            await wait(500);
         }
 
         // Terminal CTA (eligible path)
         if (node.cta) {
-            await wait(200);
+            await wait(400);
             addTerminalCTA(node.cta);
-            await wait(300);
+            await wait(400);
         }
 
         // Render options
@@ -1478,7 +1479,7 @@
     }
 
     function typingDelay(text) {
-        const base = Math.min(Math.max(text.replace(/<[^>]+>/g, '').length * 10, 450), 950);
+        const base = Math.min(Math.max(text.replace(/<[^>]+>/g, '').length * 16, 750), 1600);
         return base;
     }
 
