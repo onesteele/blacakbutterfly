@@ -638,7 +638,7 @@
     // Config
     // ──────────────────────────────────────────────────────────
     const REFUND_FORM_URL = '/refreq/';
-    const SUPPORT_EMAIL = 'info@profit-insiders.com';
+    const SUPPORT_EMAIL = 'clientsupport@profit-insiders.com';
     // Swap this to the real Loom share ID when ready
     const LOOM_EMBED_URL = 'https://www.loom.com/embed/5aa3b0bdbd3c4a56883b4fbb51eca8fc';
 
@@ -710,7 +710,7 @@
 
         'refund-eval-status': {
             agent: [
-                'The refund guarantee runs on a single <strong>90-day window</strong>, starting the day we confirmed your setup was done and the software was live on your brokerage account via TradePost.',
+                'The refund guarantee runs on a single <strong>90-day window</strong>, starting the day we confirmed your setup was done and the software was live on your brokerage account via TradeLux.',
                 'Where are you in that window right now?'
             ],
             options: [
@@ -755,7 +755,7 @@
 
         'refund-cond-uptime': {
             agent: [
-                '<strong>Uptime.</strong> Was the software running and connected to TradePost for at least <strong>95%</strong> of active trading hours (Sunday evening through Friday afternoon ET) during your 90 days?'
+                '<strong>Uptime.</strong> Was the software running and connected to TradeLux for at least <strong>95%</strong> of active trading hours (Sunday evening through Friday afternoon ET) during your 90 days?'
             ],
             options: [
                 { label: 'Yes, I kept it running ≥95% of the time',        next: 'refund-cond-conflict' },
@@ -800,7 +800,7 @@
 
         'refund-cond-records': {
             agent: [
-                '<strong>Documentation.</strong> To file a claim you need <strong>all</strong> of this: complete broker statements for the 90 days, software logs and config files, screenshots of your software and TradePost settings, and a log of any downtime or errors.',
+                '<strong>Documentation.</strong> To file a claim you need <strong>all</strong> of this: complete broker statements for the 90 days, software logs and config files, screenshots of your software and TradeLux settings, and a log of any downtime or errors.',
                 'Got all of that ready?'
             ],
             options: [
@@ -853,7 +853,7 @@
         'denied-not-started': {
             type: 'denied',
             agent: [
-                'Your 90 days haven\'t started yet. The clock only begins once onboarding is done, the software is connected to your brokerage via TradePost, signals are generating, and we\'ve confirmed setup by email.',
+                'Your 90 days haven\'t started yet. The clock only begins once onboarding is done, the software is connected to your brokerage via TradeLux, signals are generating, and we\'ve confirmed setup by email.',
                 'Until then, there\'s nothing to evaluate.',
                 'Best move: finish onboarding and get your 90 days running. If you need help, email ' + SUPPORT_EMAIL + ' and the tech team will sort you out.'
             ],
@@ -925,13 +925,13 @@
         'denied-cannot-verify-settings': {
             type: 'denied',
             agent: [
-                'Here\'s the issue. You\'re required to keep screenshots or exports of your software settings and TradePost config, and submit them with any refund claim.',
+                'Here\'s the issue. You\'re required to keep screenshots or exports of your software settings and TradeLux config, and submit them with any refund claim.',
                 'If you can\'t show what settings you ran, we can\'t verify anything — and unverifiable means ineligible. Proof is on the customer.',
                 'Before you think about disputing, here\'s what that triggers:'
             ],
             clause: {
                 label: 'Annex B §3.5 — Data and Record Retention',
-                text: 'You must maintain complete and accurate records of all trading activity during the Evaluation Period, including screenshots or exports of your Software settings and TradePost configuration.'
+                text: 'You must maintain complete and accurate records of all trading activity during the Evaluation Period, including screenshots or exports of your Software settings and TradeLux configuration.'
             },
             deterrent: true,
             loom: true
@@ -940,13 +940,13 @@
         'denied-uptime': {
             type: 'denied',
             agent: [
-                'The guarantee requires the software to be running and connected to TradePost for at least <strong>95%</strong> of active trading hours across your full 90 days. Downtime from your own actions or equipment counts against that.',
+                'The guarantee requires the software to be running and connected to TradeLux for at least <strong>95%</strong> of active trading hours across your full 90 days. Downtime from your own actions or equipment counts against that.',
                 'If uptime was below 95%, the software didn\'t get a fair shot at profitability — which disqualifies the claim.',
-                'The only downtime we exclude is scheduled maintenance we announced in advance, or outages on your broker\'s or TradePost\'s end — not yours.'
+                'The only downtime we exclude is scheduled maintenance we announced in advance, or outages on your broker\'s or TradeLux\'s end — not yours.'
             ],
             clause: {
                 label: 'Annex B §3.2 — System Uptime',
-                text: 'The Software must be operational and connected to your brokerage account via TradePost for at least ninety-five percent (95%) of all active trading hours during the Evaluation Period. You are responsible for maintaining a stable internet connection, functional hardware, and any necessary subscriptions or services to ensure the Software remains operational.'
+                text: 'The Software must be operational and connected to your brokerage account via TradeLux for at least ninety-five percent (95%) of all active trading hours during the Evaluation Period. You are responsible for maintaining a stable internet connection, functional hardware, and any necessary subscriptions or services to ensure the Software remains operational.'
             },
             deterrent: true,
             loom: true
@@ -1024,7 +1024,7 @@
             type: 'denied',
             agent: [
                 'Fair enough. Don\'t submit until you have everything — a partial submission gets kicked back and eats into your 30-day window.',
-                'What you need: account info, Start and End dates, your Net P&amp;L calculation, full broker statements, software and TradePost config screenshots, a downtime/error log, and written read-only authorization for verification.',
+                'What you need: account info, Start and End dates, your Net P&amp;L calculation, full broker statements, software and TradeLux config screenshots, a downtime/error log, and written read-only authorization for verification.',
                 'Pull it together, then come back and restart this chat.'
             ]
         },
