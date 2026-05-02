@@ -873,17 +873,18 @@
                 var sess = signUpResult.data && signUpResult.data.session;
                 var newUser = signUpResult.data && signUpResult.data.user;
 
+                // If signUp didn't auto-sign-in, log in directly with the credentials.
+                // Requires "Confirm email" to be disabled in Supabase Auth settings.
                 if (!sess) {
-                    // Email confirmation required by Supabase project settings.
-                    // We can't proceed with photo/contract until they confirm.
-                    successEl.innerHTML = 'Account created. <strong>Please check your email</strong> ' +
-                        '(' + escapeHtml(email) + ') and click the confirmation link, then ' +
-                        '<a href="/auth/" style="color:var(--success);text-decoration:underline;">sign in</a> ' +
-                        'to finish your verification.';
-                    successEl.classList.add('show');
-                    btn.disabled = true;
-                    btn.textContent = 'Awaiting email confirmation';
-                    return;
+                    var signInResult = await window.supabaseClient.auth.signInWithPassword({
+                        email: email,
+                        password: password
+                    });
+                    if (signInResult.error || !signInResult.data || !signInResult.data.session) {
+                        showError('Could not sign you in automatically. Please contact support.');
+                        return;
+                    }
+                    newUser = signInResult.data.user;
                 }
 
                 currentUser = newUser;
