@@ -348,6 +348,81 @@
             width: 16px; height: 16px;
         }
 
+        .video-timer-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            width: 100%;
+            max-width: 800px;
+            margin: -16px auto 24px;
+            padding: 12px 18px;
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .video-timer-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        .video-timer-text svg {
+            width: 16px; height: 16px;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .video-timer-text.ready {
+            color: var(--success);
+        }
+
+        .video-timer-text.ready svg {
+            color: var(--success);
+        }
+
+        .video-skip-btn {
+            padding: 8px 18px;
+            background: transparent;
+            color: var(--text-muted);
+            font-family: 'Manrope', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: not-allowed;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .video-skip-btn:not(:disabled) {
+            background: rgba(240, 200, 50, 0.12);
+            color: var(--accent);
+            border-color: rgba(240, 200, 50, 0.4);
+            cursor: pointer;
+        }
+
+        .video-skip-btn:not(:disabled):hover {
+            background: rgba(240, 200, 50, 0.2);
+            border-color: var(--accent);
+        }
+
+        @media (max-width: 480px) {
+            .video-timer-row {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            .video-timer-text { justify-content: center; }
+            .video-skip-btn { width: 100%; }
+        }
+
         .quiz-section {
             background: rgba(20, 20, 20, 0.8);
             /* backdrop-filter removed for performance */
@@ -783,6 +858,14 @@
         var checkedItems = {};
         var totalSteps = 0;
         var videoTimers = {};
+        var skipCountdowns = {};
+
+        // How long users must wait before the Skip button activates, per lesson step.
+        // Step 3 is skippable immediately (content is optional).
+        function getSkipAfterSeconds(step) {
+            if (step === 3) return 0;
+            return 30;
+        }
 
         // SVG icons that cycle for lessons
         var lessonIcons = [
@@ -950,6 +1033,17 @@
 
                 var description = video.description || 'Watch this lesson and complete the checklist below to continue.';
 
+                var skipAfter = getSkipAfterSeconds(step);
+                var skipImmediate = skipAfter <= 0;
+                var bannerText = skipImmediate
+                    ? 'This lesson is optional — you can skip it at any time.'
+                    : 'Watch the video below — a Skip option will unlock after ' + skipAfter + ' seconds.';
+                var initialTimerLabel = skipImmediate
+                    ? 'Skip available — click Skip Video to continue'
+                    : 'Skip available in ' + Math.floor(skipAfter / 60) + ':' + (skipAfter % 60 < 10 ? '0' : '') + (skipAfter % 60);
+                var timerTextClass = skipImmediate ? 'video-timer-text ready' : 'video-timer-text';
+                var skipBtnDisabledAttr = skipImmediate ? '' : 'disabled';
+
                 // Video 2 blue button (configurable from admin settings)
                 var video2ButtonHtml = '';
                 if (step === 2 && trialConfig.video2_button_url) {
@@ -967,7 +1061,7 @@
                     '<p class="lesson-description">' + escapeHtml(description) + '</p>' +
                     '<div class="video-watch-banner">' +
                         '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' +
-                        'Watch the entire video — the next step will not unlock until it is complete.' +
+                        bannerText +
                     '</div>' +
                     '<div class="lesson-video">' +
                         '<div class="lesson-video-wrapper">' +
@@ -977,6 +1071,13 @@
                                 '<span>Video Complete!</span>' +
                             '</div>' +
                         '</div>' +
+                    '</div>' +
+                    '<div class="video-timer-row" id="course-timer-row-' + step + '">' +
+                        '<span class="' + timerTextClass + '" id="course-timer-text-' + step + '">' +
+                            '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>' +
+                            '<span id="course-timer-label-' + step + '">' + initialTimerLabel + '</span>' +
+                        '</span>' +
+                        '<button class="video-skip-btn" id="course-skip-' + step + '" type="button" ' + skipBtnDisabledAttr + ' onclick="skipCourseVideo(' + step + ')">Skip Video</button>' +
                     '</div>' +
                     video2ButtonHtml +
                     '<div class="quiz-section" id="course-quiz-' + step + '">' +
@@ -1059,6 +1160,8 @@
                     var quiz = document.getElementById('course-quiz-' + s);
                     if (badge) badge.classList.add('show');
                     if (quiz) quiz.classList.add('show');
+                    var timerRow = document.getElementById('course-timer-row-' + s);
+                    if (timerRow) timerRow.style.display = 'none';
                 }
 
                 if (checkedItems[s]) {
@@ -1087,21 +1190,33 @@
         }
 
         function startCourseVideoTimer(step) {
-            if (watchedVideos[step] || videoTimers[step]) return;
+            if (watchedVideos[step]) return;
 
-            var duration = getVideoDuration(step);
-            videoTimers[step] = setTimeout(function() {
-                watchedVideos[step] = true;
+            // Auto-unlock when the configured video duration elapses (existing behavior).
+            if (!videoTimers[step]) {
+                var duration = getVideoDuration(step);
+                videoTimers[step] = setTimeout(function() {
+                    markVideoWatched(step);
+                }, duration);
+            }
 
-                var badge = document.getElementById('course-badge-' + step);
-                if (badge) badge.classList.add('show');
-
-                var quiz = document.getElementById('course-quiz-' + step);
-                if (quiz) quiz.classList.add('show');
-
-                checkCourseStepCompletion(step);
-                saveProgress();
-            }, duration);
+            // Skip-button countdown. If skipAfter is 0, the button is already
+            // enabled at render time (see renderAllLessons), so nothing to do.
+            var skipAfter = getSkipAfterSeconds(step);
+            if (skipAfter > 0 && !skipCountdowns[step]) {
+                var remaining = skipAfter;
+                updateSkipCountdownUI(step, remaining);
+                skipCountdowns[step] = setInterval(function() {
+                    remaining--;
+                    if (remaining <= 0) {
+                        clearInterval(skipCountdowns[step]);
+                        delete skipCountdowns[step];
+                        enableSkipButton(step);
+                    } else {
+                        updateSkipCountdownUI(step, remaining);
+                    }
+                }, 1000);
+            }
         }
 
         function cancelCourseVideoTimer(step) {
@@ -1109,7 +1224,56 @@
                 clearTimeout(videoTimers[step]);
                 delete videoTimers[step];
             }
+            if (skipCountdowns[step]) {
+                clearInterval(skipCountdowns[step]);
+                delete skipCountdowns[step];
+            }
         }
+
+        function formatSkipTime(seconds) {
+            var m = Math.floor(seconds / 60);
+            var s = seconds % 60;
+            return m + ':' + (s < 10 ? '0' + s : s);
+        }
+
+        function updateSkipCountdownUI(step, remaining) {
+            var label = document.getElementById('course-timer-label-' + step);
+            if (label) label.textContent = 'Skip available in ' + formatSkipTime(remaining);
+        }
+
+        function enableSkipButton(step) {
+            var label = document.getElementById('course-timer-label-' + step);
+            var text = document.getElementById('course-timer-text-' + step);
+            var btn = document.getElementById('course-skip-' + step);
+            if (label) label.textContent = 'Skip available — click Skip Video to continue';
+            if (text) text.classList.add('ready');
+            if (btn) btn.disabled = false;
+        }
+
+        function markVideoWatched(step) {
+            if (watchedVideos[step]) return;
+            watchedVideos[step] = true;
+
+            var badge = document.getElementById('course-badge-' + step);
+            if (badge) badge.classList.add('show');
+
+            var quiz = document.getElementById('course-quiz-' + step);
+            if (quiz) quiz.classList.add('show');
+
+            var timerRow = document.getElementById('course-timer-row-' + step);
+            if (timerRow) timerRow.style.display = 'none';
+
+            cancelCourseVideoTimer(step);
+            checkCourseStepCompletion(step);
+            saveProgress();
+        }
+
+        window.skipCourseVideo = function(step) {
+            var btn = document.getElementById('course-skip-' + step);
+            if (btn && btn.disabled) return;
+            markVideoWatched(step);
+            showToast('Video skipped — complete the checklist to continue');
+        };
 
         function checkCourseStepCompletion(step) {
             var videoWatched = watchedVideos[step];
