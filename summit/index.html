@@ -288,7 +288,7 @@
         .pip {
             position: fixed;
             z-index: 9000;
-            width: 400px;
+            width: 500px;
             top: auto; left: auto;
             bottom: 20px; right: 20px;
             background: #000;
@@ -524,6 +524,25 @@
         // OPEN-ACCESS INIT (no gate; just reveal the page)
         // ============================================
         (function init() {
+            // Don't let the browser restore a previous scroll position.
+            try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) {}
+
+            // The embedded TradeLux iframe autofocuses a field, which makes the
+            // browser scroll down to it on load. Keep the page pinned to the top
+            // for the first moment — but release instantly if the user scrolls.
+            var pinUntil = Date.now() + 1500;
+            function releasePin() { pinUntil = 0; }
+            ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function(evt) {
+                window.addEventListener(evt, releasePin, { passive: true, once: true });
+            });
+            function pinTop() {
+                if (Date.now() > pinUntil) return;
+                window.scrollTo(0, 0);
+                requestAnimationFrame(pinTop);
+            }
+            window.scrollTo(0, 0);
+            pinTop();
+
             // Best-effort: keep the funnel working but never block rendering.
             try {
                 if (window.supabaseClient && window.supabaseClient.auth) {
