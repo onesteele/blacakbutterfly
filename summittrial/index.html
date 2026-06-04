@@ -1044,8 +1044,18 @@
         // ============================================
         // INIT AUTH - MAIN ENTRY POINT
         // ============================================
+        // Preview mode: append ?preview=1 to view the flow without a logged-in
+        // free_trial account. No data is saved; uses a demo video if the live
+        // config isn't readable while signed out. Production behavior is unchanged.
+        var isPreview = /[?&]preview=1\b/.test(window.location.search);
+
         (async function initAuth() {
             try {
+                if (isPreview) {
+                    await initPreview();
+                    return;
+                }
+
                 var sessionResult = await window.supabaseClient.auth.getSession();
                 var session = sessionResult.data.session;
 
@@ -1119,6 +1129,47 @@
                 showError('Something went wrong', 'An error occurred during initialization. Please try again.', '/auth/');
             }
         })();
+
+        // ============================================
+        // PREVIEW MODE (?preview=1) — no auth, no saving
+        // ============================================
+        async function initPreview() {
+            currentUser = null;
+
+            // Try the live config; fall back to a demo starter video if it
+            // can't be read while signed out.
+            try {
+                trialConfig = await window.getFreeTrialConfig();
+            } catch (e) {
+                trialConfig = null;
+            }
+
+            if (!trialConfig || !trialConfig.videos || trialConfig.videos.length === 0) {
+                trialConfig = {
+                    videos: [{
+                        title: 'Welcome to Your Summit Trial',
+                        description: 'Watch this short starter video, then link your 100K Summit demo account below.',
+                        url: 'https://player.vimeo.com/video/76979871',
+                        duration: 10,
+                        checkboxes: ['I watched the starter video and I\'m ready to link my Summit demo account']
+                    }]
+                };
+            }
+
+            // Summit trial: a single starter video, then the TradeLux setup iframe.
+            trialConfig.videos = trialConfig.videos.slice(0, 1);
+            tradelinkUrl = trialConfig.tradelink_url || '';
+            totalSteps = trialConfig.videos.length;
+
+            document.getElementById('course-flow').style.display = 'block';
+            document.getElementById('course-total-lessons').textContent = totalSteps;
+
+            // Render lessons without loading/saving server progress.
+            renderAllLessons();
+            showCurrentLesson();
+
+            document.getElementById('loadingScreen').classList.add('hidden');
+        }
 
         // ============================================
         // ERROR DISPLAY
@@ -1483,9 +1534,11 @@
         }
 
         async function handleAllComplete() {
-            // Mark trial onboarding as complete
+            // Mark trial onboarding as complete (skip in preview mode)
             try {
-                if (window.markTrialOnboardingComplete) {
+                if (!currentUser) {
+                    // preview mode — nothing to persist
+                } else if (window.markTrialOnboardingComplete) {
                     await window.markTrialOnboardingComplete(currentUser.id);
                 } else {
                     await window.supabaseClient
