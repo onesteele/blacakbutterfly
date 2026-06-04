@@ -476,7 +476,7 @@
 
         <!-- DONE -->
         <div class="center" style="margin-top:40px;">
-            <button class="btn-primary" type="button" onclick="finishSummitSetup()">I'm Done — Continue to Dashboard</button>
+            <button class="btn-primary" type="button" onclick="finishSummitSetup(this)">I'm Done — Continue to Dashboard</button>
             <p class="hint">Finished all 3 steps? Head to your dashboard.</p>
         </div>
     </div>
@@ -754,13 +754,21 @@
         // ============================================
         // COMPLETION
         // ============================================
-        window.finishSummitSetup = function() {
-            // Best-effort: mark trial onboarding complete, then go to dashboard.
+        window.finishSummitSetup = async function(btn) {
+            // The dashboard ("/") sends free_trial users with onboarding_completed=false
+            // to /trial/ (the old trial videos). So we MUST mark onboarding complete and
+            // WAIT for it to persist before navigating, or they'd land on the wrong page.
+            if (btn) { btn.disabled = true; btn.textContent = 'Taking you to your dashboard…'; }
             try {
-                if (window._summitUserId && window.markTrialOnboardingComplete) {
-                    window.markTrialOnboardingComplete(window._summitUserId);
+                var uid = window._summitUserId;
+                if (!uid && window.supabaseClient && window.supabaseClient.auth) {
+                    var res = await window.supabaseClient.auth.getSession();
+                    uid = res && res.data && res.data.session && res.data.session.user.id;
                 }
-            } catch (e) { /* non-fatal */ }
+                if (uid && window.markTrialOnboardingComplete) {
+                    await window.markTrialOnboardingComplete(uid);
+                }
+            } catch (e) { console.warn('Could not mark onboarding complete:', e); }
             window.location.href = '/';
         };
 
