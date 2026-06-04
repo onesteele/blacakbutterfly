@@ -2021,18 +2021,25 @@
         var safeName = subfolder + '_' + Date.now() + '.' + ext;
         var path = refNumber + '/' + safeName;
 
-        var { data, error } = await sbClient.storage
-            .from('refund-files')
-            .upload(path, file, {
-                contentType: file.type || 'application/octet-stream',
-                upsert: false
-            });
+        // Never let a storage failure (bad mime, RLS, network) throw out and abort
+        // the whole submission — a dropped file is logged and skipped instead.
+        try {
+            var { data, error } = await sbClient.storage
+                .from('refund-files')
+                .upload(path, file, {
+                    contentType: file.type || 'application/octet-stream',
+                    upsert: false
+                });
 
-        if (error) {
-            console.error('Upload error (' + subfolder + '):', error);
+            if (error) {
+                console.error('Upload error (' + subfolder + '):', error);
+                return null;
+            }
+            return path;
+        } catch (e) {
+            console.error('Upload threw (' + subfolder + '):', e);
             return null;
         }
-        return path;
     }
 
     // ── Upload multiple files ──
@@ -2054,6 +2061,12 @@
         var ref = 'RR-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2,6).toUpperCase();
 
         try {
+            // Guard: if the Supabase library didn't load (CDN blocked/slow, offline),
+            // sbClient is undefined and every call below would throw a cryptic error.
+            if (typeof sbClient === 'undefined' || !sbClient || !window.supabase) {
+                throw new Error('Connection to our servers could not be established (the secure client failed to load). Please refresh the page and try again, or check your internet connection.');
+            }
+
             // 1. Upload all files
             btn.innerHTML = 'Uploading files...';
             var hasId = document.getElementById('f-id').files.length > 0;
@@ -2134,7 +2147,13 @@
             }, 240);
 
         } catch (err) {
-            console.error('Submission error:', err);
+            // Surface the real cause so failures are diagnosable instead of generic.
+            var detail = (err && (err.message || err.error_description || err.error)) || 'Unknown error';
+            if (err && err.code) detail += ' (code ' + err.code + ')';
+            if (err && err.details) detail += ' — ' + err.details;
+            if (err && err.hint) detail += ' [hint: ' + err.hint + ']';
+            console.error('Submission error:', err, '| detail:', detail);
+
             btn.disabled = false;
             btn.innerHTML = 'Submit Refund Request <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
 
@@ -2143,13 +2162,21 @@
             errDiv.className = 'warning-box';
             errDiv.style.marginTop = '12px';
             errDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>'
-                + '<p>There was an error submitting your request. Please try again. If this issue persists, contact <strong>clientsupport@profit-insiders.com</strong>.</p>';
+                + '<p>There was an error submitting your request. Please try again. If this issue persists, contact <strong>clientsupport@profit-insiders.com</strong>.</p>'
+                + '<p style="margin-top:8px;font-size:12px;opacity:0.8">Details: ' + escapeHtmlRR(detail) + '</p>';
 
             var existing = document.querySelector('#step-13 .submit-error');
             if (existing) existing.remove();
             errDiv.classList.add('submit-error');
             btn.parentElement.after(errDiv);
         }
+    }
+
+    // Small HTML escaper for surfaced error text.
+    function escapeHtmlRR(s) {
+        return String(s).replace(/[&<>"']/g, function(c) {
+            return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+        });
     }
 </script>
 </body>
