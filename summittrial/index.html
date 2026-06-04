@@ -1044,9 +1044,10 @@
         // ============================================
         // INIT AUTH - MAIN ENTRY POINT
         // ============================================
-        // Preview mode: append ?preview=1 to view the flow without a logged-in
-        // free_trial account. No data is saved; uses a demo video if the live
-        // config isn't readable while signed out. Production behavior is unchanged.
+        // Open access: /summittrial/ always renders. A logged-in free_trial user
+        // gets the full experience with saved progress; everyone else (logged out,
+        // or any other status) sees the flow read-only with nothing persisted.
+        // ?preview=1 forces the read-only path even for a trial user.
         var isPreview = /[?&]preview=1\b/.test(window.location.search);
 
         (async function initAuth() {
@@ -1056,47 +1057,30 @@
                     return;
                 }
 
-                var sessionResult = await window.supabaseClient.auth.getSession();
-                var session = sessionResult.data.session;
-
-                if (!session) {
-                    // Not logged in - redirect to auth
-                    window.location.href = '/auth/';
-                    return;
-                }
-
-                currentUser = session.user;
-                var profile = await window.getUserProfile(currentUser.id);
-                if (!profile) {
-                    window.location.href = '/auth/';
-                    return;
-                }
-
-                currentProfile = profile;
-                var status = (profile.status || '').toLowerCase();
-
-                // If trial onboarding already completed, go straight to dashboard
-                if (status === 'free_trial' && profile.onboarding_completed) {
-                    window.location.href = '/';
-                    return;
-                }
-
-                // Auth guard: only free_trial users allowed
-                if (status !== 'free_trial') {
-                    document.getElementById('loadingScreen').classList.add('hidden');
-
-                    if (['member', 'verified_member', 'active'].includes(status)) {
-                        // Already a member, go to dashboard
-                        showError('Already a Member', 'Your account is already active. Redirecting to the dashboard.', '/');
-                    } else if (status === 'free_trial_expired') {
-                        showError('Trial Expired', 'Your free trial has ended. Visit your dashboard to upgrade to a full membership.', '/');
-                    } else if (status === 'pending_verification' || status === 'onboarding') {
-                        showError('Standard Onboarding Required', 'Your account requires the standard onboarding flow.', '/onboarding/');
-                    } else {
-                        showError('Access Denied', 'This page is only available for free trial users.', '/');
+                var session = null;
+                var profile = null;
+                try {
+                    var sessionResult = await window.supabaseClient.auth.getSession();
+                    session = sessionResult.data.session;
+                    if (session) {
+                        profile = await window.getUserProfile(session.user.id);
                     }
+                } catch (sessErr) {
+                    console.warn('Session lookup failed (showing read-only):', sessErr);
+                }
+
+                var status = ((profile && profile.status) || '').toLowerCase();
+                var isTrialUser = !!(session && profile && status === 'free_trial');
+
+                // Anyone who isn't a logged-in free_trial user views read-only.
+                if (!isTrialUser) {
+                    await initPreview();
                     return;
                 }
+
+                // Real free_trial user — full experience with saved progress.
+                currentUser = session.user;
+                currentProfile = profile;
 
                 // Load the trial config from admin_settings
                 try {
@@ -1125,8 +1109,13 @@
                 document.getElementById('loadingScreen').classList.add('hidden');
             } catch (error) {
                 console.error('Error during initialization:', error);
-                document.getElementById('loadingScreen').classList.add('hidden');
-                showError('Something went wrong', 'An error occurred during initialization. Please try again.', '/auth/');
+                // Fall back to the read-only view rather than bouncing to /auth/.
+                try {
+                    await initPreview();
+                } catch (e) {
+                    document.getElementById('loadingScreen').classList.add('hidden');
+                    showError('Something went wrong', 'An error occurred during initialization. Please try again.', '/');
+                }
             }
         })();
 
