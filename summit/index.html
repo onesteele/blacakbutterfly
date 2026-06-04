@@ -544,11 +544,20 @@
             pinTop();
 
             // Best-effort: keep the funnel working but never block rendering.
+            // Reaching this page means signup is done, so mark trial onboarding
+            // complete now. That way the dashboard ("/") shows them the client
+            // dashboard instead of bouncing them to /trial/ — regardless of how
+            // they leave this page.
             try {
                 if (window.supabaseClient && window.supabaseClient.auth) {
                     window.supabaseClient.auth.getSession().then(function(res) {
                         var session = res && res.data && res.data.session;
-                        if (session) window._summitUserId = session.user.id;
+                        if (session) {
+                            window._summitUserId = session.user.id;
+                            if (window.markTrialOnboardingComplete) {
+                                window.markTrialOnboardingComplete(session.user.id).catch(function(){});
+                            }
+                        }
                     }).catch(function(){});
                 }
             } catch (e) { /* non-fatal */ }
