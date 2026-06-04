@@ -221,6 +221,66 @@
             display: block; width: 100%; max-width: 100%; height: 760px;
             border: 0; border-radius: 14px; overflow: hidden; background: #0f0f0f;
         }
+        /* iframe card inside a roadmap step is left-aligned, not centered */
+        .road-card .summit-iframe-card { margin: 16px 0 4px; }
+
+        /* ============================================ */
+        /* 3-STEP ROADMAP / TIMELINE                    */
+        /* ============================================ */
+        .roadmap {
+            max-width: 880px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .road-step {
+            position: relative;
+            display: grid;
+            grid-template-columns: 56px 1fr;
+            gap: 20px;
+            padding-bottom: 28px;
+        }
+        /* connecting vertical line between markers */
+        .road-step:not(:last-child)::before {
+            content: '';
+            position: absolute;
+            left: 27px; top: 56px; bottom: -4px;
+            width: 2px;
+            background: linear-gradient(var(--accent) 0%, var(--border) 100%);
+            opacity: 0.5;
+        }
+        .road-marker {
+            width: 56px; height: 56px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 24px; font-weight: 800;
+            color: var(--bg-dark);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            box-shadow: 0 0 24px var(--accent-dim);
+            flex-shrink: 0;
+            z-index: 1;
+        }
+        .road-card {
+            background: rgba(20, 20, 20, 0.85);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px 26px;
+            text-align: left;
+        }
+        .road-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 20px; font-weight: 800; margin-bottom: 8px; color: var(--text-primary);
+        }
+        .road-body { color: var(--text-secondary); font-size: 15px; margin-bottom: 18px; line-height: 1.6; }
+        .road-note { font-size: 12.5px; color: var(--text-muted); margin-top: 12px; }
+        .road-card .btn-primary { text-decoration: none; }
+
+        @media (max-width: 600px) {
+            .road-step { grid-template-columns: 44px 1fr; gap: 14px; }
+            .road-marker { width: 44px; height: 44px; font-size: 19px; }
+            .road-step:not(:last-child)::before { left: 21px; top: 44px; }
+            .road-card { padding: 18px 18px; }
+        }
 
         /* ============================================ */
         /* FLOATING PICTURE-IN-PICTURE PLAYER           */
@@ -268,8 +328,10 @@
         .pip-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
         .pip-btn svg { width: 16px; height: 16px; }
 
-        .pip-body { position: relative; width: 100%; background: #000; }
-        .pip-body wistia-player { display: block; width: 100%; }
+        /* Fixed 16:9 height so the window is fully sized the instant it appears
+           (prevents it from positioning off-screen before the video lays out). */
+        .pip-body { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+        .pip-body wistia-player { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
         .pip-resize {
             position: absolute; right: 0; bottom: 0;
@@ -346,13 +408,11 @@
     </div>
 
     <div class="stage">
-        <!-- ============================================ -->
-        <!-- SCREEN 1: WATCH THE STARTER VIDEO            -->
-        <!-- ============================================ -->
-        <div class="screen active center" id="screen-intro">
-            <span class="eyebrow">Summit Trial · Step 1 of 1</span>
-            <h1 class="screen-title">Watch This, Then Link Your 100K Summit Demo</h1>
-            <p class="screen-subtitle">Give this a quick watch. When you're ready, pop the video out and it'll follow you to the corner of your screen while you set up your $100,000 Summit demo account — watch and work at the same time.</p>
+        <!-- HERO + VIDEO -->
+        <div class="center" style="margin-bottom:40px;">
+            <span class="eyebrow">Summit Trial · No Payment Required</span>
+            <h1 class="screen-title">Set Up Your 100K Summit Demo Account</h1>
+            <p class="screen-subtitle">Watch the short video below — it walks you through every step. You can shrink the video, drag it, and pin it to any corner so it stays with you while you follow the 3 steps underneath it.</p>
 
             <div class="video-shell" id="videoShell">
                 <div id="videoMount">
@@ -362,38 +422,62 @@
 
             <button class="btn-primary" type="button" onclick="enterPip()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2h-5"/><rect x="3" y="12" width="9" height="7" rx="1.5"/></svg>
-                Pop Out Video &amp; Set Up My Account
+                Shrink Video &amp; Keep It On Screen
             </button>
-            <p class="hint">The video keeps playing in a floating window you can drag, resize, and snap to any corner.</p>
+            <p class="hint">The video keeps playing in a floating window you can drag, resize, and snap to any corner while you do the steps below.</p>
         </div>
 
-        <!-- ============================================ -->
-        <!-- SCREEN 2: ACCOUNT SETUP (IFRAME + FLOATING)  -->
-        <!-- ============================================ -->
-        <div class="screen center" id="screen-setup">
-            <div class="setup-checkmark">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-            </div>
-            <span class="eyebrow">Final Step · No Payment Required</span>
-            <h1 class="screen-title">Link Your 100K Summit Demo Account</h1>
-            <p class="screen-subtitle">Follow along with the video (floating in the corner) and complete the setup below to connect your $100,000 Summit demo account to the algorithm — it all happens right here.</p>
-
-            <div class="summit-iframe-card">
-                <iframe
-                    src="https://tradelux.ai/embed/lead-trial/8A97B0EA"
-                    title="TradeLux Copy Trade Trial Signup"
-                    loading="lazy"
-                    referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <!-- 3-STEP ROADMAP -->
+        <div class="roadmap">
+            <!-- STEP 1 -->
+            <div class="road-step">
+                <div class="road-marker">1</div>
+                <div class="road-card">
+                    <h3 class="road-title">Create your Summit account</h3>
+                    <p class="road-body">First, you need a Summit account. The video shows you exactly how to sign up — just click the button, create your account, then come right back to this page.</p>
+                    <a class="btn-primary" href="https://dashboard.summit-securities.com/signin?tab=signup" target="_blank" rel="noopener noreferrer">
+                        Create My Summit Account
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5h5v5M19 5l-9 9M10 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-4"/></svg>
+                    </a>
+                    <p class="road-note">Opens in a new tab. Keep this page open — you'll come back here for Step 2.</p>
+                </div>
             </div>
 
-            <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-                <button class="btn-ghost" type="button" onclick="exitPip()">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V6a2 2 0 012-2h2M16 4h2a2 2 0 012 2v2M20 16v2a2 2 0 01-2 2h-2M8 20H6a2 2 0 01-2-2v-2"/></svg>
-                    Back to Full Video
-                </button>
-                <button class="btn-primary" type="button" onclick="finishSummitSetup()">Continue to Dashboard</button>
+            <!-- STEP 2 -->
+            <div class="road-step">
+                <div class="road-marker">2</div>
+                <div class="road-card">
+                    <h3 class="road-title">Link your Summit account to TradeLux</h3>
+                    <p class="road-body">Now connect the Summit account you just made to the algorithm. Do it right here — no need to leave this page. Just fill out the secure tool below and follow the video.</p>
+                    <div class="summit-iframe-card">
+                        <iframe
+                            src="https://tradelux.ai/embed/lead-trial/8A97B0EA"
+                            title="TradeLux Copy Trade Trial Signup"
+                            loading="lazy"
+                            referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                    </div>
+                </div>
             </div>
-            <p class="hint">Once your Summit demo account is linked, continue to your dashboard.</p>
+
+            <!-- STEP 3 -->
+            <div class="road-step">
+                <div class="road-marker">3</div>
+                <div class="road-card">
+                    <h3 class="road-title">Open TradeLux &amp; bookmark it</h3>
+                    <p class="road-body">Last step: open TradeLux in a new window and bookmark it (Ctrl+D / Cmd+D). That's your home base — you'll use it to check on your account anytime in the future.</p>
+                    <a class="btn-primary" href="https://tradelux.ai/" target="_blank" rel="noopener noreferrer">
+                        Open TradeLux &amp; Bookmark It
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5h5v5M19 5l-9 9M10 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-4"/></svg>
+                    </a>
+                    <p class="road-note">Opens in a new tab. Bookmark it so you can always find your way back.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- DONE -->
+        <div class="center" style="margin-top:40px;">
+            <button class="btn-primary" type="button" onclick="finishSummitSetup()">I'm Done — Continue to Dashboard</button>
+            <p class="hint">Finished all 3 steps? Head to your dashboard.</p>
         </div>
     </div>
 
@@ -460,15 +544,8 @@
         };
 
         // ============================================
-        // SCREEN ROUTING
+        // UI HELPERS
         // ============================================
-        function showScreen(name) {
-            ['intro', 'setup'].forEach(function(s) {
-                document.getElementById('screen-' + s).classList.remove('active');
-            });
-            document.getElementById('screen-' + name).classList.add('active');
-        }
-
         function showToast(msg) {
             var t = document.getElementById('toast');
             document.getElementById('toast-message').textContent = msg;
@@ -515,13 +592,15 @@
             // but kept in the `videoMount` variable so exitPip can restore it).
             videoShell.classList.add('empty');
             videoShell.innerHTML = '<span class="reattach-hint"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>Video is floating — drag it anywhere or snap it to a corner.</span>';
-            showScreen('setup');
             snapToCorner(currentCorner, false);
+            // Re-snap after layout settles so it lands fully visible in the corner.
+            requestAnimationFrame(function() { snapToCorner(currentCorner, false); });
+            setTimeout(function() { snapToCorner(currentCorner, false); }, 120);
             tryPlay();
             showToast('Drag, resize, or snap the video to any corner.');
         }
 
-        // Return the video to the big inline player and go back to the intro screen.
+        // Return the video to the big inline player.
         function exitPip() {
             var player = document.getElementById('wistiaPlayer');
             // Restore the inline mount (it was replaced with a hint while floating).
@@ -535,7 +614,6 @@
             }
             pip.classList.remove('active');
             document.getElementById('pipReopen').classList.remove('active');
-            showScreen('intro');
         }
 
         // Close the floating window but stay on the setup screen; offer a reopen pill.
