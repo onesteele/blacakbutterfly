@@ -379,6 +379,70 @@
             }
             .pip-resize { display: none; }
         }
+
+        /* ============================================ */
+        /* "STOP" MANDATORY VIDEO GATE                  */
+        /* (reuses the same bg-animation + dot-pattern  */
+        /*  already fixed on <body>, so the background  */
+        /*  is identical to the setup screen)           */
+        /* ============================================ */
+        .stop-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9800;
+            display: none;
+            overflow-y: auto;
+            background: rgba(10, 10, 10, 0.92);
+            -webkit-backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px);
+        }
+        .stop-overlay.active { display: block; animation: vScreenFadeIn 0.45s ease-out; }
+        .stop-inner {
+            position: relative;
+            z-index: 2;
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 64px 24px 96px;
+            text-align: center;
+        }
+        .stop-eyebrow {
+            display: inline-block;
+            font-size: 11px; font-weight: 700; letter-spacing: 2px;
+            color: var(--error); text-transform: uppercase;
+            background: rgba(239, 68, 68, 0.12); padding: 6px 14px; border-radius: 100px;
+            margin-bottom: 18px; border: 1px solid rgba(239, 68, 68, 0.35);
+        }
+        .stop-title {
+            font-family: 'Gilroy ExtraBold', 'Manrope', sans-serif;
+            font-size: 64px; font-weight: 800; line-height: 1; letter-spacing: 0.02em;
+            margin-bottom: 14px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .stop-lead { font-size: 22px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+        .stop-sub { font-size: 14.5px; color: var(--text-secondary); max-width: 600px; margin: 0 auto 30px; line-height: 1.6; }
+
+        /* Placeholder shown until the real Wistia embed is dropped in */
+        .stop-video-placeholder {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 12px;
+            background: repeating-linear-gradient(45deg, #0f0f0f, #0f0f0f 12px, #141414 12px, #141414 24px);
+            color: var(--text-muted); font-size: 14px; text-align: center; padding: 16px;
+        }
+        .stop-video-placeholder svg { width: 40px; height: 40px; color: var(--accent); opacity: 0.7; }
+        .stop-video-placeholder small { font-size: 12px; color: var(--text-muted); }
+
+        .stop-continue:disabled { opacity: 0.5; cursor: not-allowed; }
+        .stop-continue:disabled:hover { transform: none; box-shadow: none; }
+        .stop-hint { font-size: 13px; color: var(--text-muted); margin-top: 14px; }
+
+        @media (max-width: 768px) {
+            .stop-title { font-size: 44px; }
+            .stop-lead { font-size: 18px; }
+            .stop-inner { padding: 48px 20px 80px; }
+        }
     </style>
 </head>
 <body>
@@ -478,6 +542,38 @@
         <div class="center" style="margin-top:40px;">
             <button class="btn-primary" type="button" onclick="finishSummitSetup(this)">I'm Done — Continue to Dashboard</button>
             <p class="hint">Finished all 3 steps? Head to your dashboard.</p>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- "STOP" MANDATORY VIDEO GATE                  -->
+    <!-- Shown after "I'm Done — Continue to Dashboard" -->
+    <!-- ============================================ -->
+    <div class="stop-overlay" id="stopOverlay">
+        <div class="stop-inner">
+            <span class="stop-eyebrow">One Last Thing</span>
+            <h1 class="stop-title">STOP!</h1>
+            <p class="stop-lead">Please watch this important video.</p>
+            <p class="stop-sub">This is how you can actively track and view your live results on TradeLux to verify your daily profits from the algorithm.</p>
+
+            <div class="video-shell" id="stopVideoShell">
+                <!-- ▼▼▼ REPLACE THIS PLACEHOLDER WITH YOUR REAL WISTIA EMBED ▼▼▼
+                     1) In <head>, add a loader next to the existing embed script:
+                          <script src="https://fast.wistia.com/embed/YOUR_MEDIA_ID.js" async type="module"></script>
+                     2) Replace the .stop-video-placeholder div below with:
+                          <wistia-player media-id="YOUR_MEDIA_ID" aspect="1.7777777777777777"></wistia-player>
+                     The 45-second Continue unlock is time-based, so it works with any video. -->
+                <div class="stop-video-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                    <span>Wistia video embeds here<br><small>Replace PLACEHOLDER_MEDIA_ID — see comment in source (45s)</small></span>
+                </div>
+                <!-- ▲▲▲ END PLACEHOLDER ▲▲▲ -->
+            </div>
+
+            <button class="btn-primary stop-continue" id="stopContinueBtn" type="button" disabled onclick="continueToDashboard(this)">
+                <span id="stopContinueLabel">Please wait… 45s</span>
+            </button>
+            <p class="stop-hint" id="stopContinueHint">The Continue button unlocks once the 45-second video is finished.</p>
         </div>
     </div>
 
@@ -763,11 +859,48 @@
         // ============================================
         // COMPLETION
         // ============================================
-        window.finishSummitSetup = async function(btn) {
-            // The dashboard ("/") sends free_trial users with onboarding_completed=false
-            // to /trial/ (the old trial videos). So we MUST mark onboarding complete and
-            // WAIT for it to persist before navigating, or they'd land on the wrong page.
-            if (btn) { btn.disabled = true; btn.textContent = 'Taking you to your dashboard…'; }
+        // "I'm Done" no longer jumps straight to the dashboard — it first reveals
+        // the mandatory "STOP" video gate. The real navigation happens in
+        // continueToDashboard() once the 45-second timer unlocks the button.
+        window.finishSummitSetup = function(btn) {
+            var overlay = document.getElementById('stopOverlay');
+            overlay.classList.add('active');
+            overlay.scrollTop = 0;
+            try { window.scrollTo(0, 0); } catch (e) {}
+            startStopUnlockTimer();
+        };
+
+        // 45-second countdown that unlocks the Continue button. Starts the moment
+        // the STOP screen is revealed (time-based, independent of the embed).
+        var stopTimerStarted = false;
+        function startStopUnlockTimer() {
+            if (stopTimerStarted) return;
+            stopTimerStarted = true;
+            var remaining = 45;
+            var btn = document.getElementById('stopContinueBtn');
+            var label = document.getElementById('stopContinueLabel');
+            var hint = document.getElementById('stopContinueHint');
+            label.textContent = 'Please wait… ' + remaining + 's';
+            var iv = setInterval(function() {
+                remaining -= 1;
+                if (remaining <= 0) {
+                    clearInterval(iv);
+                    btn.disabled = false;
+                    label.textContent = 'Continue to Dashboard';
+                    hint.textContent = "Thanks for watching — you're all set.";
+                } else {
+                    label.textContent = 'Please wait… ' + remaining + 's';
+                }
+            }, 1000);
+        }
+
+        // The dashboard ("/") sends free_trial users with onboarding_completed=false
+        // to /trial/ (the old trial videos). So we MUST mark onboarding complete and
+        // WAIT for it to persist before navigating, or they'd land on the wrong page.
+        window.continueToDashboard = async function(btn) {
+            if (btn && btn.disabled) return;
+            if (btn) btn.disabled = true;
+            document.getElementById('stopContinueLabel').textContent = 'Taking you to your dashboard…';
             try {
                 var uid = window._summitUserId;
                 if (!uid && window.supabaseClient && window.supabaseClient.auth) {
