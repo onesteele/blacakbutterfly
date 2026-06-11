@@ -1512,14 +1512,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                 </div>
-                <h2 class="booking-title">Book Your Setup Call</h2>
-                <p class="booking-subtitle">You've completed all lessons! Book your setup call now.</p>
-                <a href="/booking/" class="booking-btn" id="booking-btn" target="_blank">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    Book Your Setup Call Now
-                </a>
+                <h2 class="booking-title">You're All Set!</h2>
+                <p class="booking-subtitle">You've completed all lessons. Head to your member portal to get started.</p>
 
                 <div class="portal-continue" id="portal-continue">
                     <a href="/" class="portal-continue-btn">
@@ -2600,7 +2594,7 @@
 
             if (videoWatched && checkedCount >= required) {
                 btn.disabled = false;
-                btn.textContent = step < totalSteps ? 'Complete & Continue' : 'Complete & Unlock Your Booking';
+                btn.textContent = step < totalSteps ? 'Complete & Continue' : 'Complete & Finish';
                 hint.style.display = 'none';
             } else {
                 btn.disabled = true;

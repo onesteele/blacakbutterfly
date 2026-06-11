@@ -11,6 +11,8 @@
     <!-- Wistia player -->
     <script src="https://fast.wistia.com/player.js" async></script>
     <script src="https://fast.wistia.com/embed/hqlhtq3z3r.js" async type="module"></script>
+    <!-- STOP gate video -->
+    <script src="https://fast.wistia.com/embed/ddtv9g27j2.js" async type="module"></script>
 
     <!-- Supabase (for Sign Out + best-effort completion; page is open-access) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -55,6 +57,12 @@
             display: block;
             filter: blur(5px);
             padding-top: 56.25%;
+        }
+        wistia-player[media-id='ddtv9g27j2']:not(:defined) {
+            background: center / contain no-repeat url('https://fast.wistia.com/embed/medias/ddtv9g27j2/swatch');
+            display: block;
+            filter: blur(5px);
+            padding-top: 50.94%;
         }
 
         /* Background */
@@ -557,23 +565,13 @@
             <p class="stop-sub">This is how you can actively track and view your live results on TradeLux to verify your daily profits from the algorithm.</p>
 
             <div class="video-shell" id="stopVideoShell">
-                <!-- ▼▼▼ REPLACE THIS PLACEHOLDER WITH YOUR REAL WISTIA EMBED ▼▼▼
-                     1) In <head>, add a loader next to the existing embed script:
-                          <script src="https://fast.wistia.com/embed/YOUR_MEDIA_ID.js" async type="module"></script>
-                     2) Replace the .stop-video-placeholder div below with:
-                          <wistia-player media-id="YOUR_MEDIA_ID" aspect="1.7777777777777777"></wistia-player>
-                     The 45-second Continue unlock is time-based, so it works with any video. -->
-                <div class="stop-video-placeholder">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                    <span>Wistia video embeds here<br><small>Replace PLACEHOLDER_MEDIA_ID — see comment in source (45s)</small></span>
-                </div>
-                <!-- ▲▲▲ END PLACEHOLDER ▲▲▲ -->
+                <wistia-player media-id="ddtv9g27j2" aspect="1.9631901840490797"></wistia-player>
             </div>
 
             <button class="btn-primary stop-continue" id="stopContinueBtn" type="button" disabled onclick="continueToDashboard(this)">
-                <span id="stopContinueLabel">Please wait… 45s</span>
+                <span id="stopContinueLabel">Please wait… 4:37</span>
             </button>
-            <p class="stop-hint" id="stopContinueHint">The Continue button unlocks once the 45-second video is finished.</p>
+            <p class="stop-hint" id="stopContinueHint">The Continue button unlocks once the video is finished.</p>
         </div>
     </div>
 
@@ -870,17 +868,23 @@
             startStopUnlockTimer();
         };
 
-        // 45-second countdown that unlocks the Continue button. Starts the moment
-        // the STOP screen is revealed (time-based, independent of the embed).
+        // Countdown that unlocks the Continue button after the video runs (2:55).
+        // Starts the moment the STOP screen is revealed (time-based, independent
+        // of the embed's own playback events).
         var stopTimerStarted = false;
+        function fmtMMSS(s) {
+            var m = Math.floor(s / 60);
+            var r = s % 60;
+            return m + ':' + (r < 10 ? '0' + r : r);
+        }
         function startStopUnlockTimer() {
             if (stopTimerStarted) return;
             stopTimerStarted = true;
-            var remaining = 45;
+            var remaining = 277; // 4:37
             var btn = document.getElementById('stopContinueBtn');
             var label = document.getElementById('stopContinueLabel');
             var hint = document.getElementById('stopContinueHint');
-            label.textContent = 'Please wait… ' + remaining + 's';
+            label.textContent = 'Please wait… ' + fmtMMSS(remaining);
             var iv = setInterval(function() {
                 remaining -= 1;
                 if (remaining <= 0) {
@@ -889,7 +893,7 @@
                     label.textContent = 'Continue to Dashboard';
                     hint.textContent = "Thanks for watching — you're all set.";
                 } else {
-                    label.textContent = 'Please wait… ' + remaining + 's';
+                    label.textContent = 'Please wait… ' + fmtMMSS(remaining);
                 }
             }, 1000);
         }
