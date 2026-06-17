@@ -169,7 +169,6 @@
             max-width: 860px;
             margin: 0 auto 8px;
         }
-        /* The floating window lives inside the shell. Inline by default. */
         .pip-window {
             position: relative;
             width: 100%;
@@ -179,82 +178,8 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.45);
             background: #000;
         }
-        .pip-header { display: none; }
         .pip-body { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
         .pip-body iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
-        .pip-resize { display: none; }
-
-        /* Placeholder left in the shell when the player is floating */
-        .video-placeholder {
-            display: none;
-            width: 100%; max-width: 860px; margin: 0 auto 8px;
-            aspect-ratio: 16 / 9;
-            border-radius: 16px; border: 1px dashed var(--border);
-            background: rgba(20,20,20,0.6);
-            color: var(--text-muted); font-size: 14px; gap: 10px;
-            align-items: center; justify-content: center; text-align: center; padding: 16px;
-        }
-        .video-placeholder.active { display: flex; }
-        .video-placeholder svg { width: 18px; height: 18px; vertical-align: -3px; margin-right: 6px; color: var(--accent); }
-
-        /* ===== FLOATING STATE ===== */
-        .pip-window.floating {
-            position: fixed;
-            z-index: 9000;
-            width: 480px;
-            bottom: 20px; right: 20px;
-            top: auto; left: auto;
-            border-radius: 14px;
-            box-shadow: 0 24px 70px rgba(0,0,0,0.65), 0 0 0 1px rgba(240,200,50,0.18), 0 0 30px var(--accent-dim);
-            touch-action: none;
-        }
-        .pip-window.floating.snapping {
-            transition: top 0.28s cubic-bezier(0.4,0,0.2,1), left 0.28s cubic-bezier(0.4,0,0.2,1);
-        }
-        .pip-window.floating .pip-header {
-            display: flex; align-items: center; justify-content: space-between; gap: 8px;
-            height: 38px; padding: 0 6px 0 12px;
-            background: rgba(18,18,18,0.96);
-            border-bottom: 1px solid var(--border);
-            cursor: grab;
-        }
-        .pip-window.floating.dragging .pip-header { cursor: grabbing; }
-        .pip-title {
-            display: flex; align-items: center; gap: 8px;
-            font-size: 12px; font-weight: 700; letter-spacing: 0.02em; color: var(--accent);
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .pip-title svg { width: 14px; height: 14px; flex-shrink: 0; }
-        .pip-controls { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
-        .pip-btn {
-            width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
-            background: transparent; border: none; border-radius: 7px; cursor: pointer;
-            color: var(--text-secondary); transition: all 0.15s ease;
-        }
-        .pip-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); }
-        .pip-btn svg { width: 16px; height: 16px; }
-        .pip-window.floating .pip-resize {
-            display: flex;
-            position: absolute; right: 0; bottom: 0;
-            width: 22px; height: 22px;
-            cursor: nwse-resize; z-index: 5;
-            align-items: flex-end; justify-content: flex-end; padding: 3px;
-            color: rgba(255,255,255,0.55);
-        }
-        .pip-window.floating .pip-resize svg { width: 12px; height: 12px; }
-        .pip-window.floating .pip-resize:hover { color: var(--accent); }
-
-        /* Reopen pill (if floating window is closed) */
-        .pip-reopen {
-            position: fixed; bottom: 20px; right: 20px; z-index: 8000;
-            display: none; align-items: center; gap: 8px;
-            padding: 12px 18px; border-radius: 100px;
-            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
-            color: var(--bg-dark); font-weight: 700; font-size: 13px; border: none; cursor: pointer;
-            box-shadow: 0 10px 30px var(--accent-glow);
-        }
-        .pip-reopen.active { display: inline-flex; }
-        .pip-reopen svg { width: 16px; height: 16px; }
 
         /* Primary / ghost buttons */
         .btn-primary {
@@ -383,25 +308,8 @@
             font-size: 12px; color: var(--text-muted); line-height: 1.7;
         }
 
-        .toast {
-            position: fixed; bottom: 24px; left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: rgba(20,20,20,0.96); color: #fff;
-            padding: 12px 20px; border: 1px solid var(--border); border-radius: 12px;
-            font-weight: 600; font-size: 13px; display: flex; align-items: center; gap: 10px;
-            opacity: 0; transition: all 0.35s cubic-bezier(0.4,0,0.2,1); z-index: 9500;
-        }
-        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-        .toast svg { width: 18px; height: 18px; color: var(--accent); }
-
         @media (max-width: 768px) {
             .screen-title { font-size: 28px; }
-            .pip-window.floating {
-                width: auto !important;
-                left: 8px !important; right: 8px !important;
-                bottom: 8px !important; top: auto !important;
-            }
-            .pip-window.floating .pip-resize { display: none; }
         }
     </style>
 </head>
@@ -433,7 +341,7 @@
         <div class="center" style="margin-bottom:28px;">
             <span class="eyebrow">Automated Copy Trading · Free $100K Demo · No Payment</span>
             <h1 class="screen-title">Set Up Your Automated Copy Trading Account</h1>
-            <p class="screen-subtitle">Copy trade right alongside vetted, verified pro traders — completely automatically. Their live trades mirror straight into your own account through the Profit Insider copy trading hub. No manual copying, no placing orders, no lifting a finger. Follow the short walkthrough and the 2 steps below to go live.</p>
+            <p class="screen-subtitle">Copy vetted, verified pro traders — completely automatically. Their live trades mirror straight into your account. No manual copying, no lifting a finger. Watch the walkthrough, then do the 2 steps below.</p>
 
             <div class="benefits">
                 <span class="benefit"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v8m-4-4h8M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Free $100K demo</span>
@@ -450,7 +358,7 @@
             </div>
             <div class="trust-text">
                 <h3>You're copying real, verified traders — not anonymous claims</h3>
-                <p>Summit acts as a pro-trader verification platform. It verifies every trader's broker statements and all of their trades, and publicly publishes their full portfolio — so you can comb through a trader's complete, real track record before you follow them. A trader literally can't offer copy trading on Summit unless their verified history is public.</p>
+                <p>Summit verifies every trader's broker statements and trades, and publishes their full track record publicly. A trader can't offer copy trading on Summit unless their verified history is public.</p>
             </div>
         </div>
 
@@ -458,25 +366,11 @@
         <div class="section-head">
             <span class="eyebrow">Watch First</span>
             <h2 class="screen-title">The Full Setup Walkthrough</h2>
-            <p>This short video walks you through everything — creating your free Summit demo account and connecting it to the copy trading hub. Shrink it and pin it to a corner so it stays with you while you do the 2 steps below.</p>
+            <p>This short video shows the entire setup — creating your free Summit demo account and connecting it to the copy trading hub.</p>
         </div>
 
         <div class="video-shell" id="videoShell">
-            <div class="pip-window" id="pipWindow">
-                <div class="pip-header" id="pipHeader">
-                    <span class="pip-title">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-                        Setup Walkthrough
-                    </span>
-                    <div class="pip-controls">
-                        <button class="pip-btn" type="button" title="Snap to next corner" onclick="cycleCorner()" aria-label="Snap to corner">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="13" y="13" width="5" height="5" rx="1" fill="currentColor" stroke="none"/></svg>
-                        </button>
-                        <button class="pip-btn" type="button" title="Back to full video" onclick="exitPip()" aria-label="Expand">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4"/></svg>
-                        </button>
-                    </div>
-                </div>
+            <div class="pip-window">
                 <div class="pip-body">
                     <iframe
                         src="https://www.loom.com/embed/10664793b6b44febaf9446b02c141a95?hide_owner=true&hide_share=true&hide_title=true"
@@ -484,31 +378,15 @@
                         allow="autoplay; fullscreen; picture-in-picture"
                         referrerpolicy="strict-origin-when-cross-origin"
                         allowfullscreen></iframe>
-                    <div class="pip-resize" id="pipResize" title="Drag to resize">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20h11M14 15h6M19 10h1"/></svg>
-                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- Placeholder shown in the page flow while the video is floating -->
-        <div class="video-placeholder" id="videoPlaceholder">
-            <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>Video is floating — drag it anywhere or snap it to a corner.</span>
-        </div>
-
-        <div class="center">
-            <button class="btn-primary" type="button" onclick="enterPip()">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v8a2 2 0 01-2 2h-5"/><rect x="3" y="12" width="9" height="7" rx="1.5"/></svg>
-                Shrink Video &amp; Keep It On Screen
-            </button>
-            <p class="hint">The video keeps playing in a floating window you can drag, resize, and snap to any corner while you do the steps below.</p>
         </div>
 
         <!-- STEPS -->
         <div class="section-head">
             <span class="eyebrow">Go Live In 2 Steps</span>
             <h2 class="screen-title">Connect Everything &amp; Start Copying</h2>
-            <p>Follow these in order. The whole process runs natively on Summit — that's the brokerage with the integration and technology to copy trades automatically and securely, which is why everyone starts on a free Summit demo account.</p>
+            <p>Follow these in order. The whole process runs on Summit — the brokerage built to copy trades automatically and securely.</p>
         </div>
 
         <div class="roadmap">
@@ -518,7 +396,7 @@
                 <div class="road-card">
                     <div class="road-kicker">Step 1</div>
                     <h3 class="road-title">Create your free Summit demo account</h3>
-                    <p class="road-body">Start by creating your free $100,000 Summit demo account — we comp the account for you and cover the live market data fees and platform fees. It's a demo, so no real money is ever on the line, and it runs continuously with no end date. The walkthrough video shows you exactly how to sign up. Create your account, then come right back to this page for Step 2.</p>
+                    <p class="road-body">Create your free $100,000 Summit demo account — we comp the account, data, and platform fees. No real money on the line. Then come back here for Step 2.</p>
                     <a class="btn-primary" href="https://dashboard.summit-securities.com/signin?tab=signup" target="_blank" rel="noopener noreferrer">
                         Create My Free Summit Demo Account
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5h5v5M19 5l-9 9M10 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-4"/></svg>
@@ -533,7 +411,7 @@
                 <div class="road-card">
                     <div class="road-kicker">Step 2</div>
                     <h3 class="road-title">Connect to the Profit Insider copy trading hub</h3>
-                    <p class="road-body">Now connect your new Summit account to the Profit Insider copy trading hub and pick the pro trader you want to follow. Once you're connected, copy trading kicks off automatically — that trader's live trades start mirroring straight into your account. No manual work, no logging in to place orders.</p>
+                    <p class="road-body">Connect your Summit account to the copy trading hub and pick your pro trader. Copy trading kicks off automatically — their live trades start mirroring into your account.</p>
                     <a class="btn-primary" href="https://tradelux.ai/pi/signup" target="_blank" rel="noopener noreferrer">
                         Connect To The Copy Trading Hub
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5h5v5M19 5l-9 9M10 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-4"/></svg>
@@ -547,36 +425,36 @@
         <div class="section-head">
             <span class="eyebrow">The Why</span>
             <h2 class="screen-title">Why It Runs On Summit</h2>
-            <p>Copy trading only works because every trade is copied directly from the pro trader's account — and that requires a secure link that's genuinely hard to automate.</p>
+            <p>Copy trading only works when every trade copies directly from the pro trader's account — and that takes a secure link that's hard to automate.</p>
         </div>
 
         <div class="why-grid">
             <div class="why-card">
                 <div class="why-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg></div>
                 <h4>A secure, automated link</h4>
-                <p>Getting live trades to copy automatically and securely into someone else's account is hard. Summit is the brokerage with the integration and technology to do professional copy trading — it links directly into accounts and copies the trades for you.</p>
+                <p>Summit is the brokerage with the tech to do professional copy trading — it links directly into accounts and copies the trades for you.</p>
             </div>
             <div class="why-card">
                 <div class="why-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg></div>
                 <h4>Verified track records, published</h4>
-                <p>Summit verifies every trader's broker statements and trades and publishes their full portfolio publicly. You're following proven, vetted professionals with a complete, transparent history you can review yourself.</p>
+                <p>Summit verifies every trader's statements and trades and publishes their full portfolio — proven, vetted pros with a transparent history.</p>
             </div>
             <div class="why-card">
                 <div class="why-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
                 <h4>Free, zero risk, lifetime</h4>
-                <p>You start on a free Summit demo account we comp for you — including the live market data and platform fees. It's a demo, so no real money is at stake, and it runs continuously with no expiration and no countdown.</p>
+                <p>Your demo account is free — we cover the data and platform fees. No real money at stake, and it runs continuously with no expiration.</p>
             </div>
             <div class="why-card">
                 <div class="why-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z"/></svg></div>
                 <h4>Move to real money whenever you want</h4>
-                <p>Stay on the free demo as long as you like. When you're ready to go live with real money, you can — it just runs on the same Summit platform, so there's nothing new to set up.</p>
+                <p>Stay on the free demo as long as you like. Ready for real money? Go live on the same Summit platform — nothing new to set up.</p>
             </div>
         </div>
 
         <!-- FINAL CTA -->
         <div class="final-cta">
             <h2 class="screen-title">Ready To Go Hands-Free?</h2>
-            <p>Create your free Summit demo account, connect the copy trading hub, pick your pro trader — and let the algorithm do the rest.</p>
+            <p>Create your demo account, connect the hub, pick your pro trader — and let it run.</p>
             <div class="final-cta-buttons">
                 <a class="btn-primary" href="https://dashboard.summit-securities.com/signin?tab=signup" target="_blank" rel="noopener noreferrer">Step 1 — Create Summit Account</a>
                 <a class="btn-ghost" href="https://tradelux.ai/pi/signup" target="_blank" rel="noopener noreferrer">Step 2 — Connect Copy Trading Hub</a>
@@ -588,198 +466,5 @@
         </p>
     </div>
 
-    <!-- Reopen pill (if floating window closed) -->
-    <button class="pip-reopen" id="pipReopen" type="button" onclick="reopenPip()">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-        Show Video
-    </button>
-
-    <!-- Toast -->
-    <div class="toast" id="toast">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        <span id="toast-message"></span>
-    </div>
-
-    <script>
-        // ============================================
-        // UI HELPERS
-        // ============================================
-        function showToast(msg) {
-            var t = document.getElementById('toast');
-            document.getElementById('toast-message').textContent = msg;
-            t.classList.add('show');
-            clearTimeout(showToast._t);
-            showToast._t = setTimeout(function() { t.classList.remove('show'); }, 2600);
-        }
-
-        // ============================================
-        // FLOATING VIDEO (CSS-only — the iframe never leaves the DOM,
-        // so the Loom video keeps playing while it floats).
-        // ============================================
-        var pip = document.getElementById('pipWindow');
-        var pipResize = document.getElementById('pipResize');
-        var pipHeader = document.getElementById('pipHeader');
-        var videoShell = document.getElementById('videoShell');
-        var placeholder = document.getElementById('videoPlaceholder');
-
-        var MARGIN = 20;            // gap from viewport edges when snapped
-        var MIN_W = 260, MAX_W = 720;
-        var currentCorner = 'br';   // tl, tr, bl, br
-
-        function enterPip() {
-            if (pip.classList.contains('floating')) return;
-            // Lock the shell to the video's current height so the page doesn't jump.
-            videoShell.style.display = 'none';
-            placeholder.classList.add('active');
-
-            pip.classList.add('floating');
-            document.getElementById('pipReopen').classList.remove('active');
-
-            snapToCorner(currentCorner, false);
-            requestAnimationFrame(function() { snapToCorner(currentCorner, false); });
-            setTimeout(function() { snapToCorner(currentCorner, false); }, 120);
-            showToast('Drag, resize, or snap the video to any corner.');
-        }
-
-        function exitPip() {
-            pip.classList.remove('floating', 'snapping', 'dragging');
-            pip.style.cssText = ''; // clear inline left/top/width
-            videoShell.style.display = '';
-            placeholder.classList.remove('active');
-            document.getElementById('pipReopen').classList.remove('active');
-        }
-
-        function reopenPip() {
-            pip.classList.add('floating');
-            document.getElementById('pipReopen').classList.remove('active');
-            snapToCorner(currentCorner, false);
-        }
-
-        // Hide the floating window but keep the reopen pill (used by nothing inline
-        // currently, but kept for parity / future close button).
-        function hidePip() {
-            pip.classList.remove('floating');
-            pip.style.cssText = '';
-            videoShell.style.display = 'none';
-            placeholder.classList.add('active');
-            document.getElementById('pipReopen').classList.add('active');
-        }
-
-        // ---- Corner snapping ----
-        function snapToCorner(corner, animate) {
-            currentCorner = corner;
-            if (animate) pip.classList.add('snapping');
-            else pip.classList.remove('snapping');
-
-            var w = pip.offsetWidth;
-            var h = pip.offsetHeight;
-            var vw = window.innerWidth, vh = window.innerHeight;
-            var left = (corner === 'tl' || corner === 'bl') ? MARGIN : (vw - w - MARGIN);
-            var top  = (corner === 'tl' || corner === 'tr') ? MARGIN : (vh - h - MARGIN);
-
-            pip.style.left = Math.max(MARGIN, left) + 'px';
-            pip.style.top = Math.max(MARGIN, top) + 'px';
-            pip.style.right = 'auto';
-            pip.style.bottom = 'auto';
-
-            if (animate) {
-                setTimeout(function() { pip.classList.remove('snapping'); }, 320);
-            }
-        }
-
-        function cycleCorner() {
-            var order = ['br', 'bl', 'tl', 'tr'];
-            var idx = order.indexOf(currentCorner);
-            var next = order[(idx + 1) % order.length];
-            snapToCorner(next, true);
-        }
-
-        function nearestCorner() {
-            var r = pip.getBoundingClientRect();
-            var cx = r.left + r.width / 2;
-            var cy = r.top + r.height / 2;
-            var left = cx < window.innerWidth / 2;
-            var top = cy < window.innerHeight / 2;
-            return (top ? 't' : 'b') + (left ? 'l' : 'r');
-        }
-
-        // ---- Dragging (header) ----
-        var dragState = null;
-        pipHeader.addEventListener('pointerdown', function(e) {
-            if (e.target.closest('.pip-btn')) return; // let buttons work
-            if (!pip.classList.contains('floating')) return;
-            var r = pip.getBoundingClientRect();
-            dragState = { dx: e.clientX - r.left, dy: e.clientY - r.top };
-            pip.classList.add('dragging');
-            pip.classList.remove('snapping');
-            pip.style.right = 'auto';
-            pip.style.bottom = 'auto';
-            pipHeader.setPointerCapture(e.pointerId);
-            e.preventDefault();
-        });
-        pipHeader.addEventListener('pointermove', function(e) {
-            if (!dragState) return;
-            var w = pip.offsetWidth, h = pip.offsetHeight;
-            var left = e.clientX - dragState.dx;
-            var top = e.clientY - dragState.dy;
-            left = Math.min(Math.max(0, left), window.innerWidth - w);
-            top = Math.min(Math.max(0, top), window.innerHeight - h);
-            pip.style.left = left + 'px';
-            pip.style.top = top + 'px';
-        });
-        function endDrag(e) {
-            if (!dragState) return;
-            dragState = null;
-            pip.classList.remove('dragging');
-            try { pipHeader.releasePointerCapture(e.pointerId); } catch (err) {}
-            snapToCorner(nearestCorner(), true);
-        }
-        pipHeader.addEventListener('pointerup', endDrag);
-        pipHeader.addEventListener('pointercancel', endDrag);
-
-        // ---- Resizing (corner handle) ----
-        var resizeState = null;
-        pipResize.addEventListener('pointerdown', function(e) {
-            if (!pip.classList.contains('floating')) return;
-            var r = pip.getBoundingClientRect();
-            resizeState = { startX: e.clientX, startW: r.width, left: r.left, top: r.top };
-            pip.classList.add('dragging');
-            pip.classList.remove('snapping');
-            pip.style.right = 'auto';
-            pip.style.bottom = 'auto';
-            pip.style.left = r.left + 'px';
-            pip.style.top = r.top + 'px';
-            pipResize.setPointerCapture(e.pointerId);
-            e.preventDefault();
-            e.stopPropagation();
-        });
-        pipResize.addEventListener('pointermove', function(e) {
-            if (!resizeState) return;
-            var w = resizeState.startW + (e.clientX - resizeState.startX);
-            w = Math.min(Math.max(MIN_W, w), Math.min(MAX_W, window.innerWidth - 2 * MARGIN));
-            pip.style.width = w + 'px';
-        });
-        function endResize(e) {
-            if (!resizeState) return;
-            resizeState = null;
-            pip.classList.remove('dragging');
-            try { pipResize.releasePointerCapture(e.pointerId); } catch (err) {}
-            snapToCorner(nearestCorner(), true);
-        }
-        pipResize.addEventListener('pointerup', endResize);
-        pipResize.addEventListener('pointercancel', endResize);
-
-        // Keep it pinned to its corner on viewport resize.
-        window.addEventListener('resize', function() {
-            if (pip.classList.contains('floating')) snapToCorner(currentCorner, false);
-        });
-
-        // Expose handlers used by inline onclick
-        window.enterPip = enterPip;
-        window.exitPip = exitPip;
-        window.reopenPip = reopenPip;
-        window.hidePip = hidePip;
-        window.cycleCorner = cycleCorner;
-    </script>
 </body>
 </html>
